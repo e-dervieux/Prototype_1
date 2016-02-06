@@ -10,11 +10,8 @@ public:
     Grille(int w, int h, int smW, int smH);
     ~Grille();
 
-    void actualiser(double dt); // Applique tous les calculs physiques pour obtenir la nouvelle grille après dt
-    // Devrait être la seule fonction à utiliser depuis SceneSDL.
-
-    void calculerDeplacement(double dt) { m_mat.calculerDeplacement(dt); } // Deplace toutes les particules de la grille
-
+    void actualiser(double dt); // Applique tous les calculs physiques pour obtenir la nouvelle grille apres dt
+    // Devrait etre la seule fonction a utiliser depuis SceneSDL.
 
 private:
     int m_w, m_h; // Dimensions globales de la matrice creuse

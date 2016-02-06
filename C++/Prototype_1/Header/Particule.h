@@ -13,19 +13,23 @@ public:
     Particule(int x, int y, double xd, double yd, Matiere* matiere = NULL);
     ~Particule();
 
+    void creerLiaisons(Particule** liaisons);
+
     Vecteur getPos() const { return m_pos; }
     Vecteur getV() const { return m_v; }
     double getMasse() const;
 
     void appliquerForce(Vecteur f);
-    // Change la position, en fonction des forces préalablement appliquées, et de la durée de déplacement
+    // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     void calculerDeplacement(double dt);
 
+//TODO faire des accesseurs pour m_x et m_y afin que Ã§a soit propre
 //private:
-    int m_x, m_y; // Pas sûr que ça serve...
-    Vecteur m_pos, m_v, m_resf; // resf est la résultante des forces à l'instant considéré
+    int m_x, m_y; // Pas sur que ca serve...
+    Vecteur m_pos, m_v, m_resf; // resf est la resultante des forces a l'instant considere
 
-    // FAIRE LES LIAISONS
+    Particule** m_liaisons;
+
 
     Matiere* m_matiere;
 };

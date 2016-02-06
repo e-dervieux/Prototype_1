@@ -12,7 +12,7 @@ public:
     Matiere(SDL_Color couleur, double masse, double l0, double raideur, double amortissement);
 
     double getMasse(const Particule& p) const;
-    // Renvoie la force de liaison appliquée à p1
+    // Renvoie la force de liaison appliquee a p1
     virtual Vecteur forceLiaison(const Particule& p1, const Particule& p2) const;
 
 //private:

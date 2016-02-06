@@ -7,7 +7,7 @@ SceneSDL::SceneSDL(int config)
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
         throw Erreur(4, "Echec du chargement de la SDL");
 
-    init(config); // Chargement de la configuration par défaut
+    init(config); // Chargement de la configuration par defaut
 }
 
 SceneSDL::~SceneSDL()
@@ -29,7 +29,7 @@ void SceneSDL::init(int config)
         break;
     }
 
-    // Chargement de la fenêtre
+    // Chargement de la fenetre
     m_fenetre = SDL_CreateWindow(m_titre.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                  def::taillePixel*def::width, def::taillePixel*def::height, 0);
     if (m_fenetre == NULL)
@@ -44,11 +44,11 @@ void SceneSDL::init(int config)
 
 void SceneSDL::reinit(int config)
 {
-    // Vide la scène
+    // Vide la scene
     SDL_DestroyWindow(m_fenetre);
     SDL_DestroyRenderer(m_rendu);
 
-    // La réinitialise
+    // La reinitialise
     init(config);
 }
 
