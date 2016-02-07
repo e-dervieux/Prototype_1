@@ -4,31 +4,28 @@
 Particule::Particule(int x, int y, Matiere* matiere)
  : m_x(x), m_y(y), m_pos(x+0.5, y+0.5), m_v(), m_resf(), m_matiere(matiere)
 {
-    m_liaisons=new Particule*[def::nbLiaisons];
-    for(int i=0;i<def::nbLiaisons;i++)
-    {
-        m_liaisons[i]=NULL;
-    }
+    m_liaisons=NULL;
 }
 
 Particule::Particule(int x, int y, double xd, double yd, Matiere* matiere)
  : m_x(x), m_y(y), m_pos(xd,yd), m_v(), m_resf(), m_matiere(matiere)
 {
-    m_liaisons=new Particule*[def::nbLiaisons];
-    for(int i=0;i<def::nbLiaisons;i++)
-    {
-        m_liaisons[i]=NULL;
-    }
+    m_liaisons=NULL;
 }
 
 Particule::~Particule()
 {
     if (m_liaisons != NULL)
-    delete[] m_liaisons;
+    {
+        delete[] m_liaisons;
+    }
 }
 
 void Particule::creerLiaisons(Particule** liaisons)
 {
+    //TODO Regarder si la particule n'a pas déjà des liaisons
+
+    m_liaisons=new Particule*[def::nbLiaisons];
     for(int i=0;i<def::nbLiaisons;i++)
     {
         m_liaisons[i]=liaisons[i];

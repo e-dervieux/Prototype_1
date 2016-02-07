@@ -80,12 +80,13 @@ void MatriceParticules::deplacer()
                     if (xNouvPart < 0 || xNouvPart >= m_dimMPX*m_dimSMX || yNouvPart < 0 || yNouvPart >= m_dimMPY*m_dimSMY)
                     {
                         p.supprimerLiaisons();
-                        p = m_defaut(p.getX(), p.getY());
+                        this->suppr(p.getX(), p.getY());
                     }
                     else
                     {
                         //On crée ensuite une copie de p qu'on place en coordonnées (xNouvPart;yNouvPart)
                         //Si jamais erreur c'est que set ne copie pas !
+                        //TODO Problème de tableau de liaisons avec set : il faut le passer de l'ancienne à la nouvelle
                         this->set(xNouvPart, yNouvPart, p);
 
                         //Si jamais on a modifié les coordonnées dans la matrice par rapport
@@ -112,6 +113,7 @@ void MatriceParticules::deplacer()
                             }
                         }
                         //On supprime finalement p
+                        //TODO (suite) si jamais on a passé le tableau il ne faut pas le supprimer
                         this->suppr(p.m_x,p.m_y);
                     }
                 }
