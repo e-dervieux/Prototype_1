@@ -48,7 +48,7 @@
                 </ATTRIBUTES>
                 <DEPENDENCIES>
                   <LINK relation="Type">
-                    <FOREIGNID name="integer" mc="Standard.DataType" uid="00000004-0000-0009-0000-000000000000"/>
+                    <FOREIGNID name="double" mc="Standard.DataType" uid="00000004-0000-0010-0000-000000000000"/>
                   </LINK>
                 </DEPENDENCIES>
               </OBJECT>
@@ -581,6 +581,62 @@
             </COMP>
           </DEPENDENCIES>
         </OBJECT>
+        <OBJECT>
+          <ID name="creerLiaisons" mc="Standard.Operation" uid="9a43efb8-f575-4388-89fd-2b78347bee45"/>
+          <ATTRIBUTES>
+            <ATT name="Concurrency">false</ATT>
+            <ATT name="Final">false</ATT>
+            <ATT name="Passing">MethodOut</ATT>
+            <ATT name="Visibility">Public</ATT>
+            <ATT name="IsClass">false</ATT>
+            <ATT name="IsAbstract">false</ATT>
+            <ATT name="Name"><![CDATA[creerLiaisons]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <COMP relation="IO">
+              <OBJECT>
+                <ID name="liaisons" mc="Standard.Parameter" uid="3618641a-fe7c-4b70-bd1d-069f37826862"/>
+                <ATTRIBUTES>
+                  <ATT name="ParameterPassing">In</ATT>
+                  <ATT name="MultiplicityMin"><![CDATA[1]]></ATT>
+                  <ATT name="MultiplicityMax"><![CDATA[1]]></ATT>
+                  <ATT name="TypeConstraint"></ATT>
+                  <ATT name="DefaultValue"></ATT>
+                  <ATT name="IsOrdered">false</ATT>
+                  <ATT name="IsUnique">false</ATT>
+                  <ATT name="IsException">false</ATT>
+                  <ATT name="IsStream">false</ATT>
+                  <ATT name="Effect">ReadEffect</ATT>
+                  <ATT name="Name"><![CDATA[liaisons]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="Type">
+                    <ID name="Particule" mc="Standard.Class" uid="33e4dc1f-3873-4aaa-874b-ced2ca3b6dbc"/>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+            <COMP relation="Descriptor">
+              <OBJECT>
+                <ID name="" mc="Standard.Note" uid="826140f7-3261-4208-a384-60a9effbfdd6"/>
+                <ATTRIBUTES>
+                  <ATT name="Content"><![CDATA[<p>Met &agrave; jour le tableau de liaisons d&#39;une particule avec celui pass&eacute; en argument.</p>
+]]></ATT>
+                  <ATT name="MimeType"><![CDATA[text/html]]></ATT>
+                  <ATT name="Name"></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES>
+                  <LINK relation="Model">
+                    <FOREIGNID name="description" mc="Standard.NoteType" uid="00000000-0000-3e81-0000-000000000000"/>
+                  </LINK>
+                </DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
+        </OBJECT>
       </COMP>
       <COMP relation="OwnedAttribute">
         <OBJECT>
@@ -732,7 +788,7 @@
               <OBJECT>
                 <ID name="" mc="Standard.Note" uid="77cd282d-20a1-40e2-9fdd-c7067101739d"/>
                 <ATTRIBUTES>
-                  <ATT name="Content"><![CDATA[<p>La mati&egrave;re dont est constitu&eacute; le solide.</p>
+                  <ATT name="Content"><![CDATA[<p>La mati&egrave;re dont est constitu&eacute; la particule.</p>
 ]]></ATT>
                   <ATT name="MimeType"></ATT>
                   <ATT name="Name"></ATT>
@@ -748,7 +804,7 @@
           </DEPENDENCIES>
         </OBJECT>
         <OBJECT>
-          <ID name="mSolidesLies" mc="Standard.Attribute" uid="7d5032f7-0551-4d9c-bae9-69834abfd62d"/>
+          <ID name="mLiaisons" mc="Standard.Attribute" uid="7d5032f7-0551-4d9c-bae9-69834abfd62d"/>
           <ATTRIBUTES>
             <ATT name="TypeConstraint"></ATT>
             <ATT name="Value"></ATT>
@@ -762,7 +818,7 @@
             <ATT name="Visibility">Private</ATT>
             <ATT name="IsClass">false</ATT>
             <ATT name="IsAbstract">false</ATT>
-            <ATT name="Name"><![CDATA[mSolidesLies]]></ATT>
+            <ATT name="Name"><![CDATA[mLiaisons]]></ATT>
             <ATT name="status">1970354901745664</ATT>
           </ATTRIBUTES>
           <DEPENDENCIES>
@@ -773,7 +829,7 @@
               <OBJECT>
                 <ID name="" mc="Standard.Note" uid="5a4c53df-e3ea-4651-aa2b-0e625815afaa"/>
                 <ATTRIBUTES>
-                  <ATT name="Content"><![CDATA[<p>Un tableau de 6 solides (maximum) li&eacute;s au Solide courant.</p>
+                  <ATT name="Content"><![CDATA[<p>Un tableau de 6&nbsp;particules (maximum) li&eacute;es&nbsp;&agrave; la&nbsp;Particule courante.</p>
 ]]></ATT>
                   <ATT name="MimeType"></ATT>
                   <ATT name="Name"></ATT>

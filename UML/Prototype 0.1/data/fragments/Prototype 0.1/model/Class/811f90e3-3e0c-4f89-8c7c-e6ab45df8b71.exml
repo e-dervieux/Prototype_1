@@ -176,7 +176,7 @@
           </DEPENDENCIES>
         </OBJECT>
         <OBJECT>
-          <ID name="getRGBa" mc="Standard.Operation" uid="42399ee2-bfd7-4726-a6d4-375b33501a0b"/>
+          <ID name="getCouleur" mc="Standard.Operation" uid="42399ee2-bfd7-4726-a6d4-375b33501a0b"/>
           <ATTRIBUTES>
             <ATT name="Concurrency">false</ATT>
             <ATT name="Final">false</ATT>
@@ -184,7 +184,7 @@
             <ATT name="Visibility">Public</ATT>
             <ATT name="IsClass">false</ATT>
             <ATT name="IsAbstract">false</ATT>
-            <ATT name="Name"><![CDATA[getRGBa]]></ATT>
+            <ATT name="Name"><![CDATA[getCouleur]]></ATT>
             <ATT name="status">1970354901745664</ATT>
           </ATTRIBUTES>
           <DEPENDENCIES>
@@ -435,7 +435,7 @@
           </DEPENDENCIES>
         </OBJECT>
         <OBJECT>
-          <ID name="l0" mc="Standard.Attribute" uid="c5d73419-4aad-49ae-853f-b3f4abe67bc2"/>
+          <ID name="mL0" mc="Standard.Attribute" uid="c5d73419-4aad-49ae-853f-b3f4abe67bc2"/>
           <ATTRIBUTES>
             <ATT name="TypeConstraint"></ATT>
             <ATT name="Value"></ATT>
@@ -449,7 +449,7 @@
             <ATT name="Visibility">Private</ATT>
             <ATT name="IsClass">false</ATT>
             <ATT name="IsAbstract">false</ATT>
-            <ATT name="Name"><![CDATA[l0]]></ATT>
+            <ATT name="Name"><![CDATA[mL0]]></ATT>
             <ATT name="status">1970354901745664</ATT>
           </ATTRIBUTES>
           <DEPENDENCIES>
@@ -476,7 +476,7 @@
           </DEPENDENCIES>
         </OBJECT>
         <OBJECT>
-          <ID name="amortissement" mc="Standard.Attribute" uid="5ed5e12d-cf5e-441d-aeb7-ea076195fb43"/>
+          <ID name="mAmortissement" mc="Standard.Attribute" uid="5ed5e12d-cf5e-441d-aeb7-ea076195fb43"/>
           <ATTRIBUTES>
             <ATT name="TypeConstraint"></ATT>
             <ATT name="Value"></ATT>
@@ -490,7 +490,7 @@
             <ATT name="Visibility">Private</ATT>
             <ATT name="IsClass">false</ATT>
             <ATT name="IsAbstract">false</ATT>
-            <ATT name="Name"><![CDATA[amortissement]]></ATT>
+            <ATT name="Name"><![CDATA[mAmortissement]]></ATT>
             <ATT name="status">1970354901745664</ATT>
           </ATTRIBUTES>
           <DEPENDENCIES>
