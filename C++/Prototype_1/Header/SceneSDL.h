@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <ctime>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "Definitions.h"
 #include "Erreur.h"

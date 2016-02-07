@@ -1,4 +1,4 @@
-#include "SceneSDL.h"
+#include "../Header/SceneSDL.h"
 
 SceneSDL::SceneSDL(int config)
  : m_clavier(def::NB_TOUCHES, false)

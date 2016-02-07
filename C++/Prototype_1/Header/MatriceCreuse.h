@@ -29,8 +29,8 @@ public:
      - dimMPX, dimMPY : nombre en X et Y de sous-matrices
 
     Utilisation de foncteurs :
-     - EstNul(T e) : renvoie si un élément est non-vide
-     - defaut(int x, int y) : renvoie l'élément par défaut mis à la position (x,y)
+     - EstNul(T e) : renvoie si un ï¿½lï¿½ment est non-vide
+     - defaut(int x, int y) : renvoie l'ï¿½lï¿½ment par dï¿½faut mis ï¿½ la position (x,y)
     */
 
     MatriceCreuse(int dimSMX, int dimSMY, int dimMPX, int dimMPY, EstNul<T>& estNul, Defaut<T>& defaut)
@@ -80,7 +80,7 @@ public:
         int ind = (x/m_dimSMX)*m_dimMPY + y/m_dimSMY;
         SousMatrice& mat = m_tabSM[ind];
 
-        // Vérifie si la sous-matrice existe déjà
+        // Vï¿½rifie si la sous-matrice existe dï¿½jï¿½
         if (mat == NULL)
         {
             int xmin = m_dimSMX*(x/m_dimSMX);
@@ -95,7 +95,7 @@ public:
         }
 
         T& tmp = mat[(x%m_dimSMX)*m_dimMPY + (y%m_dimSMY)];
-        if (m_estNul(tmp)) // Compte le nombre d'éléments dans la sous-matrice
+        if (m_estNul(tmp)) // Compte le nombre d'ï¿½lï¿½ments dans la sous-matrice
             m_tabCnt[ind]++;
         tmp = e;
     }
@@ -109,7 +109,7 @@ public:
         {
             T& tmp = mat[(x%m_dimSMX)*m_dimMPY+(y%m_dimSMY)];
 
-            // Compte le nb d'éléments dans la sous-matrice
+            // Compte le nb d'ï¿½lï¿½ments dans la sous-matrice
             if (!m_estNul(tmp))
             {
                 m_tabCnt[ind]--;
@@ -138,7 +138,7 @@ public:
         return m_tabSM[i*m_dimMPY + j];
     }
 
-    // Supprime la sous-matrice si tous les éléments y sont nuls (par m_EstNul)
+    // Supprime la sous-matrice si tous les ï¿½lï¿½ments y sont nuls (par m_EstNul)
     /*void nettoyer(int i, int j)
     {
         SousMatrice& mat = m_tab[i*m_dimMPY + j];
@@ -147,7 +147,7 @@ public:
             bool tmp = false;
             for(int k = 0 ; k < m_dimSMX*m_dimSMY && !tmp ; k++)
                 tmp = m_EstNul(mat[k]);
-            if (!tmp) // Si tous les éléments sont nuls
+            if (!tmp) // Si tous les ï¿½lï¿½ments sont nuls
             {
                 delete[] mat;
                 mat = NULL;
@@ -171,7 +171,7 @@ public:
     const int m_dimMPX, m_dimMPY;
 
     EstNul<T>& m_estNul;
-    Defaut<T>& m_defaut; // Devrait être un foncteur renvoyant une valeur en fonction des coordonnées ?
+    Defaut<T>& m_defaut;
 };
 
 #endif // MATRICECREUSE_H_INCLUDED

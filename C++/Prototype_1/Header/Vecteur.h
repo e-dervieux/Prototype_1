@@ -5,7 +5,7 @@ op�rateurs. Peut �tre vu comme des coordonn�es de points. */
 #ifndef VECTEUR_H_INCLUDED
 #define VECTEUR_H_INCLUDED
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <cmath>
 #include <algorithm>
 

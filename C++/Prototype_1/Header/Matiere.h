@@ -1,7 +1,7 @@
 #ifndef MATIERE_H_INCLUDED
 #define MATIERE_H_INCLUDED
 
-#include "SDL2/SDL.h"
+#include <SDL.h>
 #include "Vecteur.h"
 
 class Particule;
@@ -12,6 +12,7 @@ public:
     Matiere(SDL_Color couleur, double masse, double l0, double raideur, double amortissement);
 
     double getMasse(const Particule& p) const;
+    SDL_Color getCouleur() const { return m_couleur; }
     // Renvoie la force de liaison appliquee a p1
     virtual Vecteur forceLiaison(const Particule& p1, const Particule& p2) const;
 

@@ -66,7 +66,7 @@ void matricecreuse()
 
     afficherMat(m.m_tabCnt,4,4);
     SDL_Color rouge;
-    rouge.r=255; rouge.g=0; rouge.b=0; rouge.unused=0;
+    rouge.r=255; rouge.g=0; rouge.b=0;
 
     std::cout << "Ajout d'un pixel aux coordonnees (5,7) :" << std::endl;
     Matiere matiere(rouge, 1.0,4.0,1.0,0.0);
