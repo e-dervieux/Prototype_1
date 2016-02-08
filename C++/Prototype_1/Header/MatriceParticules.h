@@ -1,7 +1,7 @@
 #ifndef MATRICEPARTICULES_H_INCLUDED
 #define MATRICEPARTICULES_H_INCLUDED
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "MatriceCreuse.h"
 #include "Particule.h"

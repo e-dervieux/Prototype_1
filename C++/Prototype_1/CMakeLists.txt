@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.3)
 project(Prototype_1)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lmingw32 -lSDL2main -lSDL2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lshell32 -lversion -luuid -static-libgcc")
 
 #On Ajoute les différentes sources au Projet
 
@@ -24,11 +26,3 @@ set(SOURCE_FILES    Sources/main.cpp
 add_executable(Prototype_1 ${SOURCE_FILES})
 
 #Pour l'utilisation de la SDL :
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-set(SDL2_INCLUDE_DIR C:/SDL2-2.0.4/include/SDL2)
-set(SDL2_LIBRARY C:/SDL2-2.0.4/lib/libSDL2main.a
-        C:/SDL2-2.0.4/lib/libSDL2.a)
-
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
-target_link_libraries(Prototype_1 ${SDL2_LIBRARY})

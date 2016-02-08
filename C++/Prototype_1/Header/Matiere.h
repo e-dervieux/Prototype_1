@@ -1,7 +1,7 @@
 #ifndef MATIERE_H_INCLUDED
 #define MATIERE_H_INCLUDED
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "Vecteur.h"
 
 class Particule;
