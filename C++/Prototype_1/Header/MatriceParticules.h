@@ -12,8 +12,9 @@ class MatriceParticules : public MatriceCreuse<Particule*>
 public:
     MatriceParticules(int mpX, int mpY, int smX, int smY);
 
-    void forcesLiaison(); // Calcule et applique les forces de liaison entre les particules
+    void ajouterPart(std::vector<Particule> particules);
 
+    void forcesLiaison(); // Calcule et applique les forces de liaison entre les particules
     void calculerDeplacement(double dt); //  Calcule la prochaine position des particules
     void deplacer(); // Effectue le d�placement des particules dans la matrice
 

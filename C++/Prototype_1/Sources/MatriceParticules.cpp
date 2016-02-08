@@ -6,6 +6,15 @@ MatriceParticules::MatriceParticules(int mpX, int mpY, int smX, int smY)
 
 }
 
+void MatriceParticules::ajouterPart(std::vector<Particule> particules)
+{
+    for(int i = 0 ; i < particules.size() ; i++)
+    {
+        Particule& p = particules[i];
+        set(p.getXInt(),p.getYInt(),&p);
+    }
+}
+
 void MatriceParticules::forcesLiaison()
 {
     for(int i = 0 ; i < m_dimMPX*m_dimMPY ; i++)

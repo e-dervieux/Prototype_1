@@ -12,7 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Sources/Definitions.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Matiere.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Vecteur.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceCreuse.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceParticules.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/SceneSDL.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Definitions.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Vecteur.h" isTestSource="false" />
@@ -20,6 +20,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Header/MatriceCreuse.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Matiere.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/MatriceParticules.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceCreuse.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Particule.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Erreur.h" isTestSource="false" />
     </content>

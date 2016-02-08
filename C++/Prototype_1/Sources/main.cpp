@@ -2,6 +2,7 @@
 #include "../Header/SceneSDL.h"
 
 #include "../Header/demoMatriceCreuse.h"
+#include "../Header/demoMatriceParticules.h"
 
 int main(int argv, char** argc)
 {
@@ -18,13 +19,19 @@ int main(int argv, char** argc)
 
     int situation;
     std::cout << "Quelle demo realiser ?" << std::endl
-              << " 0 : Particules dans une matrice creuse" << std::endl;
+              << " 0 : Entiers dans une matrice creuse" << std::endl
+              << " 1 : Matrice de particules" << std::endl;
     std::cin >> situation;
     switch(situation)
     {
     case 0:
         demoMatriceCreuse();
         break;
+
+    case 1:
+        demoMatriceParticules();
+        break;
+
     default:
         demoMatriceCreuse();
     }

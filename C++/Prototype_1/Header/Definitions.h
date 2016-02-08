@@ -9,7 +9,7 @@ namespace def
     class EstNulPart : public EstNul<Particule*>
     {
     public:
-        bool operator()(Particule*& p) { return p == NULL; }
+        bool operator()(Particule*& p) { return (p == NULL); }
     };
     class DefautPart : public Defaut<Particule*>
     {
@@ -18,6 +18,7 @@ namespace def
     };
     class SupprPart : public Suppression<Particule*>
     {
+    public:
         void operator()(Particule*& p) { p = NULL; }
     };
     extern EstNulPart testPart;
