@@ -21,6 +21,19 @@ Particule::~Particule()
     }
 }
 
+Particule& Particule::operator=(const Particule& p)
+{
+    m_x = p.m_x;
+    m_y = p.m_y;
+    m_pos = p.m_pos;
+    m_v = p.m_v;
+    m_resf = p.m_resf;
+    m_liaisons = p.m_liaisons;
+    m_matiere = p.m_matiere;
+
+    return *this;
+}
+
 void Particule::creerLiaisons(Particule** liaisons)
 {
 
@@ -88,6 +101,9 @@ void Particule::calculerDeplacement(double dt)
 }
 
 void Particule::supprimerLiaisons() {
+    if (m_liaisons == NULL)
+        return;
+
     // Supprime les liaisons
     for(int i = 0 ; i < def::nbLiaisons ; i++)
     {

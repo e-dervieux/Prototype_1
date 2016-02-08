@@ -66,7 +66,7 @@ public:
 
     virtual bool estNul(int x, int y)
     {
-        SousMatrice& mat = m_tabSM[(x/m_dimSMX)*m_dimMPY + y/m_dimSMY];
+        SousMatrice& mat = m_tabSM[(x/(m_dimSMX*m_dimSMY))*m_dimMPY + y/m_dimSMY];
         if (mat != NULL)
             return m_estNul(mat[(x%m_dimSMX)*m_dimSMY + (y%m_dimSMY)]);
         else

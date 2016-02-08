@@ -25,11 +25,6 @@ class SupprInt : public Suppression<int>
     void operator()(int& x) { x = 0; }
 };
 
-std::ostream& operator<<(std::ostream& f, Particule p)
-{
-    return (f << "(" << p.m_pos.getX() << "," << p.m_pos.getY() << " ; " << p.m_matiere << ")");
-}
-
 template<typename T>
 void afficherMat(T* tab, int n, int p)
 {

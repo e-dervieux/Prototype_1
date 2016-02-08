@@ -13,6 +13,8 @@ public:
     Particule(int x, int y, double xd, double yd, Matiere* matiere = NULL);
     ~Particule();
 
+    Particule& operator=(const Particule& p);
+
     void creerLiaisons(Particule** liaisons);
     bool lier(Particule* p); // Lie la particule à p. Retourne false si ce n'est pas possible
     void supprimerLiaisons(); // Supprime la particule de la grille (la remettre vide, et supprimer les liaisons)
@@ -31,7 +33,7 @@ public:
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     void calculerDeplacement(double dt);
 
-//private:
+private:
     int m_x, m_y; // Pas sur que ca serve...
     Vecteur m_pos, m_v, m_resf; // resf est la resultante des forces a l'instant considere
 
