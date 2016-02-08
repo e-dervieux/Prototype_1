@@ -7,7 +7,7 @@
 #include "Particule.h"
 #include "Definitions.h"
 
-class MatriceParticules : public MatriceCreuse<Particule>
+class MatriceParticules : public MatriceCreuse<Particule*>
 {
 public:
     MatriceParticules(int mpX, int mpY, int smX, int smY);

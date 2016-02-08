@@ -23,13 +23,34 @@ Particule::~Particule()
 
 void Particule::creerLiaisons(Particule** liaisons)
 {
-    //TODO Regarder si la particule n'a pas déjà des liaisons
+
 
     m_liaisons=new Particule*[def::nbLiaisons];
     for(int i=0;i<def::nbLiaisons;i++)
     {
         m_liaisons[i]=liaisons[i];
     }
+}
+
+bool Particule::lier(Particule* p)
+{
+    if (m_liaisons == NULL)
+        m_liaisons = new Particule*[def::nbLiaisons];
+
+    if (p->m_liaisons == NULL)
+        p->m_liaisons = new Particule*[def::nbLiaisons];
+
+    int i, j;
+    for(i = 0 ; i < def::nbLiaisons && m_liaisons[i] != NULL ; i++) ;
+    if (i == def::nbLiaisons)
+        return false;
+
+    for(j = 0 ; j < def::nbLiaisons && m_liaisons[j] != NULL ; j++) ;
+    if (j == def::nbLiaisons)
+        return false;
+
+    m_liaisons[i] = p;
+    p->m_liaisons[j] = this;
 }
 
 double Particule::getMasse() const

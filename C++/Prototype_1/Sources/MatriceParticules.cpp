@@ -1,7 +1,7 @@
 #include "../Header/MatriceParticules.h"
 
 MatriceParticules::MatriceParticules(int mpX, int mpY, int smX, int smY)
- : MatriceCreuse(smX, smY, mpX,mpY, def::testPart, def::defautPart)
+ : MatriceCreuse(smX, smY, mpX,mpY, def::testPart, def::defautPart, def::supprPart)
 {
 
 }
@@ -15,16 +15,16 @@ void MatriceParticules::forcesLiaison()
         {
             for(int j = 0 ; j < m_dimSMX*m_dimSMY ; j++)
             {
-                Particule& p = mat[j];
+                Particule*& p = mat[j];
 
                 if (!m_estNul(p))
                 {
                     //TODO
                     for(int i=0;i<def::nbLiaisons;i++)
                     {
-                        if(p.m_liaisons[i] != NULL)
+                        if(p->m_liaisons[i] != NULL)
                         {
-                            p.appliquerForce(p.m_matiere->forceLiaison(p,*p.m_liaisons[i]));
+                            p->appliquerForce(p->m_matiere->forceLiaison(p,*p->m_liaisons[i]));
                         }
                     }
                 }
@@ -42,8 +42,9 @@ void MatriceParticules::calculerDeplacement(double dt)
         {
             for(int j = 0 ; j < m_dimSMX*m_dimSMY ; j++)
             {
-                Particule& p = mat[j];
-                p.calculerDeplacement(dt);
+                Particule*& p = mat[j];
+                if (!m_estNul(p))
+                    p->calculerDeplacement(dt);
             }
         }
     }
@@ -58,10 +59,10 @@ void MatriceParticules::deplacer()
         {
             for(int j = 0 ; j < m_dimSMX*m_dimSMY ; j++)
             {
-                Particule& p = mat[j];
+                Particule*& p = mat[j];
                 if (!m_estNul(p))
                 {
-                    Vecteur pos = p.getPos(); // Position ou mettre le pixel
+                    Vecteur pos = p->getPos(); // Position ou mettre le pixel
                     int xNouvPart = (int)pos.getX();
                     int yNouvPart = (int)pos.getY();
 
@@ -79,8 +80,9 @@ void MatriceParticules::deplacer()
                     // Si on sort de la grille, on supprime la particule
                     if (xNouvPart < 0 || xNouvPart >= m_dimMPX*m_dimSMX || yNouvPart < 0 || yNouvPart >= m_dimMPY*m_dimSMY)
                     {
-                        p.supprimerLiaisons();
-                        this->suppr(p.getX(), p.getY());
+                        p->supprimerLiaisons();
+                        delete p;
+                        this->suppr(p->getX(), p->getY());
                     }
                     else
                     {
@@ -94,19 +96,19 @@ void MatriceParticules::deplacer()
                         //Double avec les entières.
                         if(aEteModifie)
                         {
-                            this->get(xNouvPart, yNouvPart).m_pos=Vecteur((double)xNouvPart+0.5,(double)yNouvPart+0.5); // A l'avenir, utiliser un setteur !
+                            this->get(xNouvPart, yNouvPart)->m_pos=Vecteur((double)xNouvPart+0.5,(double)yNouvPart+0.5); // A l'avenir, utiliser un setteur !
                         }
 
                         //On met à jour les liaisons des autres particules.
                         for(int i=0;i<def::nbLiaisons;i++)
                         {
-                            if(p.m_liaisons[i]!=NULL)
+                            if(p->m_liaisons[i]!=NULL)
                             {
                                 for(int j=0;j<def::nbLiaisons;j++)
                                 {
-                                    if (p.m_liaisons[i]->m_liaisons[j] == &p)
+                                    if (p->m_liaisons[i]->m_liaisons[j] == p)
                                     {
-                                        p.m_liaisons[i]->m_liaisons[j]=&this->get(xNouvPart,yNouvPart);
+                                        p->m_liaisons[i]->m_liaisons[j]= this->get(xNouvPart,yNouvPart);
                                         j=def::nbLiaisons;
                                     }
                                 }
@@ -114,7 +116,7 @@ void MatriceParticules::deplacer()
                         }
                         //On supprime finalement p
                         //TODO (suite) si jamais on a passé le tableau il ne faut pas le supprimer
-                        this->suppr(p.m_x,p.m_y);
+                        this->suppr(p->m_x,p->m_y);
                     }
                 }
             }
@@ -141,10 +143,10 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
                 int rtot=0, gtot=0, btot=0;
                 for(int j = 0 ; j < m_dimSMX*m_dimSMY ; j++)
                 {
-                    Particule& p = mat[j];
+                    Particule*& p = mat[j];
                     if (!m_estNul(p))
                     {
-                        SDL_Color c = p.getCouleur();
+                        SDL_Color c = p->getCouleur();
                         rtot += c.r;
                         gtot += c.g;
                         btot += c.b;
@@ -184,10 +186,10 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
                         {
                             for(int y = 0 ; y < def::partPP ; y++)
                             {
-                                Particule& p = mat[(xp*def::partPP+x)*m_dimSMY+(yp*def::partPP+y)];
+                                Particule*& p = mat[(xp*def::partPP+x)*m_dimSMY+(yp*def::partPP+y)];
                                 if (!m_estNul(p))
                                 {
-                                    SDL_Color c = p.getCouleur();
+                                    SDL_Color c = p->getCouleur();
                                     rtot += c.r;
                                     gtot += c.g;
                                     btot += c.b;

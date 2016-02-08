@@ -14,6 +14,8 @@ public:
     ~Particule();
 
     void creerLiaisons(Particule** liaisons);
+    bool lier(Particule* p); // Lie la particule à p. Retourne false si ce n'est pas possible
+    void supprimerLiaisons(); // Supprime la particule de la grille (la remettre vide, et supprimer les liaisons)
 
     int getX() const { return m_x; }
     int getY() const { return m_y; }
@@ -25,8 +27,6 @@ public:
     void appliquerForce(Vecteur f);
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     void calculerDeplacement(double dt);
-
-    void supprimerLiaisons(); // Supprime la particule de la grille (la remettre vide, et supprimer les liaisons)
 
 //private:
     int m_x, m_y; // Pas sur que ca serve...

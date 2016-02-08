@@ -6,18 +6,23 @@
 
 namespace def
 {
-    class EstNulPart : public EstNul<Particule>
+    class EstNulPart : public EstNul<Particule*>
     {
     public:
-        bool operator()(Particule& p) { return p.m_matiere == NULL; }
+        bool operator()(Particule*& p) { return p == NULL; }
     };
-    class DefautPart : public Defaut<Particule>
+    class DefautPart : public Defaut<Particule*>
     {
     public:
-        Particule operator()(int x, int y) { return Particule(x,y,NULL); }
+        Particule* operator()(int x, int y) { return NULL; }
+    };
+    class SupprPart : public Suppression<Particule*>
+    {
+        void operator()(Particule*& p) { p = NULL; }
     };
     extern EstNulPart testPart;
     extern DefautPart defautPart;
+    extern SupprPart supprPart;
 
     enum TOUCHE{K_DROITE, K_HAUT, K_GAUCHE, K_BAS, K_Z, K_Q, K_S, K_D, K_SHIFT, NB_TOUCHES};
 

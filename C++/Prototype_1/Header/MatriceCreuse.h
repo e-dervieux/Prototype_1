@@ -18,6 +18,13 @@ public:
     virtual T operator()(int i, int j) = 0;
 };
 
+template <typename T>
+class Suppression
+{
+public:
+    virtual void operator()(T&) = 0;
+};
+
 template<typename T>
 class MatriceCreuse
 {
@@ -33,8 +40,8 @@ public:
      - defaut(int x, int y) : renvoie l'�l�ment par d�faut mis � la position (x,y)
     */
 
-    MatriceCreuse(int dimSMX, int dimSMY, int dimMPX, int dimMPY, EstNul<T>& estNul, Defaut<T>& defaut)
-     : m_dimSMX(dimSMX), m_dimSMY(dimSMY), m_dimMPX(dimMPX), m_dimMPY(dimMPY), m_estNul(estNul), m_defaut(defaut)
+    MatriceCreuse(int dimSMX, int dimSMY, int dimMPX, int dimMPY, EstNul<T>& estNul, Defaut<T>& defaut, Suppression<T>& suppr)
+     : m_dimSMX(dimSMX), m_dimSMY(dimSMY), m_dimMPX(dimMPX), m_dimMPY(dimMPY), m_estNul(estNul), m_defaut(defaut), m_suppr(suppr)
     {
         m_tabSM = new SousMatrice[m_dimMPX*m_dimMPY];
         m_tabCnt = new int[m_dimMPX*m_dimMPY];
@@ -121,7 +128,7 @@ public:
                 }
             }
 
-            tmp = m_defaut(x,y);
+            m_suppr(tmp);
         }
     }
 
@@ -172,6 +179,7 @@ public:
 
     EstNul<T>& m_estNul;
     Defaut<T>& m_defaut;
+    Suppression<T>& m_suppr;
 };
 
 #endif // MATRICECREUSE_H_INCLUDED
