@@ -19,14 +19,7 @@ void MatriceParticules::forcesLiaison()
 
                 if (!m_estNul(p))
                 {
-                    //TODO
-                    for(int i=0;i<def::nbLiaisons;i++)
-                    {
-                        if(p->m_liaisons[i] != NULL)
-                        {
-                            p->appliquerForce(p->m_matiere->forceLiaison(p,*p->m_liaisons[i]));
-                        }
-                    }
+                    p->appliquerForcesLiaison();
                 }
             }
         }
@@ -62,6 +55,9 @@ void MatriceParticules::deplacer()
                 Particule*& p = mat[j];
                 if (!m_estNul(p))
                 {
+                    int xOldPart = p->getXInt();
+                    int yOldPart = p->getYInt();
+
                     Vecteur pos = p->getPos(); // Position ou mettre le pixel
                     int xNouvPart = (int)pos.getX();
                     int yNouvPart = (int)pos.getY();
@@ -70,6 +66,7 @@ void MatriceParticules::deplacer()
                     bool aEteModifie = false;
 
                     //Tant que la place n'est pas libre
+                    // Cette boucle sera la partie à améliorer pour gérer convenablement les collisions
                     while(!this->estNul(xNouvPart, yNouvPart))
                     {
                         xNouvPart++;
@@ -81,42 +78,24 @@ void MatriceParticules::deplacer()
                     if (xNouvPart < 0 || xNouvPart >= m_dimMPX*m_dimSMX || yNouvPart < 0 || yNouvPart >= m_dimMPY*m_dimSMY)
                     {
                         p->supprimerLiaisons();
-                        delete p;
-                        this->suppr(p->getX(), p->getY());
+                        delete p; // Supprime-t-on la particule de la mémoire ici ? (cf stockage des particules)
+                        this->suppr(xOldPart, yOldPart);
                     }
                     else
                     {
-                        //On crée ensuite une copie de p qu'on place en coordonnées (xNouvPart;yNouvPart)
-                        //Si jamais erreur c'est que set ne copie pas !
-                        //TODO Problème de tableau de liaisons avec set : il faut le passer de l'ancienne à la nouvelle
                         this->set(xNouvPart, yNouvPart, p);
+                        p->setPosInt(xNouvPart, yNouvPart);
 
                         //Si jamais on a modifié les coordonnées dans la matrice par rapport
                         //Aux coordonnées "vraies" calculées, alors on accorde les coordonnées
                         //Double avec les entières.
                         if(aEteModifie)
                         {
-                            this->get(xNouvPart, yNouvPart)->m_pos=Vecteur((double)xNouvPart+0.5,(double)yNouvPart+0.5); // A l'avenir, utiliser un setteur !
+                            p->setPos(Vecteur((double)xNouvPart+0.5,(double)yNouvPart+0.5));
                         }
 
-                        //On met à jour les liaisons des autres particules.
-                        for(int i=0;i<def::nbLiaisons;i++)
-                        {
-                            if(p->m_liaisons[i]!=NULL)
-                            {
-                                for(int j=0;j<def::nbLiaisons;j++)
-                                {
-                                    if (p->m_liaisons[i]->m_liaisons[j] == p)
-                                    {
-                                        p->m_liaisons[i]->m_liaisons[j]= this->get(xNouvPart,yNouvPart);
-                                        j=def::nbLiaisons;
-                                    }
-                                }
-                            }
-                        }
                         //On supprime finalement p
-                        //TODO (suite) si jamais on a passé le tableau il ne faut pas le supprimer
-                        this->suppr(p->m_x,p->m_y);
+                        this->suppr(xOldPart, yOldPart);
                     }
                 }
             }

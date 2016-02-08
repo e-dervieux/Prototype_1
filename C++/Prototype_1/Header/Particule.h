@@ -17,14 +17,17 @@ public:
     bool lier(Particule* p); // Lie la particule à p. Retourne false si ce n'est pas possible
     void supprimerLiaisons(); // Supprime la particule de la grille (la remettre vide, et supprimer les liaisons)
 
-    int getX() const { return m_x; }
-    int getY() const { return m_y; }
+    int getXInt() const { return m_x; }
+    int getYInt() const { return m_y; }
+    void setPosInt(int x, int y); // Donne les nouvelles coordonnées entières de la particule
     Vecteur getPos() const { return m_pos; }
+    void setPos(Vecteur pos);
     Vecteur getV() const { return m_v; }
     SDL_Color getCouleur() const { return m_matiere->getCouleur(); };
     double getMasse() const;
 
     void appliquerForce(Vecteur f);
+    void appliquerForcesLiaison();
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     void calculerDeplacement(double dt);
 

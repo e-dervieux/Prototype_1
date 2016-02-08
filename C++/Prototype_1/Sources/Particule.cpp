@@ -53,6 +53,18 @@ bool Particule::lier(Particule* p)
     p->m_liaisons[j] = this;
 }
 
+void Particule::setPosInt(int x, int y)
+{
+    m_x = x;
+    m_y = y;
+}
+
+void Particule::setPos(Vecteur pos)
+{
+    m_pos = pos;
+}
+
+
 double Particule::getMasse() const
 {
     if (m_matiere == NULL)
@@ -91,5 +103,18 @@ void Particule::supprimerLiaisons() {
             }
         }
         m_liaisons[i] = NULL;
+    }
+}
+
+void Particule::appliquerForcesLiaison()
+{
+    if (m_liaisons == NULL)
+        return;
+
+    for(int i = 0 ; i < def::nbLiaisons ; i++)
+    {
+        Particule* p = m_liaisons[i];
+        if (p != NULL)
+            appliquerForce(m_matiere->forceLiaison(this, p));
     }
 }
