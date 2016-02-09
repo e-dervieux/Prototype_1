@@ -29,13 +29,18 @@ void demoMatriceParticules()
     std::cout << "Ajout de 2 particules en (2,2) et (3,3) :" << std::endl;
     m.ajouterPart(particules);
     afficherMat(m.m_tabCnt,4,4);
+    std::cout << "Sous-matrice (0,0) :" << std::endl;
     afficherMat(m.getSM(0,0),4,4);
 
+    std::cout << "   ----------" << std::endl << std::endl;
     std::cout << "On bouge la particule de (3.5,3.5) a (3.7,5.1)" << std::endl;
     particules[1].setPos(Vecteur(3.7,5.1));
     m.deplacer();
     afficherMat(m.m_tabCnt,4,4);
+    std::cout << "Sous-matrice (0,0) :" << std::endl;
     afficherMat(m.getSM(0,0),4,4);
+    std::cout << "Sous-matrice (0,1) :" << std::endl;
+    afficherMat(m.getSM(0,1),4,4);
 }
 
 #endif //PROTOTYPE_1_DEMOMATRICEPARTICULES_H

@@ -6,12 +6,12 @@ MatriceParticules::MatriceParticules(int mpX, int mpY, int smX, int smY)
 
 }
 
-void MatriceParticules::ajouterPart(std::vector<Particule> particules)
+void MatriceParticules::ajouterPart(std::vector<Particule>& particules)
 {
     for(int i = 0 ; i < particules.size() ; i++)
     {
         Particule& p = particules[i];
-        set(p.getXInt(),p.getYInt(),&p);
+        set(p.getXInt(),p.getYInt(),&particules[i]);
     }
 }
 
@@ -74,37 +74,38 @@ void MatriceParticules::deplacer()
                     // Tenter de mettre la particule aux coordonnees (x,y)
                     bool aEteModifie = false;
 
-                    //Tant que la place n'est pas libre
-                    // Cette boucle sera la partie à améliorer pour gérer convenablement les collisions
-                    while(!this->estNul(xNouvPart, yNouvPart))
+                    // Seulement si la particule bouge :
+                    if (xOldPart != xNouvPart || yOldPart != yNouvPart)
                     {
-                        xNouvPart++;
-                        yNouvPart++;
-                        aEteModifie = true;
-                    }
-
-                    // Si on sort de la grille, on supprime la particule
-                    if (xNouvPart < 0 || xNouvPart >= m_dimMPX*m_dimSMX || yNouvPart < 0 || yNouvPart >= m_dimMPY*m_dimSMY)
-                    {
-                        p->supprimerLiaisons();
-                        delete p; // Supprime-t-on la particule de la mémoire ici ? (cf stockage des particules)
-                        this->suppr(xOldPart, yOldPart);
-                    }
-                    else
-                    {
-                        this->set(xNouvPart, yNouvPart, p);
-                        p->setPosInt(xNouvPart, yNouvPart);
-
-                        //Si jamais on a modifié les coordonnées dans la matrice par rapport
-                        //Aux coordonnées "vraies" calculées, alors on accorde les coordonnées
-                        //Double avec les entières.
-                        if(aEteModifie)
-                        {
-                            p->setPos(Vecteur((double)xNouvPart+0.5,(double)yNouvPart+0.5));
+                        //Tant que la place n'est pas libre
+                        // Cette boucle sera la partie à améliorer pour gérer convenablement les collisions
+                        while (!this->estNul(xNouvPart, yNouvPart)) {
+                            xNouvPart++;
+                            yNouvPart++;
+                            aEteModifie = true;
                         }
 
-                        //On supprime finalement p
-                        this->suppr(xOldPart, yOldPart);
+                        // Si on sort de la grille, on supprime la particule
+                        if (xNouvPart < 0 || xNouvPart >= m_dimMPX * m_dimSMX || yNouvPart < 0 ||
+                            yNouvPart >= m_dimMPY * m_dimSMY) {
+                            p->supprimerLiaisons();
+                            delete p; // Supprime-t-on la particule de la mémoire ici ? (cf stockage des particules)
+                            this->suppr(xOldPart, yOldPart);
+                        }
+                        else {
+                            this->set(xNouvPart, yNouvPart, p);
+                            p->setPosInt(xNouvPart, yNouvPart);
+
+                            //Si jamais on a modifié les coordonnées dans la matrice par rapport
+                            //Aux coordonnées "vraies" calculées, alors on accorde les coordonnées
+                            //Double avec les entières.
+                            if (aEteModifie) {
+                                p->setPos(Vecteur((double) xNouvPart + 0.5, (double) yNouvPart + 0.5));
+                            }
+
+                            //On supprime finalement p
+                            this->suppr(xOldPart, yOldPart);
+                        }
                     }
                 }
             }
