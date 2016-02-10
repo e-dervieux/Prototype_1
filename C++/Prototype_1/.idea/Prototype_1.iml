@@ -17,6 +17,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Header/Definitions.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Vecteur.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoGraphique1.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoLiaison.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Grille.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/MatriceCreuse.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Matiere.h" isTestSource="false" />

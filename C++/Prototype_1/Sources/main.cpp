@@ -4,6 +4,7 @@
 #include "../Header/demoMatriceCreuse.h"
 #include "../Header/demoMatriceParticules.h"
 #include "../Header/demoGraphique1.h"
+#include "../Header/demoLiaison.h"
 
 int main(int argv, char** argc)
 {
@@ -24,7 +25,8 @@ int main(int argv, char** argc)
         std::cout << "Quelle demo realiser ? (-1 = stop)" << std::endl
         << " 0 : Entiers dans une matrice creuse" << std::endl
         << " 1 : Matrice de particules" << std::endl
-        << " 2 : Premier rendu graphique de la situation 1" << std::endl;
+        << " 2 : Premier rendu graphique de la situation 1" << std::endl
+        << " 3 : Test de liaison physique entre 2 particules" << std::endl;
         std::cin >> situation;
         switch(situation)
         {
@@ -38,6 +40,10 @@ int main(int argv, char** argc)
 
             case 2:
                 demoGraphique1();
+                break;
+
+            case 3:
+                demoLiaison();
                 break;
 
             default:

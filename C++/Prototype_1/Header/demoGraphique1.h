@@ -77,6 +77,8 @@ void demoGraphique1()
     SDL_DestroyRenderer(rendu);
     SDL_DestroyWindow(fenetre);
     SDL_Quit();
+
+    delete[] particules;
 }
 
 #endif //PROTOTYPE_1_DEMOGRAPHIQUE1_H

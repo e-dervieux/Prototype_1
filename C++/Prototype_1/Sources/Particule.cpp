@@ -47,11 +47,20 @@ void Particule::creerLiaisons(Particule** liaisons)
 
 bool Particule::lier(Particule* p)
 {
+    // Si les tableaux de liaisons n'existent pas encore, on les crée (faire ça systématiquement dans le constructeur ?)
     if (m_liaisons == NULL)
+    {
         m_liaisons = new Particule*[def::nbLiaisons];
+        for(int i = 0 ; i < def::nbLiaisons ; i++)
+            m_liaisons[i] = NULL;
+    }
 
     if (p->m_liaisons == NULL)
+    {
         p->m_liaisons = new Particule*[def::nbLiaisons];
+        for(int i = 0 ; i < def::nbLiaisons ; i++)
+            p->m_liaisons[i] = NULL;
+    }
 
     int i, j;
     for(i = 0 ; i < def::nbLiaisons && m_liaisons[i] != NULL ; i++) ;
