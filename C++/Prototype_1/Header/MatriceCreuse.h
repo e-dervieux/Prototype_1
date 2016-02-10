@@ -18,6 +18,13 @@ public:
     virtual T operator()(int i, int j) = 0;
 };
 
+template <typename T>
+class Suppression
+{
+public:
+    virtual void operator()(T&) = 0;
+};
+
 template<typename T>
 class MatriceCreuse
 {
@@ -29,12 +36,12 @@ public:
      - dimMPX, dimMPY : nombre en X et Y de sous-matrices
 
     Utilisation de foncteurs :
-     - EstNul(T e) : renvoie si un élément est non-vide
-     - defaut(int x, int y) : renvoie l'élément par défaut mis à la position (x,y)
+     - EstNul(T e) : renvoie si un ï¿½lï¿½ment est non-vide
+     - defaut(int x, int y) : renvoie l'ï¿½lï¿½ment par dï¿½faut mis ï¿½ la position (x,y)
     */
 
-    MatriceCreuse(int dimSMX, int dimSMY, int dimMPX, int dimMPY, EstNul<T>& estNul, Defaut<T>& defaut)
-     : m_dimSMX(dimSMX), m_dimSMY(dimSMY), m_dimMPX(dimMPX), m_dimMPY(dimMPY), m_estNul(estNul), m_defaut(defaut)
+    MatriceCreuse(int dimSMX, int dimSMY, int dimMPX, int dimMPY, EstNul<T>& estNul, Defaut<T>& defaut, Suppression<T>& suppr)
+     : m_dimSMX(dimSMX), m_dimSMY(dimSMY), m_dimMPX(dimMPX), m_dimMPY(dimMPY), m_estNul(estNul), m_defaut(defaut), m_suppr(suppr)
     {
         m_tabSM = new SousMatrice[m_dimMPX*m_dimMPY];
         m_tabCnt = new int[m_dimMPX*m_dimMPY];
@@ -59,7 +66,7 @@ public:
 
     virtual bool estNul(int x, int y)
     {
-        SousMatrice& mat = m_tabSM[(x/m_dimSMX)*m_dimMPY + y/m_dimSMY];
+        SousMatrice& mat = m_tabSM[(x/(m_dimSMX*m_dimSMY))*m_dimMPY + y/m_dimSMY];
         if (mat != NULL)
             return m_estNul(mat[(x%m_dimSMX)*m_dimSMY + (y%m_dimSMY)]);
         else
@@ -80,7 +87,7 @@ public:
         int ind = (x/m_dimSMX)*m_dimMPY + y/m_dimSMY;
         SousMatrice& mat = m_tabSM[ind];
 
-        // Vérifie si la sous-matrice existe déjà
+        // Vï¿½rifie si la sous-matrice existe dï¿½jï¿½
         if (mat == NULL)
         {
             int xmin = m_dimSMX*(x/m_dimSMX);
@@ -95,33 +102,34 @@ public:
         }
 
         T& tmp = mat[(x%m_dimSMX)*m_dimMPY + (y%m_dimSMY)];
-        if (m_estNul(tmp)) // Compte le nombre d'éléments dans la sous-matrice
+        if (m_estNul(tmp)) // Compte le nombre d'ï¿½lï¿½ments dans la sous-matrice
             m_tabCnt[ind]++;
         tmp = e;
     }
 
     void suppr(int x, int y)
     {
-        int ind = (x/m_dimSMX)*m_dimMPY + y/m_dimSMY;
-        SousMatrice& mat = m_tabSM[ind];
+        int indMP = (x/m_dimSMX)*m_dimMPY + y/m_dimSMY;
+        SousMatrice& mat = m_tabSM[indMP];
 
         if (mat != NULL)
         {
-            T& tmp = mat[(x%m_dimSMX)*m_dimMPY+(y%m_dimSMY)];
+            int x2 = x%m_dimSMX;
+            int y2 = y%m_dimSMY;
+            T& tmp = mat[x2*m_dimSMY+y2];
 
-            // Compte le nb d'éléments dans la sous-matrice
+            // Compte le nb d'ï¿½lï¿½ments dans la sous-matrice
             if (!m_estNul(tmp))
             {
-                m_tabCnt[ind]--;
-                if (m_tabCnt[ind] == 0)
+                m_tabCnt[indMP]--;
+                m_suppr(tmp);
+                if (m_tabCnt[indMP] == 0)
                 {
                     // Supprime la sous-matrice
                     delete[] mat;
                     mat = NULL;
                 }
             }
-
-            tmp = m_defaut(x,y);
         }
     }
 
@@ -138,7 +146,7 @@ public:
         return m_tabSM[i*m_dimMPY + j];
     }
 
-    // Supprime la sous-matrice si tous les éléments y sont nuls (par m_EstNul)
+    // Supprime la sous-matrice si tous les ï¿½lï¿½ments y sont nuls (par m_EstNul)
     /*void nettoyer(int i, int j)
     {
         SousMatrice& mat = m_tab[i*m_dimMPY + j];
@@ -147,7 +155,7 @@ public:
             bool tmp = false;
             for(int k = 0 ; k < m_dimSMX*m_dimSMY && !tmp ; k++)
                 tmp = m_EstNul(mat[k]);
-            if (!tmp) // Si tous les éléments sont nuls
+            if (!tmp) // Si tous les ï¿½lï¿½ments sont nuls
             {
                 delete[] mat;
                 mat = NULL;
@@ -171,7 +179,8 @@ public:
     const int m_dimMPX, m_dimMPY;
 
     EstNul<T>& m_estNul;
-    Defaut<T>& m_defaut; // Devrait être un foncteur renvoyant une valeur en fonction des coordonnées ?
+    Defaut<T>& m_defaut;
+    Suppression<T>& m_suppr;
 };
 
 #endif // MATRICECREUSE_H_INCLUDED

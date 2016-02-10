@@ -1,4 +1,4 @@
-#include "SceneSDL.h"
+#include "../Header/SceneSDL.h"
 
 SceneSDL::SceneSDL(int config)
  : m_clavier(def::NB_TOUCHES, false)
@@ -203,7 +203,7 @@ void SceneSDL::afficherGrille()
 {
     // Lignes verticales
     SDL_SetRenderDrawColor(m_rendu, 0, 0, 0, 200);
-    for(int i = 0 ; i < def::width ; i += def::pasGrille)
+    for(int i = 0 ; i <= def::width ; i += def::pasGrille)
         SDL_RenderDrawLine(m_rendu, i*def::taillePixel, 0, i*def::taillePixel, def::height*def::taillePixel);
     SDL_SetRenderDrawColor(m_rendu, 0, 0, 0, 128);
     for(int i = 0 ; i <= def::width ; i += def::divisionGrille*def::pasGrille)
@@ -214,7 +214,7 @@ void SceneSDL::afficherGrille()
 
     // Lignes horizontales
     SDL_SetRenderDrawColor(m_rendu, 0, 0, 0, 200);
-    for(int j = 0 ; j < def::height ; j += def::pasGrille)
+    for(int j = 0 ; j <= def::height ; j += def::pasGrille)
         SDL_RenderDrawLine(m_rendu, 0, j*def::taillePixel, def::width*def::taillePixel, j*def::taillePixel);
     SDL_SetRenderDrawColor(m_rendu, 0, 0, 0, 128);
     for(int j = 0 ; j <= def::height ; j += def::divisionGrille*def::pasGrille)

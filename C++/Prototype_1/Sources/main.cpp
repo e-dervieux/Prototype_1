@@ -1,33 +1,10 @@
 #include <iostream>
 #include "../Header/SceneSDL.h"
 
-#include "../Header/Particule.h"
-#include "../Header/MatriceCreuse.h"
-
-void matricecreuse();
-
-std::ostream& operator<<(std::ostream& f, Particule p)
-{
-    return (f << "(" << p.m_pos.getX() << "," << p.m_pos.getY() << " ; " << p.m_matiere << ")");
-}
-
-template<typename T>
-void afficherMat(T* tab, int n, int p)
-{
-    if (tab == NULL)
-    {
-        std::cout << "Matrice vide..." << std::endl;
-        return;
-    }
-    for(int j = 0 ; j < p ; j++)
-    {
-        for(int i = 0 ; i < n ; i++)
-            std::cout << tab[i*p + j] << " ";
-
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
+#include "../Header/demoMatriceCreuse.h"
+#include "../Header/demoMatriceParticules.h"
+#include "../Header/demoGraphique1.h"
+#include "../Header/demoLiaison.h"
 
 int main(int argv, char** argc)
 {
@@ -41,50 +18,38 @@ int main(int argv, char** argc)
     {
         std::cout << "Erreur de niveau " << e.getNiveau() << " : " << e.what() << std::endl;
     }*/
-
-    int situation;
-    std::cout << "Quelle demo realiser ?" << std::endl
-              << " 0 : Particules dans une matrice creuse" << std::endl;
-    std::cin >> situation;
-    switch(situation)
+    bool continuer = true;
+    while(continuer)
     {
-    case 0:
-        matricecreuse();
-        break;
-    default:
-        matricecreuse();
+        int situation;
+        std::cout << "Quelle demo realiser ? (-1 = stop)" << std::endl
+        << " 0 : Entiers dans une matrice creuse" << std::endl
+        << " 1 : Matrice de particules" << std::endl
+        << " 2 : Premier rendu graphique de la situation 1" << std::endl
+        << " 3 : Test de liaison physique entre 2 particules" << std::endl;
+        std::cin >> situation;
+        switch(situation)
+        {
+            case 0:
+                demoMatriceCreuse();
+                break;
+
+            case 1:
+                demoMatriceParticules();
+                break;
+
+            case 2:
+                demoGraphique1();
+                break;
+
+            case 3:
+                demoLiaison();
+                break;
+
+            default:
+                continuer=false;
+        }
     }
 
     return 0;
-}
-
-void matricecreuse()
-{
-    std::cout << std::endl;
-
-    MatriceCreuse<Particule> m(4,4,4,4,def::testPart,def::defautPart);
-
-    afficherMat(m.m_tabCnt,4,4);
-    SDL_Color rouge;
-    rouge.r=255; rouge.g=0; rouge.b=0; rouge.unused=0;
-
-    std::cout << "Ajout d'un pixel aux coordonnees (5,7) :" << std::endl;
-    Matiere matiere(rouge, 1.0,4.0,1.0,0.0);
-    m.set(5,7,Particule(5,7,&matiere));
-
-    afficherMat(m.m_tabCnt,4,4);
-    afficherMat(m.getSM(5/4,7/4),4,4);
-
-    std::cout << "Deplacement : " << std::endl;
-    Vecteur f(1.0,1.0);
-    Particule& p(m.get(5,7));
-    p.appliquerForce(f);
-    p.calculerDeplacement(0.5);
-    afficherMat(m.m_tabCnt,4,4);
-    afficherMat(m.getSM(5/4,7/4),4,4);
-
-    std::cout << "Suppression : " << std::endl;
-    m.suppr(5,7);
-    afficherMat(m.m_tabCnt,4,4);
-    afficherMat(m.getSM(5/4,7/4),4,4);
 }

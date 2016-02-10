@@ -2,9 +2,6 @@
 
 namespace def
 {
-    EstNulPart testPart;
-    DefautPart defautPart;
-
     int width;
     int height;
     int taillePixel;

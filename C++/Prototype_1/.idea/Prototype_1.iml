@@ -2,41 +2,45 @@
 <module type="CPP_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/Header/Vecteur.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/SceneSDL.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/Definitions.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/MatriceCreuse.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/MatriceParticules.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/Grille.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/Matiere.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/Particule.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/Erreur.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Erreur.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/MatriceParticules.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Sources/Definitions.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Sources/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Grille.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Particule.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/SceneSDL.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Sources/Definitions.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Matiere.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Sources/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Vecteur.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/cmake/FindSDL2.cmake" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceParticules.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/SceneSDL.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/Definitions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/Vecteur.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoGraphique1.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoLiaison.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/Grille.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/MatriceCreuse.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/Matiere.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/MatriceParticules.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceCreuse.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/Particule.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/Erreur.h" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library name="Header Search Paths">
         <CLASSES>
-          <root url="file://C:/SDL2-2.0.4/include" />
-          <root url="file://C:/Program Files (x86)/CodeBlocks/MinGW/lib/gcc/mingw32/4.8.1/include" />
-          <root url="file://C:/Program Files (x86)/CodeBlocks/MinGW/lib/gcc/mingw32/4.8.1/include-fixed" />
-          <root url="file://C:/Program Files (x86)/CodeBlocks/MinGW/include" />
+          <root url="file://C:/MinGW/lib/gcc/mingw32/4.8.1/include" />
+          <root url="file://C:/MinGW/lib/gcc/mingw32/4.8.1/include-fixed" />
+          <root url="file://C:/MinGW/mingw32/include" />
+          <root url="file://C:/MinGW/include" />
         </CLASSES>
         <SOURCES>
-          <root url="file://C:/SDL2-2.0.4/include" />
-          <root url="file://C:/Program Files (x86)/CodeBlocks/MinGW/lib/gcc/mingw32/4.8.1/include" />
-          <root url="file://C:/Program Files (x86)/CodeBlocks/MinGW/lib/gcc/mingw32/4.8.1/include-fixed" />
-          <root url="file://C:/Program Files (x86)/CodeBlocks/MinGW/include" />
+          <root url="file://C:/MinGW/lib/gcc/mingw32/4.8.1/include" />
+          <root url="file://C:/MinGW/lib/gcc/mingw32/4.8.1/include-fixed" />
+          <root url="file://C:/MinGW/mingw32/include" />
+          <root url="file://C:/MinGW/include" />
         </SOURCES>
       </library>
     </orderEntry>
