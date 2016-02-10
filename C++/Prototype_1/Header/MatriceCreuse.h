@@ -109,18 +109,20 @@ public:
 
     void suppr(int x, int y)
     {
-        int ind = (x/m_dimSMX)*m_dimMPY + y/m_dimSMY;
-        SousMatrice& mat = m_tabSM[ind];
+        int indMP = (x/m_dimSMX)*m_dimMPY + y/m_dimSMY;
+        SousMatrice& mat = m_tabSM[indMP];
 
         if (mat != NULL)
         {
-            T& tmp = mat[(x%m_dimSMX)*m_dimMPY+(y%m_dimSMY)];
+            int x2 = x%m_dimSMX;
+            int y2 = y%m_dimSMY;
+            T& tmp = mat[x2*m_dimSMY+y2];
 
             // Compte le nb d'�l�ments dans la sous-matrice
             if (!m_estNul(tmp))
             {
-                m_tabCnt[ind]--;
-                if (m_tabCnt[ind] == 0)
+                m_tabCnt[indMP]--;
+                if (m_tabCnt[indMP] == 0)
                 {
                     // Supprime la sous-matrice
                     delete[] mat;

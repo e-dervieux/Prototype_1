@@ -86,8 +86,8 @@ void MatriceParticules::deplacer()
                         }
 
                         // Si on sort de la grille, on supprime la particule
-                        if (xNouvPart < 0 || xNouvPart >= m_dimMPX * m_dimSMX || yNouvPart < 0 ||
-                            yNouvPart >= m_dimMPY * m_dimSMY) {
+                        if (xNouvPart < 0 || xNouvPart >= m_dimMPX * m_dimSMX || yNouvPart < 0 || yNouvPart >= m_dimMPY * m_dimSMY)
+                        {
                             p->supprimerLiaisons();
                             delete p; // Supprime-t-on la particule de la mémoire ici ? (cf stockage des particules)
                             this->suppr(xOldPart, yOldPart);
@@ -105,6 +105,9 @@ void MatriceParticules::deplacer()
 
                             //On supprime finalement p
                             this->suppr(xOldPart, yOldPart);
+
+                            if (mat == NULL)
+                                break;
                         }
                     }
                 }
@@ -130,6 +133,7 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
             if (mat != NULL)
             {
                 int rtot=0, gtot=0, btot=0;
+                // On pourrait encore optimiser cette boucle en comparant le nombre de particules traitées et m_tabCnt[i]
                 for(int j = 0 ; j < m_dimSMX*m_dimSMY ; j++)
                 {
                     Particule*& p = mat[j];
@@ -142,8 +146,10 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
                     }
                 }
 
-                SDL_SetRenderDrawColor(rendu, rtot/m_tabCnt[i], gtot/m_tabCnt[i], btot/m_tabCnt[i], 255);
-                SDL_RenderDrawPoint(rendu, xg, yg);
+                int nb = m_tabCnt[i];
+                SDL_SetRenderDrawColor(rendu, (Uint8)(rtot/nb),(Uint8)(gtot/nb),(Uint8)(btot/nb),255);
+                SDL_Rect rect = {def::taillePixel*xg, def::taillePixel*yg,def::taillePixel,def::taillePixel};
+                SDL_RenderFillRect(rendu, &rect);
             }
 
             yg++;
@@ -192,8 +198,9 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
                         {
                             int xg = (i/m_dimMPY)*(m_dimSMX/def::partPP) + xp;
                             int yg = (i%m_dimMPY)*(m_dimSMY/def::partPP) + yp;
-                            SDL_SetRenderDrawColor(rendu, rtot / nb, gtot / nb, btot / nb, 255);
-                            SDL_RenderDrawPoint(rendu, xg, yg);
+                            SDL_SetRenderDrawColor(rendu, (Uint8)(rtot/nb),(Uint8)(gtot/nb),(Uint8)(btot/nb),255);
+                            SDL_Rect rect = {def::taillePixel*xg, def::taillePixel*yg,def::taillePixel,def::taillePixel};
+                            SDL_RenderFillRect(rendu, &rect);
                         }
                     }
                 }

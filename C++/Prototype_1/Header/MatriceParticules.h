@@ -2,6 +2,7 @@
 #define MATRICEPARTICULES_H_INCLUDED
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 
 #include "MatriceCreuse.h"
 #include "Particule.h"
