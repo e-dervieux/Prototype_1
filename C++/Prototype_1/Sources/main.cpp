@@ -17,29 +17,32 @@ int main(int argv, char** argc)
     {
         std::cout << "Erreur de niveau " << e.getNiveau() << " : " << e.what() << std::endl;
     }*/
-
-    int situation;
-    std::cout << "Quelle demo realiser ?" << std::endl
-              << " 0 : Entiers dans une matrice creuse" << std::endl
-              << " 1 : Matrice de particules" << std::endl
-              << " 2 : Premier rendu graphique de la situation 1" << std::endl;
-    std::cin >> situation;
-    switch(situation)
+    bool continuer = true;
+    while(continuer)
     {
-    case 0:
-        demoMatriceCreuse();
-        break;
+        int situation;
+        std::cout << "Quelle demo realiser ? (-1 = stop)" << std::endl
+        << " 0 : Entiers dans une matrice creuse" << std::endl
+        << " 1 : Matrice de particules" << std::endl
+        << " 2 : Premier rendu graphique de la situation 1" << std::endl;
+        std::cin >> situation;
+        switch(situation)
+        {
+            case 0:
+                demoMatriceCreuse();
+                break;
 
-    case 1:
-        demoMatriceParticules();
-        break;
+            case 1:
+                demoMatriceParticules();
+                break;
 
-    case 2:
-        demoGraphique1();
-        break;
+            case 2:
+                demoGraphique1();
+                break;
 
-    default:
-        demoMatriceCreuse();
+            default:
+                continuer=false;
+        }
     }
 
     return 0;
