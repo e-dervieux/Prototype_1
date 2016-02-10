@@ -7,7 +7,7 @@
 class Grille // Cette classe est-elle utile, vis-a-vis
 {
 public:
-    Grille(int w, int h, int smW, int smH);
+    Grille(int w, int h, int smW, int smH, Particule* particules, int nbParticules);
     ~Grille();
 
     void actualiser(double dt); // Applique tous les calculs physiques pour obtenir la nouvelle grille apres dt

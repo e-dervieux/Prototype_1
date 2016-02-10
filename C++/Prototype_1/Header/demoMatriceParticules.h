@@ -18,16 +18,15 @@ void demoMatriceParticules()
     Matiere matiere(rouge, 1.0, 2.0, 1.0, 0.0);
 
     // On crée au préalable les particules
-    std::vector<Particule> particules;
-    particules.push_back(Particule(2,2,&matiere)); // P0
-    particules.push_back(Particule(3,3,&matiere)); // P1
+    Particule* particules = new Particule[2];
+    particules[0] = Particule(2,2,&matiere); // P0
+    particules[1] = Particule(3,3,&matiere); // P1
 
     // Création de la matrice
-    MatriceParticules m(4,4,4,4);
+    MatriceParticules m(4,4,4,4, particules, 2);
 
     // Affichage
     std::cout << "Ajout de 2 particules en (2,2) et (3,3) :" << std::endl;
-    m.ajouterPart(particules);
     afficherMat(m.m_tabCnt,4,4);
     std::cout << "Sous-matrice (0,0) :" << std::endl;
     afficherMat(m.getSM(0,0),4,4);

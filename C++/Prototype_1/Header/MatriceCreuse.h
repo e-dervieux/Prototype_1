@@ -122,6 +122,7 @@ public:
             if (!m_estNul(tmp))
             {
                 m_tabCnt[indMP]--;
+                m_suppr(tmp);
                 if (m_tabCnt[indMP] == 0)
                 {
                     // Supprime la sous-matrice
@@ -129,8 +130,6 @@ public:
                     mat = NULL;
                 }
             }
-
-            m_suppr(tmp);
         }
     }
 
