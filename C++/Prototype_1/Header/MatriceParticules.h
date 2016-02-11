@@ -20,7 +20,7 @@ public:
     void calculerDeplacement(double dt); //  Calcule la prochaine position des particules
     void deplacer(); // Effectue le d�placement des particules dans la matrice
 
-    void afficher(SDL_Renderer* rendu); // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
+void afficher(SDL_Renderer* rendu, int partPP, int taillePixel); // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
 
     Particule** getSM(int i, int j) { return m_tabSM[i*m_mpY+j]; }
 //private:
