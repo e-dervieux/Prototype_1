@@ -14,8 +14,11 @@ void demoLiaison()
 
     // Initiation de la fenetre
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window* fenetre = SDL_CreateWindow("Test de liaison",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,321,321,0);
-    SDL_Renderer* rendu = SDL_CreateRenderer(fenetre, -1, 0);
+    SDL_Window* fenetre1 = SDL_CreateWindow("Test de liaison (1 part/pxl)",100,100,321,321,0);
+    SDL_Renderer* rendu1 = SDL_CreateRenderer(fenetre1, -1, 0);
+
+    SDL_Window* fenetre4 = SDL_CreateWindow("Test de liaison (4 part/pxl)", 500, 100,321,321,0);
+    SDL_Renderer* rendu4 = SDL_CreateRenderer(fenetre4, -1, 0);
 
     // Création de la matière
     SDL_Color rouge;
@@ -39,17 +42,25 @@ void demoLiaison()
         m.deplacer();
 
         // Affichage
-        SDL_SetRenderDrawColor(rendu,255,255,255,255);
-        SDL_RenderClear(rendu);
-        m.afficher(rendu);
-        afficherGrille(rendu);
-        SDL_RenderPresent(rendu);
+        SDL_SetRenderDrawColor(rendu1,255,255,255,255);
+        SDL_RenderClear(rendu1);
+        m.afficher(rendu1, 1, 10);
+        afficherGrille(rendu1, 32, 32, 10, 4, 4);
+        SDL_RenderPresent(rendu1);
+
+        SDL_SetRenderDrawColor(rendu4,255,255,255,255);
+        SDL_RenderClear(rendu4);
+        m.afficher(rendu4, 4, 40);
+        afficherGrille(rendu4, 32, 32, 40, 1, 4);
+        SDL_RenderPresent(rendu4);
         SDL_Delay(50);
     }
 
     // Fin
-    SDL_DestroyRenderer(rendu);
-    SDL_DestroyWindow(fenetre);
+    SDL_DestroyRenderer(rendu1);
+    SDL_DestroyRenderer(rendu4);
+    SDL_DestroyWindow(fenetre1);
+    SDL_DestroyWindow(fenetre4);
     SDL_Quit();
 
     delete[] particules;

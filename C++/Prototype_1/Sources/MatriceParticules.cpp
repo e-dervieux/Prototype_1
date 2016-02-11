@@ -123,7 +123,7 @@ void MatriceParticules::deplacer()
     }
 }
 
-void MatriceParticules::afficher(SDL_Renderer* rendu)
+void MatriceParticules::afficher(SDL_Renderer* rendu, int partPP, int taillePixel)
 {
     // Pour l'instant, on suppose que les sous-matrices sont carrées !!!
 
@@ -131,7 +131,7 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
         - taille d'une SM == taille d'un pixel (optimisation du 2nd cas)
         - taille d'une SM > taille d'un pixel
         - taille d'une SM < taille d'un pixel*/
-    if (m_smX == def::partPP)
+    if (m_smX == partPP)
     {
         int xg = 0, yg = 0; // x et y du pixel à afficher
         for(int i = 0 ; i < m_mpX*m_mpY ; i++)
@@ -155,7 +155,7 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
 
                 int nb = m_tabCnt[i];
                 SDL_SetRenderDrawColor(rendu, (Uint8)(rtot/nb),(Uint8)(gtot/nb),(Uint8)(btot/nb),255);
-                SDL_Rect rect = {def::taillePixel*xg, def::taillePixel*yg,def::taillePixel,def::taillePixel};
+                SDL_Rect rect = {taillePixel*xg, taillePixel*yg,taillePixel,taillePixel};
                 SDL_RenderFillRect(rendu, &rect);
             }
 
@@ -167,7 +167,7 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
             }
         }
     }
-    else if (m_smX > def::partPP)
+    else if (m_smX > partPP)
     {
         // Parcours de sous-matrices
         for(int i = 0 ; i < m_mpX*m_mpY ; i++)
@@ -176,19 +176,19 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
             if (mat != NULL)
             {
                 // Parcours de pixels dans les sous-matrices
-                for(int xp = 0 ; xp < m_smX/def::partPP ; xp++)
+                for(int xp = 0 ; xp < m_smX / partPP; xp++)
                 {
-                    for(int yp = 0 ; yp < m_smY/def::partPP ; yp++)
+                    for(int yp = 0 ; yp < m_smY / partPP; yp++)
                     {
                         int rtot = 0, gtot = 0, btot = 0;
                         int nb = 0; // Nombre de particules dans le pixel
 
                         // Parcours des particules dans le pixel
-                        for(int x = 0 ; x < def::partPP ; x++)
+                        for(int x = 0 ; x < partPP; x++)
                         {
-                            for(int y = 0 ; y < def::partPP ; y++)
+                            for(int y = 0 ; y < partPP; y++)
                             {
-                                Particule*& p = mat[(xp*def::partPP+x)*m_smY+(yp*def::partPP+y)];
+                                Particule*& p = mat[(xp * partPP + x) * m_smY + (yp * partPP + y)];
                                 if (p != NULL)
                                 {
                                     SDL_Color c = p->getCouleur();
@@ -203,10 +203,10 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
                         // Affichage si le pixel n'est pas vide
                         if (nb != 0)
                         {
-                            int xg = (i/m_mpY)*(m_smX/def::partPP) + xp;
-                            int yg = (i%m_mpY)*(m_smY/def::partPP) + yp;
+                            int xg = (i/m_mpY)*(m_smX / partPP) + xp;
+                            int yg = (i%m_mpY)*(m_smY / partPP) + yp;
                             SDL_SetRenderDrawColor(rendu, (Uint8)(rtot/nb),(Uint8)(gtot/nb),(Uint8)(btot/nb),255);
-                            SDL_Rect rect = {def::taillePixel*xg, def::taillePixel*yg,def::taillePixel,def::taillePixel};
+                            SDL_Rect rect = {taillePixel*xg, taillePixel*yg,taillePixel,taillePixel};
                             SDL_RenderFillRect(rendu, &rect);
                         }
                     }
@@ -214,7 +214,7 @@ void MatriceParticules::afficher(SDL_Renderer* rendu)
             }
         }
     }
-    else // m_smX < def::partPP
+    else // m_smX < partPP
     {
         // Utile ?
     }

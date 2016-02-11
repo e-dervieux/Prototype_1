@@ -9,27 +9,27 @@
 #include <SDL2/SDL.h>
 #include "MatriceParticules.h"
 
-void afficherGrille(SDL_Renderer* rendu) {
+void afficherGrille(SDL_Renderer* rendu, int w, int h, int echelle, int pasGrille, int divisionGrille) {
     // Lignes verticales
     SDL_SetRenderDrawColor(rendu, 0, 0, 0, 200);
-    for (int i = 0; i <= def::width; i += def::pasGrille)
-        SDL_RenderDrawLine(rendu, i * def::taillePixel, 0, i * def::taillePixel, def::height * def::taillePixel);
+    for (int i = 0; i <= w ; i += pasGrille)
+        SDL_RenderDrawLine(rendu, i * echelle, 0, i * echelle, h * echelle);
     SDL_SetRenderDrawColor(rendu, 0, 0, 0, 128);
-    for (int i = 0; i <= def::width; i += def::divisionGrille * def::pasGrille) {
-        SDL_RenderDrawLine(rendu, i * def::taillePixel + 1, 0, i * def::taillePixel + 1,
-                           def::height * def::taillePixel);
-        SDL_RenderDrawLine(rendu, i * def::taillePixel - 1, 0, i * def::taillePixel - 1,
-                           def::height * def::taillePixel);
+    for (int i = 0; i <= w ; i += divisionGrille * pasGrille) {
+        SDL_RenderDrawLine(rendu, i * echelle + 1, 0, i * echelle + 1,
+                           h * echelle);
+        SDL_RenderDrawLine(rendu, i * echelle - 1, 0, i * echelle - 1,
+                           h * echelle);
     }
 
     // Lignes horizontales
     SDL_SetRenderDrawColor(rendu, 0, 0, 0, 200);
-    for (int j = 0; j <= def::height; j += def::pasGrille)
-        SDL_RenderDrawLine(rendu, 0, j * def::taillePixel, def::width * def::taillePixel, j * def::taillePixel);
+    for (int j = 0; j <= h ; j += pasGrille)
+        SDL_RenderDrawLine(rendu, 0, j * echelle, w * echelle, j * echelle);
     SDL_SetRenderDrawColor(rendu, 0, 0, 0, 128);
-    for (int j = 0; j <= def::height; j += def::divisionGrille * def::pasGrille) {
-        SDL_RenderDrawLine(rendu, 0, j * def::taillePixel + 1, def::width * def::taillePixel, j * def::taillePixel + 1);
-        SDL_RenderDrawLine(rendu, 0, j * def::taillePixel - 1, def::width * def::taillePixel, j * def::taillePixel - 1);
+    for (int j = 0; j <= h; j += divisionGrille * pasGrille) {
+        SDL_RenderDrawLine(rendu, 0, j * echelle + 1, w * echelle, j * echelle + 1);
+        SDL_RenderDrawLine(rendu, 0, j * echelle - 1, w * echelle, j * echelle - 1);
     }
 }
 
@@ -67,8 +67,8 @@ void demoGraphique1()
         // Affichage
         SDL_SetRenderDrawColor(rendu,255,255,255,255);
         SDL_RenderClear(rendu);
-        m.afficher(rendu);
-        afficherGrille(rendu);
+        m.afficher(rendu, 4, 10);
+        afficherGrille(rendu, 32, 32, 10, 4, 4);
         SDL_RenderPresent(rendu);
         SDL_Delay(500);
     }

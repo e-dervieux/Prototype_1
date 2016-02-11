@@ -25,7 +25,6 @@
       <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceCreuse.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Particule.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Erreur.h" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
