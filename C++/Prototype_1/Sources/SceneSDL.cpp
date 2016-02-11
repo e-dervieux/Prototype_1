@@ -1,7 +1,7 @@
 #include "../Header/SceneSDL.h"
 
-SceneSDL::SceneSDL(int config)
- : m_clavier(def::NB_TOUCHES, false)
+SceneSDL::SceneSDL(Grille& g, int config)
+ : m_g(g), m_clavier(def::NB_TOUCHES, false)
 {
     // Chargement de la SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)

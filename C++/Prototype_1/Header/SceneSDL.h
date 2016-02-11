@@ -8,11 +8,12 @@
 
 #include "Definitions.h"
 #include "Erreur.h"
+#include "Grille.h"
 
 class SceneSDL
 {
 public:
-    SceneSDL(int config = 1);
+    SceneSDL(Grille& g, int config = 1);
     ~SceneSDL();
 
     void init(int config);
@@ -25,6 +26,7 @@ public:
 private:
     std::string m_titre;
     int m_config;
+    Grille& m_g;
 
     SDL_Window* m_fenetre;
     SDL_Renderer* m_rendu;
