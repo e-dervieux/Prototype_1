@@ -5,6 +5,7 @@
 #include "../Header/demoMatriceParticules.h"
 #include "../Header/demoGraphique1.h"
 #include "../Header/demoLiaison.h"
+#include "../Header/demoCohesion.h"
 
 int main(int argv, char** argc)
 {
@@ -26,7 +27,8 @@ int main(int argv, char** argc)
         << " 0 : Entiers dans une matrice creuse" << std::endl
         << " 1 : Matrice de particules" << std::endl
         << " 2 : Premier rendu graphique de la situation 1" << std::endl
-        << " 3 : Test de liaison physique entre 2 particules" << std::endl;
+        << " 3 : Test de liaison physique entre 2 particules" << std::endl
+        << " 4 : Test de cohesion a petite echelle" << std::endl;
         std::cin >> situation;
         switch(situation)
         {
@@ -44,6 +46,10 @@ int main(int argv, char** argc)
 
             case 3:
                 demoLiaison();
+                break;
+
+            case 4:
+                demoCohesion();
                 break;
 
             default:

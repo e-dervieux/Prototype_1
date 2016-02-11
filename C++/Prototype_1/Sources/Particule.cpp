@@ -75,7 +75,7 @@ bool Particule::lier(Particule* p)
     p->m_liaisons[j] = this;
 }
 
-void Particule::setPosInt(int x, int y)
+void Particule::setInt(int x, int y)
 {
     m_x = x;
     m_y = y;
@@ -142,4 +142,11 @@ void Particule::appliquerForcesLiaison()
         if (p != NULL)
             appliquerForce(m_matiere->forceLiaison(this, p));
     }
+}
+
+void Particule::setPosInt(Vecteur pos)
+{
+    m_pos = pos;
+    m_x = (int)pos.getX();
+    m_y = (int)pos.getY();
 }

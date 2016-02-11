@@ -8,11 +8,12 @@
 
 #include "Definitions.h"
 #include "Erreur.h"
+#include "Grille.h"
 
 class SceneSDL
 {
 public:
-    SceneSDL(int config = 1);
+    SceneSDL(Grille& grille, int config = 1);
     ~SceneSDL();
 
     void init(int config);
@@ -24,6 +25,7 @@ public:
 
 private:
     std::string m_titre;
+    Grille& m_grille;
     int m_config;
 
     SDL_Window* m_fenetre;
@@ -31,6 +33,9 @@ private:
     SDL_Event m_event;
 
     std::vector<bool> m_clavier;
+
+    void echellePlus();
+    void echelleMoins();
 };
 
 #endif // SCENESDL_H_INCLUDED

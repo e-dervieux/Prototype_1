@@ -1,12 +1,13 @@
 #include "../Header/SceneSDL.h"
 
-SceneSDL::SceneSDL(int config)
- : m_clavier(def::NB_TOUCHES, false)
+SceneSDL::SceneSDL(Grille& grille, int config)
+ : m_grille(grille), m_clavier(def::NB_TOUCHES, false)
 {
     // Chargement de la SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
         throw Erreur(4, "Echec du chargement de la SDL");
 
+    m_config = -1;
     init(config); // Chargement de la configuration par defaut
 }
 
@@ -19,19 +20,27 @@ SceneSDL::~SceneSDL()
 
 void SceneSDL::init(int config)
 {
-    m_config = config;
-
-    switch(m_config)
+    switch(config)
     {
     default:
-        m_titre = "Test 1";
-        def::redefinir(200, 125, 5, true, 5);
+        m_titre = "Test de cohésion";
+        def::width = 200;
+        def::height = 120;
+        def::taillePixel = 5;
+        if (m_config != config)
+        {
+            def::pasGrille = 16;
+            def::partPP = 1;
+        }
+        def::divisionGrille = 5;
         break;
     }
 
+    m_config = config;
+
     // Chargement de la fenetre
     m_fenetre = SDL_CreateWindow(m_titre.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                 def::taillePixel*def::width, def::taillePixel*def::height, 0);
+                                 def::taillePixel*def::width+1, def::taillePixel*def::height+1, 0);
     if (m_fenetre == NULL)
         throw Erreur(3, "Echec du chargement de la fenetre");
 
@@ -72,6 +81,7 @@ void SceneSDL::bouclePrincipale()
             dt = def::dtMax;
 
         // Mouvement
+        m_grille.actualiser(dt);
 
         // Actualisation du rendu
         affichage(continuer);
@@ -111,6 +121,12 @@ void SceneSDL::gererEvent(bool & continuer)
             reinit(3);
             break;
 
+        case SDLK_KP_PLUS:
+            echellePlus();
+            break;
+        case SDLK_KP_MINUS:
+            echelleMoins();
+            break;
 
         case SDLK_RIGHT:
             m_clavier[def::K_DROITE] = true;
@@ -189,11 +205,12 @@ void SceneSDL::affichage(bool& continuer)
     SDL_SetRenderDrawColor(m_rendu, 255, 255, 255, 255);
     SDL_RenderClear(m_rendu);
 
+    // Construction du rendu
+    m_grille.afficher(m_rendu, def::partPP, def::taillePixel);
+
     // Affichage de la grille
     if (def::grilleAffichee)
         afficherGrille();
-
-    // Construction du rendu
 
     // Actualisation du rendu
     SDL_RenderPresent(m_rendu);
@@ -206,10 +223,13 @@ void SceneSDL::afficherGrille()
     for(int i = 0 ; i <= def::width ; i += def::pasGrille)
         SDL_RenderDrawLine(m_rendu, i*def::taillePixel, 0, i*def::taillePixel, def::height*def::taillePixel);
     SDL_SetRenderDrawColor(m_rendu, 0, 0, 0, 128);
-    for(int i = 0 ; i <= def::width ; i += def::divisionGrille*def::pasGrille)
+    if (def::divisionsAffichees)
     {
-        SDL_RenderDrawLine(m_rendu, i*def::taillePixel+1, 0, i*def::taillePixel+1, def::height*def::taillePixel);
-        SDL_RenderDrawLine(m_rendu, i*def::taillePixel-1, 0, i*def::taillePixel-1, def::height*def::taillePixel);
+        for(int i = 0 ; i <= def::width ; i += def::divisionGrille*def::pasGrille)
+        {
+            SDL_RenderDrawLine(m_rendu, i*def::taillePixel+1, 0, i*def::taillePixel+1, def::height*def::taillePixel);
+            SDL_RenderDrawLine(m_rendu, i*def::taillePixel-1, 0, i*def::taillePixel-1, def::height*def::taillePixel);
+        }
     }
 
     // Lignes horizontales
@@ -217,9 +237,36 @@ void SceneSDL::afficherGrille()
     for(int j = 0 ; j <= def::height ; j += def::pasGrille)
         SDL_RenderDrawLine(m_rendu, 0, j*def::taillePixel, def::width*def::taillePixel, j*def::taillePixel);
     SDL_SetRenderDrawColor(m_rendu, 0, 0, 0, 128);
-    for(int j = 0 ; j <= def::height ; j += def::divisionGrille*def::pasGrille)
+    if (def::divisionsAffichees)
     {
-        SDL_RenderDrawLine(m_rendu, 0, j*def::taillePixel+1, def::width*def::taillePixel, j*def::taillePixel+1);
-        SDL_RenderDrawLine(m_rendu, 0, j*def::taillePixel-1, def::width*def::taillePixel, j*def::taillePixel-1);
+        for(int j = 0 ; j <= def::height ; j += def::divisionGrille*def::pasGrille)
+        {
+            SDL_RenderDrawLine(m_rendu, 0, j*def::taillePixel+1, def::width*def::taillePixel, j*def::taillePixel+1);
+            SDL_RenderDrawLine(m_rendu, 0, j*def::taillePixel-1, def::width*def::taillePixel, j*def::taillePixel-1);
+        }
+    }
+}
+
+void SceneSDL::echellePlus()
+{
+    if (def::taillePixel > 1)
+    {
+        def::partPP *= 2;
+        def::pasGrille /= 2;
+        def::taillePixel *= 2;
+        def::width /= 2;
+        def::height /= 2;
+    }
+}
+
+void SceneSDL::echelleMoins()
+{
+    if (def::partPP > 1)
+    {
+        def::partPP /= 2;
+        def::pasGrille *= 2;
+        def::taillePixel /= 2;
+        def::width *= 2;
+        def::height *= 2;
     }
 }

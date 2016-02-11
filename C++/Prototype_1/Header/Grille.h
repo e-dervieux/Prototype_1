@@ -13,6 +13,8 @@ public:
     void actualiser(double dt); // Applique tous les calculs physiques pour obtenir la nouvelle grille apres dt
     // Devrait etre la seule fonction a utiliser depuis SceneSDL.
 
+    void afficher(SDL_Renderer* rendu, int partPP, int taillePixel) { m_mat.afficher(rendu, partPP, taillePixel); }
+
 private:
     int m_w, m_h; // Dimensions globales de la matrice creuse
     int m_smW, m_smH; // A supprimer ?

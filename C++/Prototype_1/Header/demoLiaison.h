@@ -9,7 +9,7 @@
 
 void demoLiaison()
 {
-    def::redefinir(32,32,10,true,4,4);
+    def::redefinir(32,32,10,true,true,4,4);
     def::partPP = 1;
 
     // Initiation de la fenetre

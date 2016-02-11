@@ -21,7 +21,8 @@ public:
 
     int getXInt() const { return m_x; }
     int getYInt() const { return m_y; }
-    void setPosInt(int x, int y); // Donne les nouvelles coordonnées entières de la particule
+    void setInt(int x, int y); // Donne les nouvelles coordonnées entières de la particule
+    void setPosInt(Vecteur pos); // Donne les nouvelles coordonnées double, et actualise les int correspondants
     Vecteur getPos() const { return m_pos; }
     void setPos(Vecteur pos);
     Vecteur getV() const { return m_v; }

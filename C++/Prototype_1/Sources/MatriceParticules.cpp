@@ -100,7 +100,7 @@ void MatriceParticules::deplacer()
                     }
 
                     // On bouge les coordonnées entières de la particule
-                    p.setPosInt(xNouvPart, yNouvPart);
+                    p.setInt(xNouvPart, yNouvPart);
 
                     // Si on sort de la grille...
                     if (!estValide(p))
