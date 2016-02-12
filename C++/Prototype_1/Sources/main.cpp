@@ -9,51 +9,36 @@
 
 int main(int argv, char** argc)
 {
-    /*SceneSDL scene;
-
-    try
-    {
-        scene.bouclePrincipale();
-    }
-    catch (Erreur& e)
-    {
-        std::cout << "Erreur de niveau " << e.getNiveau() << " : " << e.what() << std::endl;
-    }*/
     bool continuer = true;
     while(continuer)
     {
         int situation;
-        std::cout << "Quelle demo realiser ? (-1 = stop)" << std::endl
-        << " 0 : Entiers dans une matrice creuse" << std::endl
-        << " 1 : Matrice de particules" << std::endl
-        << " 2 : Premier rendu graphique de la situation 1" << std::endl
-        << " 3 : Test de liaison physique entre 2 particules" << std::endl
-        << " 4 : Test de cohesion a petite echelle" << std::endl;
+        std::cout << "Quelle demo realiser ? (0 = stop)" << std::endl
+        << " 1 : Entiers dans une matrice creuse" << std::endl
+        << " 2 : Matrice de particules" << std::endl
+        << " 3 : Premier rendu graphique de la situation 1" << std::endl
+        << " 4 : Test de liaison physique entre 2 particules" << std::endl
+        << " 5 : Test de cohesion a petite echelle" << std::endl;
         std::cin >> situation;
         switch(situation)
         {
-            case 0:
-                demoMatriceCreuse();
-                break;
-
-            case 1:
-                demoMatriceParticules();
-                break;
-
-            case 2:
-                demoGraphique1();
-                break;
-
-            case 3:
-                demoLiaison();
-                break;
-
-            case 4:
-                demoCohesion();
-                break;
-
-            default:
-                continuer=false;
+        case 1:
+            demoMatriceCreuse();
+            break;
+        case 2:
+            demoMatriceParticules();
+            break;
+        case 3:
+            demoGraphique1();
+            break;
+        case 4:
+            demoLiaison();
+            break;
+        case 5:
+            demoCohesion();
+            break;
+        default:
+            continuer=false;
         }
     }
 

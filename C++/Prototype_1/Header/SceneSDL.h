@@ -10,10 +10,13 @@
 #include "Erreur.h"
 #include "Grille.h"
 
+struct ActionClavier
+{ virtual void operator()(std::vector<bool>& clavier, bool & continuer) = 0; };
+
 class SceneSDL
 {
 public:
-    SceneSDL(Grille& grille, int config = 1);
+    SceneSDL(Grille& grille, ActionClavier& action, int config = 1);
     ~SceneSDL();
 
     void init(int config);
@@ -26,6 +29,7 @@ public:
 private:
     std::string m_titre;
     Grille& m_grille;
+    ActionClavier& m_actionClavier;
     int m_config;
 
     SDL_Window* m_fenetre;

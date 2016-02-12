@@ -1,7 +1,7 @@
 #include "../Header/SceneSDL.h"
 
-SceneSDL::SceneSDL(Grille& grille, int config)
- : m_grille(grille), m_clavier(def::NB_TOUCHES, false)
+SceneSDL::SceneSDL(Grille& grille, ActionClavier& actionClavier, int config)
+ : m_grille(grille), m_actionClavier(actionClavier), m_clavier(def::NB_TOUCHES, false)
 {
     // Chargement de la SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -24,9 +24,7 @@ void SceneSDL::init(int config)
     {
     default:
         m_titre = "Test de cohésion";
-        def::width = 200;
-        def::height = 120;
-        def::taillePixel = 5;
+
         if (m_config != config)
         {
             def::pasGrille = 16;
@@ -106,6 +104,7 @@ void SceneSDL::gererEvent(bool & continuer)
             break;
 
         case SDLK_SPACE:
+            m_clavier[def::K_ESPACE] = true;
             reinit(m_config);
             break;
 
@@ -164,6 +163,10 @@ void SceneSDL::gererEvent(bool & continuer)
     case SDL_KEYUP:
         switch(m_event.key.keysym.sym)
         {
+        case SDLK_SPACE:
+            m_clavier[def::K_ESPACE] = false;
+            break;
+
         case SDLK_RIGHT:
             m_clavier[def::K_DROITE] = false;
             break;
@@ -197,6 +200,8 @@ void SceneSDL::gererEvent(bool & continuer)
         }
         break;
     }
+
+    m_actionClavier(m_clavier, continuer);
 }
 
 void SceneSDL::affichage(bool& continuer)

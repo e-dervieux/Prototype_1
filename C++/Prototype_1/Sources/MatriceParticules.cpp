@@ -222,6 +222,9 @@ void MatriceParticules::afficher(SDL_Renderer* rendu, int partPP, int taillePixe
 
 void MatriceParticules::set(int x, int y, Particule *p)
 {
+    if (x < 0 || x >= m_mpX*m_smX || y < 0 || y >= m_mpY*m_smY)
+        return;
+
     int indSM = (x/m_smX)*m_mpY + (y/m_smY);
     Particule**& sm = m_tabSM[indSM];
     if (sm == NULL) // Si la sous-matrice associée n'existe pas encore, la créer
@@ -264,6 +267,9 @@ void MatriceParticules::suppr(int x, int y)
 
 bool MatriceParticules::estVide(int x, int y)
 {
+    if (x < 0 || x >= m_mpX*m_smX || y < 0 || y >= m_mpY*m_smY)
+        return false; // Ou true ?
+
     int indSM = (x/m_smX)*m_mpY + (y/m_smY);
     Particule** sm = m_tabSM[indSM];
     if (sm == NULL)

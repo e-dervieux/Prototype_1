@@ -63,11 +63,11 @@ bool Particule::lier(Particule* p)
     }
 
     int i, j;
-    for(i = 0 ; i < def::nbLiaisons && m_liaisons[i] != NULL ; i++) ;
+    for(i = 0 ; i < def::nbLiaisons && m_liaisons[i] != NULL && m_liaisons[i] != p ; i++) ;
     if (i == def::nbLiaisons)
         return false;
 
-    for(j = 0 ; j < def::nbLiaisons && m_liaisons[j] != NULL ; j++) ;
+    for(j = 0 ; j < def::nbLiaisons && m_liaisons[j] != NULL && m_liaisons[j] != this ; j++) ;
     if (j == def::nbLiaisons)
         return false;
 

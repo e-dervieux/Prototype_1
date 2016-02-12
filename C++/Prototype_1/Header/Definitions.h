@@ -6,7 +6,7 @@
 
 namespace def
 {
-    enum TOUCHE{K_DROITE, K_HAUT, K_GAUCHE, K_BAS, K_Z, K_Q, K_S, K_D, K_SHIFT, NB_TOUCHES};
+    enum TOUCHE{K_ESPACE, K_DROITE, K_HAUT, K_GAUCHE, K_BAS, K_Z, K_Q, K_S, K_D, K_SHIFT, NB_TOUCHES};
 
     // Elements li�s � la grille
     extern int width;
