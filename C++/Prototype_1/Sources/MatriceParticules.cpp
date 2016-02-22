@@ -154,13 +154,13 @@ void MatriceParticules::afficher(SDL_Renderer* rendu, int partPP, int taillePixe
                 }
 
                 int nb = m_tabCnt[i];
-                SDL_SetRenderDrawColor(rendu, (Uint8)(rtot/nb),(Uint8)(gtot/nb),(Uint8)(btot/nb),255);
+                SDL_SetRenderDrawColor(rendu, (Uint8)(rtot/nb),(Uint8)(gtot/nb),(Uint8)(btot/nb), 255);
                 SDL_Rect rect = {taillePixel*xg, taillePixel*yg,taillePixel,taillePixel};
                 SDL_RenderFillRect(rendu, &rect);
             }
 
             yg++;
-            if (yg == m_mpX)
+            if (yg == m_mpY)
             {
                 yg = 0;
                 xg++;

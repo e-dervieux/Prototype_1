@@ -8,14 +8,23 @@
 #include "demoLiaison.h"
 #include "SceneSDL.h"
 
-#define C 20
-#define L 3.5
+#define C 10
+#define L 3.0
+#define L0 3.0
+#define K 10.0
+#define CC 3.0
 
-// Test de génération d'objets
 class Jambon
 {
 public:
-    Jambon(Vecteur(origine), Particule* particules)
+    virtual void init() = 0;
+};
+
+// Test de génération d'objets
+class JambonHexa : public Jambon
+{
+public:
+    JambonHexa(Vecteur(origine), Particule* particules)
      : m_o(origine), m_part(particules)
     {
 
@@ -61,10 +70,49 @@ private:
     Particule* m_part;
 };
 
+class JambonCarre : public Jambon
+{
+public:
+    JambonCarre(Vecteur(origine), Particule* particules)
+     : m_o(origine), m_part(particules)
+    {
+
+    }
+
+    void init()
+    {
+        Vecteur v1(L, 0.0);
+        Vecteur v2(0.0, L);
+        for(int i = 0 ; i < C ; i++)
+        {
+            for(int j = 0 ; j < C ; j++)
+                m_part[i*C+j].setPosInt(m_o + i*v1 + j*v2);
+        }
+
+        for(int i = 0 ; i < C ; i++)
+        {
+            for(int j = 0 ; j < C ; j++)
+            {
+                if (i < C-1)
+                    m_part[i*C + j].lier(&m_part[(i+1)*C + j]);
+
+                if (j < C-1)
+                    m_part[i*C + j].lier(&m_part[i*C + (j+1)]);
+            }
+        }
+    }
+
+    static int nbPart() { return C*C; }
+
+private:
+    Vecteur m_o;
+    Particule* m_part;
+};
+
 class ActionCohesion1 : public ActionClavier
 {
 public:
-    ActionCohesion1(Jambon& j)
+    ActionCohesion1(Jambon & j)
      : m_j(j)
     {}
     virtual void operator()(std::vector<bool>& clavier, bool& continuer)
@@ -74,7 +122,7 @@ public:
     }
 
 private:
-    Jambon& m_j;
+    Jambon & m_j;
 };
 
 void demoCohesion()
@@ -83,16 +131,16 @@ void demoCohesion()
 
     // Création de la matière
     SDL_Color c = {255, 0, 0, 255};
-    Matiere m(c, 1.0, 3.0, 15.0, 3.0);
+    Matiere m(c, 1.0, L0, K, CC);
 
     // Création des particules
-    int nbPart = Jambon::nbPart();
+    int nbPart = JambonCarre::nbPart();
     Particule* particules = new Particule[nbPart];
     Particule refP(-1, -1, &m);
     for(int i = 0 ; i < nbPart ; i++)
         particules[i] = refP;
 
-    Jambon j1(Vecteur(50.0, 50.0),particules);
+    JambonCarre j1(Vecteur(50.0, 50.0), particules);
     j1.init();
 
     // Création de la grille

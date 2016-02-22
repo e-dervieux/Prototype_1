@@ -12,7 +12,7 @@ namespace def
     int divisionGrille;
 
     int nbLiaisons = 6;
-    double dtMax = 0.2; // Intervalle max consid�r� entre 2 frames (en s)
+    double dtMax = 0.15; // Intervalle max consid�r� entre 2 frames (en s)
 
     void redefinir(int w, int h, int tp, bool ga, bool da, int pg, int dg)
     {

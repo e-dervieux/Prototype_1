@@ -4,21 +4,22 @@
 Particule::Particule(int x, int y, Matiere* matiere)
  : m_x(x), m_y(y), m_pos(x+0.5, y+0.5), m_v(), m_resf(), m_matiere(matiere)
 {
-    m_liaisons=NULL;
+    m_liaisons = new Particule*[def::nbLiaisons];
+    for(int i = 0 ; i < def::nbLiaisons ; i++)
+        m_liaisons[i] = NULL;
 }
 
 Particule::Particule(int x, int y, double xd, double yd, Matiere* matiere)
  : m_x(x), m_y(y), m_pos(xd,yd), m_v(), m_resf(), m_matiere(matiere)
 {
-    m_liaisons=NULL;
+    m_liaisons = new Particule*[def::nbLiaisons];
+    for(int i = 0 ; i < def::nbLiaisons ; i++)
+        m_liaisons[i] = NULL;
 }
 
 Particule::~Particule()
 {
-    if (m_liaisons != NULL)
-    {
-        delete[] m_liaisons;
-    }
+    delete[] m_liaisons;
 }
 
 Particule& Particule::operator=(const Particule& p)
@@ -36,8 +37,6 @@ Particule& Particule::operator=(const Particule& p)
 
 void Particule::creerLiaisons(Particule** liaisons)
 {
-
-
     m_liaisons=new Particule*[def::nbLiaisons];
     for(int i=0;i<def::nbLiaisons;i++)
     {
@@ -47,32 +46,24 @@ void Particule::creerLiaisons(Particule** liaisons)
 
 bool Particule::lier(Particule* p)
 {
-    // Si les tableaux de liaisons n'existent pas encore, on les crée (faire ça systématiquement dans le constructeur ?)
-    if (m_liaisons == NULL)
-    {
-        m_liaisons = new Particule*[def::nbLiaisons];
-        for(int i = 0 ; i < def::nbLiaisons ; i++)
-            m_liaisons[i] = NULL;
-    }
+    // Une particule ne peut être liée à elle-même
+    if (this == p)
+        return false;
 
-    if (p->m_liaisons == NULL)
-    {
-        p->m_liaisons = new Particule*[def::nbLiaisons];
-        for(int i = 0 ; i < def::nbLiaisons ; i++)
-            p->m_liaisons[i] = NULL;
-    }
-
+    //Recherche des indices dans les tableaux de liaisons
     int i, j;
     for(i = 0 ; i < def::nbLiaisons && m_liaisons[i] != NULL && m_liaisons[i] != p ; i++) ;
     if (i == def::nbLiaisons)
         return false;
 
-    for(j = 0 ; j < def::nbLiaisons && m_liaisons[j] != NULL && m_liaisons[j] != this ; j++) ;
+    for(j = 0 ; j < def::nbLiaisons && p->m_liaisons[j] != NULL && p->m_liaisons[j] != this ; j++) ;
     if (j == def::nbLiaisons)
         return false;
 
     m_liaisons[i] = p;
     p->m_liaisons[j] = this;
+
+    return true;
 }
 
 void Particule::setInt(int x, int y)
@@ -110,10 +101,7 @@ void Particule::calculerDeplacement(double dt)
 }
 
 void Particule::supprimerLiaisons() {
-    if (m_liaisons == NULL)
-        return;
-
-    // Supprime les liaisons
+    // Supprime les liaisons, de cette particule et des particules qui y sont liées
     for(int i = 0 ; i < def::nbLiaisons ; i++)
     {
         if (m_liaisons[i] != NULL)
@@ -126,8 +114,8 @@ void Particule::supprimerLiaisons() {
                     break;
                 }
             }
+            m_liaisons[i] = NULL;
         }
-        m_liaisons[i] = NULL;
     }
 }
 

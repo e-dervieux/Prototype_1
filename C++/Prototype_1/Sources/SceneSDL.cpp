@@ -163,10 +163,6 @@ void SceneSDL::gererEvent(bool & continuer)
     case SDL_KEYUP:
         switch(m_event.key.keysym.sym)
         {
-        case SDLK_SPACE:
-            m_clavier[def::K_ESPACE] = false;
-            break;
-
         case SDLK_RIGHT:
             m_clavier[def::K_DROITE] = false;
             break;
@@ -202,6 +198,7 @@ void SceneSDL::gererEvent(bool & continuer)
     }
 
     m_actionClavier(m_clavier, continuer);
+    m_clavier[def::K_ESPACE] = false;
 }
 
 void SceneSDL::affichage(bool& continuer)
