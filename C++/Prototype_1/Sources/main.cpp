@@ -9,6 +9,9 @@
 
 int main(int argv, char** argc)
 {
+    demoCohesion();
+    return 0;
+
     bool continuer = true;
     while(continuer)
     {

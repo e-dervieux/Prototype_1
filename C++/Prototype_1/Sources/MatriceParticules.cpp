@@ -15,7 +15,7 @@ MatriceParticules::MatriceParticules(int mpX, int mpY, int smX, int smY, Particu
     // Ajout des particules
     for(int i = 0 ; i < nbParticules ; i++)
     {
-        Particule* p = particules+i;
+        Particule* p = &particules[i];
         set(p->getXInt(), p->getYInt(), p);
     }
 }
@@ -33,6 +33,27 @@ MatriceParticules::~MatriceParticules()
 
     // Libération des particules (doit-on le faire !?)
     
+}
+
+void MatriceParticules::reinit()
+{
+    // Suppression du contenu de la matrice Creuse
+    for(int i = 0 ; i < m_mpX*m_mpY ; i++)
+    {
+        if (m_tabSM[i] != NULL)
+        {
+            delete[] m_tabSM[i];
+            m_tabSM[i] = NULL;
+            m_tabCnt[i] = 0;
+        }
+    }
+
+    // Rajout des particules
+    for(int i = 0 ; i < m_nbPart ; i++)
+    {
+        Particule* p = &m_part[i];
+        set(p->getXInt(), p->getYInt(), p);
+    }
 }
 
 bool MatriceParticules::estValide(Particule &p)

@@ -46,14 +46,13 @@ void SceneSDL::init(int config)
     m_rendu = SDL_CreateRenderer(m_fenetre, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (m_rendu == NULL)
         throw Erreur(3, "Echec du chargement du rendu");
-
 }
 
 void SceneSDL::reinit(int config)
 {
     // Vide la scene
-    SDL_DestroyWindow(m_fenetre);
     SDL_DestroyRenderer(m_rendu);
+    SDL_DestroyWindow(m_fenetre);
 
     // La reinitialise
     init(config);

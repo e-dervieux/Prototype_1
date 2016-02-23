@@ -12,6 +12,11 @@ Grille::~Grille()
 
 }
 
+void Grille::reinit()
+{
+    m_mat.reinit();
+}
+
 void Grille::actualiser(double dt)
 {
     //Calculer la force à appliquer et l'appliquer à chaque particule

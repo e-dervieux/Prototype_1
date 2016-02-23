@@ -10,9 +10,14 @@
 
 class MatriceParticules
 {
+    friend void demoMatriceParticules();
+
 public:
     MatriceParticules(int mpX, int mpY, int smX, int smY, Particule* particules, int nbParticules);
     ~MatriceParticules();
+
+    void reinit(); // Réinitialise la matrice de particules à partir du tableau
+    // particules, afin qu'elle soit gérée de manière correcte.
 
     bool estValide(Particule& p);
 
@@ -20,10 +25,11 @@ public:
     void calculerDeplacement(double dt); //  Calcule la prochaine position des particules
     void deplacer(); // Effectue le d�placement des particules dans la matrice
 
-void afficher(SDL_Renderer* rendu, int partPP, int taillePixel); // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
+    void afficher(SDL_Renderer* rendu, int partPP, int taillePixel); // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
 
     Particule** getSM(int i, int j) { return m_tabSM[i*m_mpY+j]; }
-//private:
+
+private:
     int m_mpX, m_mpY;
     int m_smX, m_smY;
     Particule* m_part; // Tableau des particules à gérer

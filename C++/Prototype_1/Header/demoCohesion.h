@@ -8,11 +8,11 @@
 #include "demoLiaison.h"
 #include "SceneSDL.h"
 
-#define C 10
-#define L 3.0
+#define C 5
+#define L 5.0
 #define L0 3.0
 #define K 10.0
-#define CC 3.0
+#define CC 2.0
 
 class Jambon
 {
@@ -112,17 +112,21 @@ private:
 class ActionCohesion1 : public ActionClavier
 {
 public:
-    ActionCohesion1(Jambon & j)
-     : m_j(j)
+    ActionCohesion1(Jambon & j, Grille& g)
+     : m_j(j), m_g(g)
     {}
     virtual void operator()(std::vector<bool>& clavier, bool& continuer)
     {
         if (clavier[def::K_ESPACE])
+        {
             m_j.init();
+            m_g.reinit();
+        }
     }
 
 private:
     Jambon & m_j;
+    Grille& m_g;
 };
 
 void demoCohesion()
@@ -147,7 +151,7 @@ void demoCohesion()
     Grille g(192, 112, 16, 16, particules, nbPart);
 
     // Lancement de la scène SDL
-    ActionCohesion1 a(j1);
+    ActionCohesion1 a(j1, g);
     SceneSDL scene(g, a);
     try
     {

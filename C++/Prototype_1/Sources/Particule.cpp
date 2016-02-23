@@ -29,8 +29,9 @@ Particule& Particule::operator=(const Particule& p)
     m_pos = p.m_pos;
     m_v = p.m_v;
     m_resf = p.m_resf;
-    m_liaisons = p.m_liaisons;
     m_matiere = p.m_matiere;
+
+    creerLiaisons(p.m_liaisons);
 
     return *this;
 }
