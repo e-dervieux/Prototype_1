@@ -8,11 +8,11 @@
 #include "demoLiaison.h"
 #include "SceneSDL.h"
 
-#define C 5
+#define C 15
 #define L 5.0
 #define L0 3.0
-#define K 10.0
-#define CC 2.0
+#define K 50.0
+#define CC 10.0
 
 class Jambon
 {
@@ -112,20 +112,22 @@ private:
 class ActionCohesion1 : public ActionClavier
 {
 public:
-    ActionCohesion1(Jambon & j, Grille& g)
-     : m_j(j), m_g(g)
+    ActionCohesion1(Jambon & j1, Jambon & j2, Grille& g)
+     : m_j1(j1),m_j2(j2),  m_g(g)
     {}
     virtual void operator()(std::vector<bool>& clavier, bool& continuer)
     {
         if (clavier[def::K_ESPACE])
         {
-            m_j.init();
+            m_j1.init();
+            m_j2.init();
             m_g.reinit();
         }
     }
 
 private:
-    Jambon & m_j;
+    Jambon & m_j1;
+    Jambon & m_j2;
     Grille& m_g;
 };
 
@@ -138,20 +140,22 @@ void demoCohesion()
     Matiere m(c, 1.0, L0, K, CC);
 
     // Création des particules
-    int nbPart = JambonCarre::nbPart();
+    int nbPart = JambonHexa::nbPart() + JambonCarre::nbPart();
     Particule* particules = new Particule[nbPart];
     Particule refP(-1, -1, &m);
     for(int i = 0 ; i < nbPart ; i++)
         particules[i] = refP;
 
-    JambonCarre j1(Vecteur(50.0, 50.0), particules);
+    JambonHexa j1(Vecteur(100.5, 25.5), particules);
     j1.init();
+    JambonCarre j2(Vecteur(10.5, 25.5), particules+JambonHexa::nbPart());
+    j2.init();
 
     // Création de la grille
-    Grille g(192, 112, 16, 16, particules, nbPart);
+    Grille g(200, 120, 16, 16, particules, nbPart);
 
     // Lancement de la scène SDL
-    ActionCohesion1 a(j1, g);
+    ActionCohesion1 a(j1, j2, g);
     SceneSDL scene(g, a);
     try
     {

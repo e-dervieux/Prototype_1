@@ -91,12 +91,14 @@ void Particule::appliquerForce(Vecteur f)
     m_resf += f;
 }
 
+// EULER
 void Particule::calculerDeplacement(double dt)
 {
     if (m_matiere != NULL)
     {
-        m_v += (dt/getMasse())*m_resf;
-        m_pos += dt*m_v;
+        Vecteur a = 1.0/getMasse() * m_resf;
+        m_pos += dt*(m_v + 0.5*dt*a);
+        m_v += dt*a;
         m_resf = Vecteur();
     }
 }

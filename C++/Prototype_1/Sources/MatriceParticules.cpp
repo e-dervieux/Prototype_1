@@ -13,11 +13,7 @@ MatriceParticules::MatriceParticules(int mpX, int mpY, int smX, int smY, Particu
     }
 
     // Ajout des particules
-    for(int i = 0 ; i < nbParticules ; i++)
-    {
-        Particule* p = &particules[i];
-        set(p->getXInt(), p->getYInt(), p);
-    }
+    ajouterParticules();
 }
 
 MatriceParticules::~MatriceParticules()
@@ -30,9 +26,18 @@ MatriceParticules::~MatriceParticules()
     }
     delete[] m_tabSM;
     delete[] m_tabCnt;
+}
 
-    // Libération des particules (doit-on le faire !?)
-    
+void MatriceParticules::ajouterParticules()
+{
+    for(int i = 0 ; i < m_nbPart ; i++)
+    {
+        Particule* p = &m_part[i];
+        if (estValide(*p))
+            set(p->getXInt(), p->getYInt(), p);
+        else
+            p->supprimerLiaisons();
+    }
 }
 
 void MatriceParticules::reinit()
@@ -49,11 +54,7 @@ void MatriceParticules::reinit()
     }
 
     // Rajout des particules
-    for(int i = 0 ; i < m_nbPart ; i++)
-    {
-        Particule* p = &m_part[i];
-        set(p->getXInt(), p->getYInt(), p);
-    }
+    ajouterParticules();
 }
 
 bool MatriceParticules::estValide(Particule &p)
@@ -289,7 +290,7 @@ void MatriceParticules::suppr(int x, int y)
 bool MatriceParticules::estVide(int x, int y)
 {
     if (x < 0 || x >= m_mpX*m_smX || y < 0 || y >= m_mpY*m_smY)
-        return false; // Ou true ?
+        return true;
 
     int indSM = (x/m_smX)*m_mpY + (y/m_smY);
     Particule** sm = m_tabSM[indSM];

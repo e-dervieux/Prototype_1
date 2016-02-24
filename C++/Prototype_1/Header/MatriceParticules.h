@@ -16,6 +16,7 @@ public:
     MatriceParticules(int mpX, int mpY, int smX, int smY, Particule* particules, int nbParticules);
     ~MatriceParticules();
 
+    void ajouterParticules(); // Ajoute les particules de m_particules dans la matrice
     void reinit(); // Réinitialise la matrice de particules à partir du tableau
     // particules, afin qu'elle soit gérée de manière correcte.
 
