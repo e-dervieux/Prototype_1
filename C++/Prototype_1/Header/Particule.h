@@ -26,6 +26,7 @@ public:
     Vecteur getPos() const { return m_pos; }
     void setPos(Vecteur pos);
     Vecteur getV() const { return m_v; }
+    void setV(Vecteur v) { m_v = v; }
     SDL_Color getCouleur() const { return m_matiere->getCouleur(); };
     double getMasse() const;
 
@@ -38,9 +39,6 @@ private:
     int m_x, m_y; // Pas sur que ca serve...
     Vecteur m_pos, m_v, m_resf; // resf est la resultante des forces a l'instant considere
 
-    //TODO Il faut gérer correctement les passages de l'attribut m_liaisons d'une particule à une autre
-    // /!\ Cet attribut n'est pas encore géré par le constructeur de copie
-    // S'il est copié, il y a une fuite mémoire !!!
     Particule** m_liaisons;
 
     Matiere* m_matiere;

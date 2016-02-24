@@ -8,10 +8,10 @@
 #include "demoLiaison.h"
 #include "SceneSDL.h"
 
-#define C 15
+#define C 10
 #define L 5.0
 #define L0 3.0
-#define K 50.0
+#define K 80.0
 #define CC 10.0
 
 class Jambon
@@ -26,9 +26,7 @@ class JambonHexa : public Jambon
 public:
     JambonHexa(Vecteur(origine), Particule* particules)
      : m_o(origine), m_part(particules)
-    {
-
-    }
+    {}
 
     void init()
     {
@@ -61,6 +59,19 @@ public:
             for(int j = 0 ; j < C-1 ; j++)
                 m_part[i*C + j].lier(&m_part[i*C + (j+1)]);
         }
+
+        for(int i = 0 ; i < nbPart() ; i++)
+            m_part[i].setV(Vecteur());
+
+        // Suppression des coins
+        m_part[0].supprimerLiaisons();
+        m_part[0].setPosInt(Vecteur(-1.0,-1.0));
+        m_part[C-1].supprimerLiaisons();
+        m_part[C-1].setPosInt(Vecteur(-1.0,-1.0));
+        m_part[C*(C-1)].supprimerLiaisons();
+        m_part[C*(C-1)].setPosInt(Vecteur(-1.0,-1.0));
+        m_part[C*C-1].supprimerLiaisons();
+        m_part[C*C-1].setPosInt(Vecteur(-1.0,-1.0));
     }
 
     static int nbPart() { return C*C + (C-1)*(C-1); }
@@ -75,9 +86,7 @@ class JambonCarre : public Jambon
 public:
     JambonCarre(Vecteur(origine), Particule* particules)
      : m_o(origine), m_part(particules)
-    {
-
-    }
+    {}
 
     void init()
     {
@@ -100,6 +109,9 @@ public:
                     m_part[i*C + j].lier(&m_part[i*C + (j+1)]);
             }
         }
+
+        for(int i = 0 ; i < nbPart() ; i++)
+            m_part[i].setV(Vecteur());
     }
 
     static int nbPart() { return C*C; }
@@ -146,7 +158,7 @@ void demoCohesion()
     for(int i = 0 ; i < nbPart ; i++)
         particules[i] = refP;
 
-    JambonHexa j1(Vecteur(100.5, 25.5), particules);
+    JambonHexa j1(Vecteur(80.5, 25.5), particules);
     j1.init();
     JambonCarre j2(Vecteur(10.5, 25.5), particules+JambonHexa::nbPart());
     j2.init();

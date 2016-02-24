@@ -1,5 +1,7 @@
 #include "../Header/MatriceParticules.h"
 
+int nbC = 0;
+
 MatriceParticules::MatriceParticules(int mpX, int mpY, int smX, int smY, Particule* particules, int nbParticules)
  : m_mpX(mpX), m_mpY(mpY), m_smX(smX), m_smY(smY), m_part(particules), m_nbPart(nbParticules)
 {
@@ -84,7 +86,7 @@ void MatriceParticules::calculerDeplacement(double dt)
     }
 }
 
-void MatriceParticules::deplacer()
+void MatriceParticules::deplacer(double dt)
 {
     for(int i = 0 ; i < m_nbPart ; i++)
     {
@@ -114,10 +116,12 @@ void MatriceParticules::deplacer()
                 {
                     //Tant que la place n'est pas libre
                     // Cette boucle sera la partie à améliorer pour gérer convenablement les collisions
-                    while (!this->estVide(xNouvPart, yNouvPart))
+                    if (!this->estVide(xNouvPart, yNouvPart))
                     {
-                        xNouvPart++;
-                        yNouvPart++;
+                        std::cout << "C" << nbC << std::endl;
+                        nbC++;
+                        xNouvPart = xOldPart;
+                        yNouvPart = yOldPart;
                         aEteModifie = true;
                     }
 
@@ -129,16 +133,18 @@ void MatriceParticules::deplacer()
                         p.supprimerLiaisons();
                     else
                     {
-                        set(xNouvPart, yNouvPart, &p);
-
                         //Si jamais on a modifié les coordonnées dans la matrice par rapport
                         //Aux coordonnées "vraies" calculées, alors on accorde les coordonnées
                         //Double avec les entières.
                         if (aEteModifie) {
-                            p.setPos(Vecteur((double) xNouvPart + 0.5, (double) yNouvPart + 0.5));
+                            Vecteur newPos((double) xNouvPart + 0.5, (double) yNouvPart + 0.5);
+                            p.setPos(newPos);
                         }
+                        else
+                            set(xNouvPart, yNouvPart, &p);
                     }
-                    suppr(xOldPart, yOldPart);
+                    if (xOldPart != xNouvPart || yOldPart != yNouvPart)
+                        suppr(xOldPart, yOldPart);
                 }
             }
         }

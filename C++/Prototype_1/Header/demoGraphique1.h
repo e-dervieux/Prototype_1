@@ -61,7 +61,7 @@ void demoGraphique1()
     for(int i = 0 ; i < 15 ; i++)
     {
         m.calculerDeplacement(1.0);
-        m.deplacer();
+        m.deplacer(0.5);
 
         // Affichage
         SDL_SetRenderDrawColor(rendu,255,255,255,255);

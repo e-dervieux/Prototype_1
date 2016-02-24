@@ -24,7 +24,7 @@ public:
     void bouclePrincipale();
     void affichage(bool& continuer);
     void afficherGrille();
-    void gererEvent(bool& continuer);
+    void gererEvent(bool& continuer, bool& recommencer);
 
 private:
     std::string m_titre;

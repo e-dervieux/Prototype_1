@@ -26,6 +26,6 @@ void Grille::actualiser(double dt)
     m_mat.calculerDeplacement(dt);
 
     //Deplacer effectivement ces coordonnées dans la grille
-    m_mat.deplacer();
+    m_mat.deplacer(dt);
 
 }

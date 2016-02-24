@@ -39,7 +39,7 @@ void demoLiaison()
     {
         m.forcesLiaison();
         m.calculerDeplacement(0.05);
-        m.deplacer();
+        m.deplacer(0.05);
 
         // Affichage
         SDL_SetRenderDrawColor(rendu1,255,255,255,255);

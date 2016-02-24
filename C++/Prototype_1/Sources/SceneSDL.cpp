@@ -60,7 +60,7 @@ void SceneSDL::reinit(int config)
 
 void SceneSDL::bouclePrincipale()
 {
-    bool continuer = true;
+    bool continuer = true, recommencer = false;
     time_t t1, t2;
     double dt;
 
@@ -68,30 +68,35 @@ void SceneSDL::bouclePrincipale()
     while (continuer)
     {
         SDL_PollEvent(&m_event);
-        gererEvent(continuer);
+        gererEvent(continuer, recommencer);
 
-        // Calul du dt
-        t2 = clock();
-        dt = (double)(t2 - t1)/CLOCKS_PER_SEC;
-        t1 = t2;
-        if (dt > def::dtMax)
-            dt = def::dtMax;
+        if (!recommencer)
+        {
+            t2 = clock();
+            dt = (double)(t2 - t1)/CLOCKS_PER_SEC;
+            t1 = t2;
+            if (dt > def::dtMax)
+                dt = def::dtMax;
 
-        // Mouvement
-        m_grille.actualiser(dt);
+            // Mouvement
+            m_grille.actualiser(0.017); // DEBUG (mettre dt sinon)
 
-        // Actualisation du rendu
-        affichage(continuer);
+            // Actualisation du rendu
+            affichage(continuer);
+        }
+        else
+            recommencer = false;
     }
 }
 
 
-void SceneSDL::gererEvent(bool & continuer)
+void SceneSDL::gererEvent(bool & continuer, bool& recommencer)
 {
     switch(m_event.type)
     {
     case SDL_QUIT:
         continuer = false;
+        recommencer = false;
         break;
 
     // Attribution des touches du clavier dans le tableau clavier (pour le multi-touches)
@@ -100,23 +105,28 @@ void SceneSDL::gererEvent(bool & continuer)
         {
         case SDLK_ESCAPE:
             continuer = false;
+            recommencer = true;
             break;
 
         case SDLK_SPACE:
             m_clavier[def::K_ESPACE] = true;
             reinit(m_config);
+            recommencer = true;
             break;
 
         case SDLK_KP_1:
             reinit(1);
+            recommencer = true;
             break;
 
         case SDLK_KP_2:
             reinit(2);
+            recommencer = true;
             break;
 
         case SDLK_KP_3:
             reinit(3);
+            recommencer = true;
             break;
 
         case SDLK_KP_PLUS:
