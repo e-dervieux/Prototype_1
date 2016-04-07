@@ -118,7 +118,7 @@ void MatriceParticules::deplacer(double dt)
                     // Cette boucle sera la partie à améliorer pour gérer convenablement les collisions
                     if (!this->estVide(xNouvPart, yNouvPart))
                     {
-                        std::cout << "C" << nbC << std::endl;
+                        //std::cout << "C" << nbC << std::endl;
                         nbC++;
                         xNouvPart = xOldPart;
                         yNouvPart = yOldPart;

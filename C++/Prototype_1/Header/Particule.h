@@ -34,6 +34,7 @@ public:
     void appliquerForcesLiaison();
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     void calculerDeplacement(double dt);
+    void surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
 
 private:
     int m_x, m_y; // Pas sur que ca serve...

@@ -141,3 +141,10 @@ void Particule::setPosInt(Vecteur pos)
     m_x = (int)pos.getX();
     m_y = (int)pos.getY();
 }
+
+void Particule::surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
+    SDL_SetRenderDrawColor(rendu, 0, 0, 255, 255);
+    SDL_Rect rect = {taillePixel*m_x, taillePixel*m_y,taillePixel,taillePixel};
+    SDL_RenderFillRect(rendu, &rect);
+}

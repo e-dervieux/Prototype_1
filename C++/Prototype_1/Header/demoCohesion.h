@@ -11,7 +11,7 @@
 #define C 10
 #define L 5.0
 #define L0 3.0
-#define K 80.0
+#define K 120.0
 #define CC 10.0
 
 class Jambon
@@ -135,6 +135,8 @@ public:
             m_j2.init();
             m_g.reinit();
         }
+        else if (clavier[def::K_SHIFT])
+            SDL_Delay(200);
     }
 
 private:

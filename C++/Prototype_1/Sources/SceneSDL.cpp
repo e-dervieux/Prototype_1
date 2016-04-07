@@ -79,7 +79,7 @@ void SceneSDL::bouclePrincipale()
                 dt = def::dtMax;
 
             // Mouvement
-            m_grille.actualiser(0.017); // DEBUG (mettre dt sinon)
+            m_grille.actualiser(0.003); // DEBUG (mettre dt sinon)
 
             // Actualisation du rendu
             affichage(continuer);
