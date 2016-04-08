@@ -32,6 +32,7 @@ public:
 
     void appliquerForce(Vecteur f);
     void appliquerForcesLiaison();
+    void collision(Particule& p, double dt); // Applique la force de collision avec p ET repositionne cette particule
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     void calculerDeplacement(double dt);
     void surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);

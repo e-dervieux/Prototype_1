@@ -21,7 +21,7 @@ set(SOURCE_FILES    Sources/main.cpp
                     Header/Matiere.h            Sources/Matiere.cpp
                     Header/Grille.h             Sources/Grille.cpp
                     Header/Erreur.h             Sources/Erreur.cpp
-                    Header/Definitions.h        Sources/Definitions.cpp Header/demoMatriceCreuse.h Header/demoMatriceParticules.h Header/demoGraphique1.h Header/demoLiaison.h Header/demoCohesion.h)
+                    Header/Definitions.h        Sources/Definitions.cpp Header/demoMatriceCreuse.h Header/demoMatriceParticules.h Header/demoGraphique1.h Header/demoLiaison.h Header/demoCohesion.h Header/demoCollision1.h)
 
 add_executable(Prototype_1 ${SOURCE_FILES})
 

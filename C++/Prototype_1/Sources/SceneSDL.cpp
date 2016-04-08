@@ -207,7 +207,7 @@ void SceneSDL::gererEvent(bool & continuer, bool& recommencer)
     }
 
     m_actionClavier(m_clavier, continuer);
-    m_clavier[def::K_ESPACE] = false;
+    m_clavier[def::K_ESPACE] = false; // Pour éviter de faire bugger la détection de ESPACE
 }
 
 void SceneSDL::affichage(bool& continuer)

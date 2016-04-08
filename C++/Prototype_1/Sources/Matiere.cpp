@@ -18,7 +18,7 @@ Vecteur Matiere::forceLiaison(const Particule* p1, const Particule* p2) const
 
     double l = ab.norme();
 
-    double d1 = 2.5, d0 = 1.5;
+    double d1 = 0.0, d0 = 1.5;
 
     if (l >= d1)
         return  m_raideur*(l-m_l0)*(ab.unitaire()) + m_amor*vr;

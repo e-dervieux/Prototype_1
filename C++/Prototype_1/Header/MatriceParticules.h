@@ -29,6 +29,7 @@ public:
 
     void afficher(SDL_Renderer* rendu, int partPP, int taillePixel); // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
 
+    Particule* get(int x, int y);
     Particule** getSM(int i, int j) { return m_tabSM[i*m_mpY+j]; }
 
 private:

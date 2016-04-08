@@ -8,11 +8,7 @@
 #include "demoLiaison.h"
 #include "SceneSDL.h"
 
-#define C 10
-#define L 5.0
-#define L0 3.0
-#define K 120.0
-#define CC 10.0
+#define C 10 // Nombre de particules sur un côté
 
 class Jambon
 {
@@ -28,7 +24,7 @@ public:
      : m_o(origine), m_part(particules)
     {}
 
-    void init()
+    void init(double L)
     {
         Vecteur v1(L * sqrt(3.0)/2.0,0.5 * L);
         Vecteur v2(L * sqrt(3.0),0.0 * L);
@@ -88,7 +84,7 @@ public:
      : m_o(origine), m_part(particules)
     {}
 
-    void init()
+    void init(double L)
     {
         Vecteur v1(L, 0.0);
         Vecteur v2(0.0, L);
@@ -145,7 +141,7 @@ private:
     Grille& m_g;
 };
 
-void demoCohesion()
+void demoCohesion(double L, double L0, double K, double CC)
 {
     def::redefinir(200,120,5,true,true,16,4);
 
@@ -161,9 +157,9 @@ void demoCohesion()
         particules[i] = refP;
 
     JambonHexa j1(Vecteur(80.5, 25.5), particules);
-    j1.init();
+    j1.init(L);
     JambonCarre j2(Vecteur(10.5, 25.5), particules+JambonHexa::nbPart());
-    j2.init();
+    j2.init(L);
 
     // Création de la grille
     Grille g(200, 120, 16, 16, particules, nbPart);

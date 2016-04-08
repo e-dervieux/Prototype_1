@@ -96,12 +96,11 @@ void MatriceParticules::deplacer(double dt)
             int xOldPart = p.getXInt();
             int yOldPart = p.getYInt();
 
-            Vecteur pos = p.getPos(); // Position ou mettre le pixel
+            Vecteur pos = p.getPos(); // Position où mettre le pixel
             int xNouvPart = (int)pos.getX();
             int yNouvPart = (int)pos.getY();
 
-            // Tenter de mettre la particule aux coordonnees (x,y)
-            bool aEteModifie = false;
+            // On tente de mettre la particule aux coordonnees (x,y)
 
             // Seulement si la particule bouge :
             if (xOldPart != xNouvPart || yOldPart != yNouvPart)
@@ -114,37 +113,23 @@ void MatriceParticules::deplacer(double dt)
                 }
                 else
                 {
-                    //Tant que la place n'est pas libre
                     // Cette boucle sera la partie à améliorer pour gérer convenablement les collisions
-                    if (!this->estVide(xNouvPart, yNouvPart))
-                    {
-                        //std::cout << "C" << nbC << std::endl;
-                        nbC++;
-                        xNouvPart = xOldPart;
-                        yNouvPart = yOldPart;
-                        aEteModifie = true;
-                    }
-
-                    // On bouge les coordonnées entières de la particule
-                    p.setInt(xNouvPart, yNouvPart);
-
-                    // Si on sort de la grille...
-                    if (!estValide(p))
-                        p.supprimerLiaisons();
+                    Particule* p2 = get(xNouvPart,yNouvPart);
+                    if (p2 != NULL)
+                        p.collision(*p2, dt);
                     else
                     {
-                        //Si jamais on a modifié les coordonnées dans la matrice par rapport
-                        //Aux coordonnées "vraies" calculées, alors on accorde les coordonnées
-                        //Double avec les entières.
-                        if (aEteModifie) {
-                            Vecteur newPos((double) xNouvPart + 0.5, (double) yNouvPart + 0.5);
-                            p.setPos(newPos);
-                        }
+                        // On bouge les coordonnées entières de la particule
+                        p.setInt(xNouvPart, yNouvPart);
+
+                        // Si on sort de la grille...
+                        if (!estValide(p))
+                            p.supprimerLiaisons();
                         else
                             set(xNouvPart, yNouvPart, &p);
-                    }
-                    if (xOldPart != xNouvPart || yOldPart != yNouvPart)
+
                         suppr(xOldPart, yOldPart);
+                    }
                 }
             }
         }
@@ -303,6 +288,15 @@ bool MatriceParticules::estVide(int x, int y)
     if (sm == NULL)
         return true;
 
-    Particule*& tmp = sm[(x%m_smX)*m_smY+(y%m_smY)];
+    Particule* tmp = sm[(x%m_smX)*m_smY+(y%m_smY)];
     return (tmp == NULL);
+}
+
+Particule* MatriceParticules::get(int x, int y)
+{
+    int indSM = (x/m_smX)*m_mpY + (y/m_smY);
+    Particule** sm = m_tabSM[indSM];
+    if (sm == NULL)
+            return NULL;
+    return sm[(x%m_smX)*m_smY+(y%m_smY)];
 }

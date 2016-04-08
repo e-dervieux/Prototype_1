@@ -6,11 +6,12 @@
 #include "../Header/demoGraphique1.h"
 #include "../Header/demoLiaison.h"
 #include "../Header/demoCohesion.h"
+#include "../Header/demoCollision1.h"
 
 int main(int argv, char** argc)
 {
-    demoCohesion();
-    return 0;
+    //demoCohesion();
+    //return 0;
 
     bool continuer = true;
     while(continuer)
@@ -21,7 +22,8 @@ int main(int argv, char** argc)
         << " 2 : Matrice de particules" << std::endl
         << " 3 : Premier rendu graphique de la situation 1" << std::endl
         << " 4 : Test de liaison physique entre 2 particules" << std::endl
-        << " 5 : Test de cohesion a petite echelle" << std::endl;
+        << " 5 : Test de cohesion a petite echelle" << std::endl
+        << " 6 : Test de collision entre quelques particules" << std::endl;
         std::cin >> situation;
         switch(situation)
         {
@@ -38,7 +40,10 @@ int main(int argv, char** argc)
             demoLiaison();
             break;
         case 5:
-            demoCohesion();
+            demoCohesion(5.0, 3.0, 120.0, 10.0);
+            break;
+        case 6:
+            demoCollision1();
             break;
         default:
             continuer=false;

@@ -56,7 +56,7 @@ void demoGraphique1()
     MatriceParticules m(4,4,4,4, particules, 2);
 
     // Application d'une force
-    particules[0].appliquerForce(Vecteur(1.0,0.5));
+    particules[1].appliquerForce(Vecteur(1.0,0.5));
 
     for(int i = 0 ; i < 15 ; i++)
     {
@@ -66,7 +66,7 @@ void demoGraphique1()
         // Affichage
         SDL_SetRenderDrawColor(rendu,255,255,255,255);
         SDL_RenderClear(rendu);
-        m.afficher(rendu, 4, 10);
+        m.afficher(rendu, 1, 10);
         afficherGrille(rendu, 32, 32, 10, 4, 4);
         SDL_RenderPresent(rendu);
         SDL_Delay(500);

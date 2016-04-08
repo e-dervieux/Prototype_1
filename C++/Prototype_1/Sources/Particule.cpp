@@ -148,3 +148,73 @@ void Particule::surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint
     SDL_Rect rect = {taillePixel*m_x, taillePixel*m_y,taillePixel,taillePixel};
     SDL_RenderFillRect(rendu, &rect);
 }
+
+void Particule::collision(Particule& p, double dt)
+{
+    // A ce stade, p et cette particule sont dans la même "boîte"
+
+    double xCol, yCol; // Coordonnées double de la collision (au bord de la "boîte" de p)
+    double vx = m_v.getX();
+    double vy = m_v.getY();
+    bool deplacementX = false; // Détecte si cette particule s'est déplacé selon m_x (int)
+
+    // Réglage de la position : au bord de la "boîte"
+    double newX = m_pos.getX();
+    double newY = m_pos.getY();
+
+    if (p.m_x < m_x)
+    {
+        newX = (double)m_x;
+
+        // Logiquement, vx != 0.0
+        xCol = (double)(p.m_x+1);
+        yCol = m_pos.getY() + vy/vx*((double)(p.m_x+1)-m_pos.getX());
+        deplacementX = true;
+    }
+    else if (p.m_x > m_x)
+    {
+        newX = (double)(m_x+1);
+
+        // Logiquement, vx != 0.0
+        xCol = (double)p.m_x;
+        yCol = m_pos.getY() + vy/vx*((double)p.m_x-m_pos.getX());
+        deplacementX = true;
+    }
+
+    if (p.m_y < m_y)
+    {
+        newY = (double)m_y;
+
+        if (deplacementX && yCol > (double)(p.m_y+1))
+        {
+            // Logiquement, vy != 0.0
+            yCol = (double)(p.m_y+1);
+            xCol = m_pos.getX() + vx/vy*((double)(p.m_y+1)-m_pos.getY());
+        }
+    }
+    else if (p.m_x > m_x)
+    {
+        newY = (double)(m_y+1);
+
+        if (deplacementX && yCol < (double)p.m_y)
+        {
+            // Logiquement, vy != 0.0
+            yCol = (double)p.m_y;
+            xCol = m_pos.getX() + vx/vy*((double)p.m_y-m_pos.getY());
+        }
+    }
+
+    m_pos = Vecteur(newX,newY);
+
+    // Calcul de la force de collision (peut être optimisé ?)
+    Vecteur n(
+            Point((double)p.m_x+0.5,(double)p.m_y+0.5), // Centre
+            Point(xCol,yCol) ); // Point de collision
+    Vecteur vr = m_v - p.m_v; // Vitesse relative
+    Vecteur dv = -2.0 * (vr*n)/n.normeCarre()*n; // Variation de vitesse à la collision
+    Vecteur f = 1.0/getMasse()/dt * dv; // Force correspondante sur cette particule
+
+    // Application de la force de collision
+    appliquerForce(f);
+    p.appliquerForce(-f);
+}
