@@ -20,15 +20,15 @@ public:
 class JambonHexa : public Jambon
 {
 public:
-    JambonHexa(Vecteur(origine), Particule* particules)
-     : m_o(origine), m_part(particules)
+    JambonHexa(Vecteur(origine), Particule* particules, double L)
+     : m_o(origine), m_part(particules), m_l(L)
     {}
 
-    void init(double L)
+    void init()
     {
-        Vecteur v1(L * sqrt(3.0)/2.0,0.5 * L);
-        Vecteur v2(L * sqrt(3.0),0.0 * L);
-        Vecteur v3(0.0, L);
+        Vecteur v1(m_l * sqrt(3.0)/2.0,0.5 * m_l);
+        Vecteur v2(m_l * sqrt(3.0),0.0 * m_l);
+        Vecteur v3(0.0, m_l);
         for(int i = 0 ; i < C ; i++)
         {
             for(int j = 0 ; j < C ; j++)
@@ -75,19 +75,20 @@ public:
 private:
     Vecteur m_o;
     Particule* m_part;
+    double m_l;
 };
 
 class JambonCarre : public Jambon
 {
 public:
-    JambonCarre(Vecteur(origine), Particule* particules)
-     : m_o(origine), m_part(particules)
+    JambonCarre(Vecteur(origine), Particule* particules, double L)
+     : m_o(origine), m_part(particules), m_l(L)
     {}
 
-    void init(double L)
+    void init()
     {
-        Vecteur v1(L, 0.0);
-        Vecteur v2(0.0, L);
+        Vecteur v1(m_l, 0.0);
+        Vecteur v2(0.0, m_l);
         for(int i = 0 ; i < C ; i++)
         {
             for(int j = 0 ; j < C ; j++)
@@ -115,6 +116,7 @@ public:
 private:
     Vecteur m_o;
     Particule* m_part;
+    double m_l;
 };
 
 class ActionCohesion1 : public ActionClavier
@@ -156,10 +158,10 @@ void demoCohesion(double L, double L0, double K, double CC)
     for(int i = 0 ; i < nbPart ; i++)
         particules[i] = refP;
 
-    JambonHexa j1(Vecteur(80.5, 25.5), particules);
-    j1.init(L);
-    JambonCarre j2(Vecteur(10.5, 25.5), particules+JambonHexa::nbPart());
-    j2.init(L);
+    JambonHexa j1(Vecteur(80.5, 25.5), particules, L);
+    j1.init();
+    JambonCarre j2(Vecteur(10.5, 25.5), particules+JambonHexa::nbPart(), L);
+    j2.init();
 
     // Création de la grille
     Grille g(200, 120, 16, 16, particules, nbPart);

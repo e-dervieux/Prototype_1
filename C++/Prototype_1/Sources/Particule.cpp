@@ -152,6 +152,7 @@ void Particule::surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint
 void Particule::collision(Particule& p, double dt)
 {
     // A ce stade, p et cette particule sont dans la même "boîte"
+    // d'après les coordonnées en double, les coordonnées entières ne sont pas les mêmes
 
     double xCol, yCol; // Coordonnées double de la collision (au bord de la "boîte" de p)
     double vx = m_v.getX();
@@ -211,10 +212,13 @@ void Particule::collision(Particule& p, double dt)
             Point((double)p.m_x+0.5,(double)p.m_y+0.5), // Centre
             Point(xCol,yCol) ); // Point de collision
     Vecteur vr = m_v - p.m_v; // Vitesse relative
-    Vecteur dv = -2.0 * (vr*n)/n.normeCarre()*n; // Variation de vitesse à la collision
-    Vecteur f = 1.0/getMasse()/dt * dv; // Force correspondante sur cette particule
+    double m1 = getMasse();
+    double m2 = p.getMasse();
+    Vecteur f = -2.0 * m1*m2/(m1+m2) / dt / n.normeCarre()*(vr*n)*n; // Force correspondante sur cette particule
 
     // Application de la force de collision
     appliquerForce(f);
     p.appliquerForce(-f);
+
+    std::cout << "Collision : f=(" << f.getX() << ", " << f.getY() << ")" << std::endl;
 }

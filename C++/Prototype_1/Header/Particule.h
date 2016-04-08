@@ -1,6 +1,7 @@
 #ifndef PARTICULE_H_INCLUDED
 #define PARTICULE_H_INCLUDED
 
+#include <iostream> // DEBUG
 #include <vector>
 #include "Vecteur.h"
 #include "Matiere.h"
