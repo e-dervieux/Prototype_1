@@ -53,7 +53,7 @@ void demoGraphique1()
     particules[1] = Particule(3,3,&matiere); // P1
 
     // Création de la matrice
-    MatriceParticules m(4,4,4,4, particules, 2);
+    MatriceParticules m(16,16,4,4, particules, 2);
 
     // Application d'une force
     particules[1].appliquerForce(Vecteur(1.0,0.5));

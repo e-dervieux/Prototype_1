@@ -1,7 +1,7 @@
 #include "../Header/SceneSDL.h"
 
-SceneSDL::SceneSDL(Grille& grille, ActionClavier& actionClavier, int config)
- : m_grille(grille), m_actionClavier(actionClavier), m_clavier(def::NB_TOUCHES, false)
+SceneSDL::SceneSDL(MatriceParticules& mat, ActionClavier& actionClavier, int config)
+ : m_mat(mat), m_actionClavier(actionClavier), m_clavier(def::NB_TOUCHES, false)
 {
     // Chargement de la SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -79,7 +79,7 @@ void SceneSDL::bouclePrincipale()
                 dt = def::dtMax;
 
             // Mouvement
-            m_grille.actualiser(0.003); // DEBUG (mettre dt sinon)
+            m_mat.actualiser(0.003); // DEBUG (mettre dt sinon)
 
             // Actualisation du rendu
             affichage(continuer);
@@ -217,11 +217,14 @@ void SceneSDL::affichage(bool& continuer)
     SDL_RenderClear(m_rendu);
 
     // Construction du rendu
-    m_grille.afficher(m_rendu, def::partPP, def::taillePixel);
+    m_mat.afficher(m_rendu, def::partPP, def::taillePixel);
 
     // Affichage de la grille
     if (def::grilleAffichee)
         afficherGrille();
+
+    SDL_SetRenderDrawColor(m_rendu,0,255,0,128);
+    m_mat.afficherLiaisons(m_rendu,1,10); // SUPPRIMER CETTE F*CKING CLASSE GRILLE
 
     // Actualisation du rendu
     SDL_RenderPresent(m_rendu);

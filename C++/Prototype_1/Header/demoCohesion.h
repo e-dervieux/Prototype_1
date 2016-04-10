@@ -122,8 +122,8 @@ private:
 class ActionCohesion1 : public ActionClavier
 {
 public:
-    ActionCohesion1(Jambon & j1, Jambon & j2, Grille& g)
-     : m_j1(j1),m_j2(j2),  m_g(g)
+    ActionCohesion1(Jambon & j1, Jambon & j2, MatriceParticules& m)
+     : m_j1(j1),m_j2(j2),  m_m(m)
     {}
     virtual void operator()(std::vector<bool>& clavier, bool& continuer)
     {
@@ -131,7 +131,7 @@ public:
         {
             m_j1.init();
             m_j2.init();
-            m_g.reinit();
+            m_m.reinit();
         }
         else if (clavier[def::K_SHIFT])
             SDL_Delay(200);
@@ -140,7 +140,7 @@ public:
 private:
     Jambon & m_j1;
     Jambon & m_j2;
-    Grille& m_g;
+    MatriceParticules& m_m;
 };
 
 void demoCohesion(double L, double L0, double K, double CC)
@@ -164,11 +164,11 @@ void demoCohesion(double L, double L0, double K, double CC)
     j2.init();
 
     // Création de la grille
-    Grille g(200, 120, 16, 16, particules, nbPart);
+    MatriceParticules mat(200, 120, 16, 16, particules, nbPart);
 
     // Lancement de la scène SDL
-    ActionCohesion1 a(j1, j2, g);
-    SceneSDL scene(g, a);
+    ActionCohesion1 a(j1, j2, mat);
+    SceneSDL scene(mat, a);
     try
     {
         scene.bouclePrincipale();

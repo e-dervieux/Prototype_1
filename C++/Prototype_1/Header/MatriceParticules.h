@@ -14,25 +14,28 @@ class MatriceParticules
     friend void demoMatriceParticules();
 
 public:
-    MatriceParticules(int mpX, int mpY, int smX, int smY, Particule* particules, int nbParticules);
+    MatriceParticules(int w, int h, int smX, int smY, Particule* particules, int nbParticules);
     ~MatriceParticules();
 
     void ajouterParticules(); // Ajoute les particules de m_particules dans la matrice
     void reinit(); // Réinitialise la matrice de particules à partir du tableau
     // particules, afin qu'elle soit gérée de manière correcte.
 
-    bool estValide(Particule& p);
+    bool estValide(Particule& p); // Indique si une particule est bien dans la matrice
 
     void forcesLiaison(); // Calcule et applique les forces de liaison entre les particules
     void calculerDeplacement(double dt); //  Calcule la prochaine position des particules
     void deplacer(double dt); // Effectue le d�placement des particules dans la matrice
+    void actualiser(double dt); // Calcule la frame suivante, à partir des méothodes ci-dessus
 
     void afficher(SDL_Renderer* rendu, int partPP, int taillePixel); // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
+    void afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel);
 
     Particule* get(int x, int y);
     Particule** getSM(int i, int j) { return m_tabSM[i*m_mpY+j]; }
 
 private:
+    int m_w, m_h;
     int m_mpX, m_mpY;
     int m_smX, m_smY;
     Particule* m_part; // Tableau des particules à gérer

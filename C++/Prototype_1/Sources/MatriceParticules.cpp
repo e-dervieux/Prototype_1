@@ -2,13 +2,13 @@
 
 int nbC = 0;
 
-MatriceParticules::MatriceParticules(int mpX, int mpY, int smX, int smY, Particule* particules, int nbParticules)
- : m_mpX(mpX), m_mpY(mpY), m_smX(smX), m_smY(smY), m_part(particules), m_nbPart(nbParticules)
+MatriceParticules::MatriceParticules(int w, int h, int smX, int smY, Particule* particules, int nbParticules)
+ : m_w(w), m_h(h), m_mpX((int)ceil((double)w/(double)smX)), m_mpY((int)ceil((double)h/(double)smY)), m_smX(smX), m_smY(smY), m_part(particules), m_nbPart(nbParticules)
 {
     // Initialisation des tableaux
-    m_tabSM = new Particule**[mpX*mpY];
-    m_tabCnt = new int[mpX*mpY];
-    for(int i = 0 ; i < mpX*mpY ; i++)
+    m_tabSM = new Particule**[m_mpX*m_mpY];
+    m_tabCnt = new int[m_mpX*m_mpY];
+    for(int i = 0 ; i < m_mpX*m_mpY ; i++)
     {
         m_tabSM[i]=NULL;
         m_tabCnt[i]=0;
@@ -63,7 +63,7 @@ bool MatriceParticules::estValide(Particule &p)
 {
     int x = p.getXInt();
     int y = p.getYInt();
-    return (x >= 0 && x < m_mpX*m_smX && y >= 0 && y < m_mpY*m_smY);
+    return (x >= 0 && x < m_w && y >= 0 && y < m_h);
 }
 
 void MatriceParticules::forcesLiaison()
@@ -134,6 +134,18 @@ void MatriceParticules::deplacer(double dt)
             }
         }
     }
+}
+
+void MatriceParticules::actualiser(double dt)
+{
+    // Calculer la force à appliquer et l'appliquer à chaque particule
+    forcesLiaison();
+
+    // Modifier les coordonnées de ces particules
+    calculerDeplacement(dt);
+
+    // Deplacer effectivement ces coordonnées dans la grille
+    deplacer(dt);
 }
 
 void MatriceParticules::afficher(SDL_Renderer* rendu, int partPP, int taillePixel)
@@ -231,6 +243,12 @@ void MatriceParticules::afficher(SDL_Renderer* rendu, int partPP, int taillePixe
     {
         // Utile ?
     }
+}
+
+void MatriceParticules::afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel)
+{
+    for(int i = 0 ; i < m_nbPart ; i++)
+        m_part[i].afficherLiaisons(rendu, partPP, taillePixel);
 }
 
 void MatriceParticules::set(int x, int y, Particule *p)

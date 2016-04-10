@@ -44,7 +44,9 @@ void demoCollision1()
         SDL_SetRenderDrawColor(rendu,255,255,255,255);
         SDL_RenderClear(rendu);
         m.afficher(rendu, 1, 10);
+
         //afficherGrille(rendu, 32, 32, 10, 4, 4);
+
         SDL_RenderPresent(rendu);
         SDL_Delay(100);
     }

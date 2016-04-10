@@ -149,6 +149,20 @@ void Particule::surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint
     SDL_RenderFillRect(rendu, &rect);
 }
 
+void Particule::afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel)
+{
+    double echelle = taillePixel/partPP;
+
+    for(int i = 0 ; i < def::nbLiaisons ; i++)
+    {
+        Particule* p = m_liaisons[i];
+        if (p != NULL)
+            SDL_RenderDrawLine(rendu,
+                               (int)(echelle*m_pos.getX()),(int)(echelle*m_pos.getY()),
+                               (int)(echelle*p->m_pos.getX()),(int)(echelle*p->m_pos.getY()));
+    }
+}
+
 void Particule::collision(Particule& p, double dt)
 {
     // A ce stade, p et cette particule sont dans la même "boîte"

@@ -33,7 +33,7 @@ void demoLiaison()
     particules[0].lier(&particules[1]);
 
     // Création de la matrice
-    MatriceParticules m(8,8,4,4, particules, 2);
+    MatriceParticules m(32,32,4,4, particules, 2);
 
     for(int i = 0 ; i < 500 ; i++)
     {

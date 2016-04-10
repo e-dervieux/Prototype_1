@@ -8,7 +8,7 @@
 
 #include "Definitions.h"
 #include "Erreur.h"
-#include "Grille.h"
+#include "MatriceParticules.h"
 
 struct ActionClavier
 { virtual void operator()(std::vector<bool>& clavier, bool & continuer) = 0; };
@@ -16,7 +16,7 @@ struct ActionClavier
 class SceneSDL
 {
 public:
-    SceneSDL(Grille& grille, ActionClavier& action, int config = 1);
+    SceneSDL(MatriceParticules& mat, ActionClavier& action, int config = 1);
     ~SceneSDL();
 
     void init(int config);
@@ -28,7 +28,7 @@ public:
 
 private:
     std::string m_titre;
-    Grille& m_grille;
+    MatriceParticules& m_mat;
     ActionClavier& m_actionClavier;
     int m_config;
 
