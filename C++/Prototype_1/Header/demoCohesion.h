@@ -127,6 +127,8 @@ public:
     {}
     virtual void operator()(std::vector<bool>& clavier, bool& continuer)
     {
+        SceneSDL::acDefaut(clavier,continuer);
+
         if (clavier[def::K_ESPACE])
         {
             m_j1.init();
@@ -145,7 +147,8 @@ private:
 
 void demoCohesion(double L, double L0, double K, double CC)
 {
-    def::redefinir(200,120,5,true,true,16,4);
+    def::redefGrille(200,120,5,1,false);
+    def::redefTemp(true, 0.003, 0);
 
     // Création de la matière
     SDL_Color c = {255, 0, 0, 255};

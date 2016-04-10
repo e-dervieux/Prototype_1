@@ -5,23 +5,61 @@ namespace def
     int width;
     int height;
     int taillePixel;
-    int partPP;
-    bool grilleAffichee;
-    bool divisionsAffichees;
-    int pasGrille;
-    int divisionGrille;
+    int partPP = 1;
+    bool grilleAffichee = false;
+    bool divisionsAffichees = false;
+    int pasGrille = 5;
+    int divisionGrille = 5;
+
+    bool liaisonsAffichees = false;
+
+    bool pasFixe = false;
+    double dtMax = 0.1;
+    Uint32 delaiEntreFrames = 0;
 
     int nbLiaisons = 6;
-    double dtMax = 0.15; // Intervalle max consid�r� entre 2 frames (en s)
 
-    void redefinir(int w, int h, int tp, bool ga, bool da, int pg, int dg)
+    void redefGrille(int width, int height, int taillePixel, int partPP,
+                     bool grilleAffichee, bool divisionsAffichees, int pasGrille, int divisionGrille)
     {
-        width = w;
-        height = h;
-        taillePixel = tp;
-        grilleAffichee = ga;
-        divisionsAffichees = da;
-        pasGrille = pg;
-        divisionGrille = dg;
+        def::width = width;
+        def::height = height;
+        def::taillePixel = taillePixel;
+        def::partPP = partPP;
+        def::grilleAffichee = grilleAffichee;
+        def::divisionsAffichees = divisionsAffichees;
+        def::divisionGrille = divisionGrille;
+    }
+
+    void redefTemp(bool pasFixe, double dtMax, Uint32 delaiEntreFrames)
+    {
+        def::pasFixe = pasFixe;
+        def::dtMax = dtMax;
+        def::delaiEntreFrames = delaiEntreFrames;
+    }
+
+
+    void echellePlus()
+    {
+        if (taillePixel > 1)
+        {
+            partPP *= 2;
+            pasGrille /= 2;
+            taillePixel *= 2;
+            width /= 2;
+            height /= 2;
+        }
+    }
+
+    void echelleMoins()
+    {
+        if (partPP > 1)
+        {
+            partPP /= 2;
+            pasGrille *= 2;
+            taillePixel /= 2;
+            width *= 2;
+            height *= 2;
+        }
     }
 }

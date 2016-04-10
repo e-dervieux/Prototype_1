@@ -13,6 +13,16 @@
 struct ActionClavier
 { virtual void operator()(std::vector<bool>& clavier, bool & continuer) = 0; };
 
+class ActionClavierDefaut : public ActionClavier
+{
+public:
+    ActionClavierDefaut() : m_plusTraite(false), m_moinsTraite(false) {}
+    virtual void operator()(std::vector<bool>& clavier, bool & continuer);
+
+private:
+    bool m_plusTraite, m_moinsTraite; // Pour ne détecter que l'appui
+};
+
 class SceneSDL
 {
 public:
@@ -26,6 +36,8 @@ public:
     void afficherGrille();
     void gererEvent(bool& continuer, bool& recommencer);
 
+    static ActionClavierDefaut acDefaut;
+
 private:
     std::string m_titre;
     MatriceParticules& m_mat;
@@ -37,9 +49,6 @@ private:
     SDL_Event m_event;
 
     std::vector<bool> m_clavier;
-
-    void echellePlus();
-    void echelleMoins();
 };
 
 #endif // SCENESDL_H_INCLUDED

@@ -247,6 +247,8 @@ void MatriceParticules::afficher(SDL_Renderer* rendu, int partPP, int taillePixe
 
 void MatriceParticules::afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel)
 {
+    SDL_SetRenderDrawColor(rendu, 0,255,0,60);
+
     for(int i = 0 ; i < m_nbPart ; i++)
         m_part[i].afficherLiaisons(rendu, partPP, taillePixel);
 }

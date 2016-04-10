@@ -25,7 +25,7 @@ public:
 
     void forcesLiaison(); // Calcule et applique les forces de liaison entre les particules
     void calculerDeplacement(double dt); //  Calcule la prochaine position des particules
-    void deplacer(double dt); // Effectue le d�placement des particules dans la matrice
+    void deplacer(double dt); // Effectue le déplacement des particules dans la matrice
     void actualiser(double dt); // Calcule la frame suivante, à partir des méothodes ci-dessus
 
     void afficher(SDL_Renderer* rendu, int partPP, int taillePixel); // Calcule les couleurs des pixels, et les affiche sur le rendu SDL

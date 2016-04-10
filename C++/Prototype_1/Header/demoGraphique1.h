@@ -35,7 +35,7 @@ void afficherGrille(SDL_Renderer* rendu, int w, int h, int echelle, int pasGrill
 
 void demoGraphique1()
 {
-    def::redefinir(16,16,10,true,true,4,4);
+    def::redefGrille(16,16,10,1,true,true,4,4);
 
     // Initiation de la fenetre
     SDL_Init(SDL_INIT_VIDEO);

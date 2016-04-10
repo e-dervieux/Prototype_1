@@ -5,7 +5,7 @@
 
 void demoCollision1()
 {
-    def::redefinir(16,16,10,true,true,4,4);
+    def::redefGrille(16,16,10,1,true,true,4,4);
 
     // Initiation de la fenetre
     SDL_Init(SDL_INIT_VIDEO);
@@ -27,7 +27,7 @@ void demoCollision1()
     particules[3] = Particule(25,25,&matieres[3]); // P3
 
     // Création de la matrice
-    MatriceParticules m(8,8,4,4, particules, 4);
+    MatriceParticules m(32,32,4,4, particules, 4);
 
     // Application des vitesses de base
     particules[0].setV(Vecteur(5.0,0.0));

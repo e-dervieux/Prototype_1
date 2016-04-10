@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/Sources/Erreur.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/MatriceParticules.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/main.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Sources/Grille.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Particule.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/SceneSDL.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Sources/Definitions.cpp" isTestSource="false" />
@@ -22,7 +21,6 @@
       <sourceFolder url="file://$MODULE_DIR$/Header/MatriceParticules.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceParticules.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoGraphique1.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/Grille.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoCollision1.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/SceneSDL.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoLiaison.h" isTestSource="false" />

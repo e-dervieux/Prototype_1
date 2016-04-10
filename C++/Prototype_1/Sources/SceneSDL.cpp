@@ -1,6 +1,27 @@
 #include "../Header/SceneSDL.h"
 
-SceneSDL::SceneSDL(MatriceParticules& mat, ActionClavier& actionClavier, int config)
+// Définition des actions par défaut de la scène
+void ActionClavierDefaut::operator()(std::vector<bool> &clavier, bool &continuer)
+{
+    if (clavier[def::K_KP_PLUS] && !m_plusTraite)
+    {
+        def::echellePlus();
+        m_plusTraite = true;
+    }
+    else if (!clavier[def::K_KP_PLUS])
+        m_plusTraite = false;
+
+    if (clavier[def::K_KP_MOINS] && !m_moinsTraite)
+    {
+        def::echelleMoins();
+        m_moinsTraite = true;
+    }
+    else if (!clavier[def::K_KP_MOINS])
+        m_moinsTraite = false;
+}
+ActionClavierDefaut SceneSDL::acDefaut;
+
+SceneSDL::SceneSDL(MatriceParticules& mat, ActionClavier& actionClavier = acDefaut, int config)
  : m_mat(mat), m_actionClavier(actionClavier), m_clavier(def::NB_TOUCHES, false)
 {
     // Chargement de la SDL
@@ -37,8 +58,9 @@ void SceneSDL::init(int config)
     m_config = config;
 
     // Chargement de la fenetre
+    int marge = (def::grilleAffichee) ? 1 : 0;
     m_fenetre = SDL_CreateWindow(m_titre.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                 def::taillePixel*def::width+1, def::taillePixel*def::height+1, 0);
+                                 def::taillePixel*def::width+marge, def::taillePixel*def::height+marge, 0);
     if (m_fenetre == NULL)
         throw Erreur(3, "Echec du chargement de la fenetre");
 
@@ -72,14 +94,22 @@ void SceneSDL::bouclePrincipale()
 
         if (!recommencer)
         {
-            t2 = clock();
-            dt = (double)(t2 - t1)/CLOCKS_PER_SEC;
-            t1 = t2;
-            if (dt > def::dtMax)
+            // Délai entre frames
+            SDL_Delay(def::delaiEntreFrames);
+
+            if (!def::pasFixe)
+            {
+                t2 = clock();
+                dt = (double)(t2 - t1)/CLOCKS_PER_SEC;
+                t1 = t2;
+                if (dt > def::dtMax)
+                    dt = def::dtMax;
+            }
+            else
                 dt = def::dtMax;
 
             // Mouvement
-            m_mat.actualiser(0.003); // DEBUG (mettre dt sinon)
+            m_mat.actualiser(dt);
 
             // Actualisation du rendu
             affichage(continuer);
@@ -88,7 +118,6 @@ void SceneSDL::bouclePrincipale()
             recommencer = false;
     }
 }
-
 
 void SceneSDL::gererEvent(bool & continuer, bool& recommencer)
 {
@@ -130,10 +159,10 @@ void SceneSDL::gererEvent(bool & continuer, bool& recommencer)
             break;
 
         case SDLK_KP_PLUS:
-            echellePlus();
+            m_clavier[def::K_KP_PLUS] = true;
             break;
         case SDLK_KP_MINUS:
-            echelleMoins();
+            m_clavier[def::K_KP_MOINS] = true;
             break;
 
         case SDLK_RIGHT:
@@ -172,6 +201,13 @@ void SceneSDL::gererEvent(bool & continuer, bool& recommencer)
     case SDL_KEYUP:
         switch(m_event.key.keysym.sym)
         {
+        case SDLK_KP_PLUS:
+            m_clavier[def::K_KP_PLUS] = false;
+            break;
+        case SDLK_KP_MINUS:
+            m_clavier[def::K_KP_MOINS] = false;
+            break;
+
         case SDLK_RIGHT:
             m_clavier[def::K_DROITE] = false;
             break;
@@ -223,8 +259,8 @@ void SceneSDL::affichage(bool& continuer)
     if (def::grilleAffichee)
         afficherGrille();
 
-    SDL_SetRenderDrawColor(m_rendu,0,255,0,128);
-    m_mat.afficherLiaisons(m_rendu,1,10); // SUPPRIMER CETTE F*CKING CLASSE GRILLE
+    if (def::liaisonsAffichees)
+        m_mat.afficherLiaisons(m_rendu, def::partPP, def::taillePixel);
 
     // Actualisation du rendu
     SDL_RenderPresent(m_rendu);
@@ -258,29 +294,5 @@ void SceneSDL::afficherGrille()
             SDL_RenderDrawLine(m_rendu, 0, j*def::taillePixel+1, def::width*def::taillePixel, j*def::taillePixel+1);
             SDL_RenderDrawLine(m_rendu, 0, j*def::taillePixel-1, def::width*def::taillePixel, j*def::taillePixel-1);
         }
-    }
-}
-
-void SceneSDL::echellePlus()
-{
-    if (def::taillePixel > 1)
-    {
-        def::partPP *= 2;
-        def::pasGrille /= 2;
-        def::taillePixel *= 2;
-        def::width /= 2;
-        def::height /= 2;
-    }
-}
-
-void SceneSDL::echelleMoins()
-{
-    if (def::partPP > 1)
-    {
-        def::partPP /= 2;
-        def::pasGrille *= 2;
-        def::taillePixel /= 2;
-        def::width *= 2;
-        def::height *= 2;
     }
 }
