@@ -35,8 +35,7 @@ void afficherGrille(SDL_Renderer* rendu, int w, int h, int echelle, int pasGrill
 
 void demoGraphique1()
 {
-    def::redefinir(16,16,10,true,4,4);
-    def::partPP = 1;
+    def::redefGrille(16,16,10,1,true,true,4,4);
 
     // Initiation de la fenetre
     SDL_Init(SDL_INIT_VIDEO);
@@ -54,20 +53,20 @@ void demoGraphique1()
     particules[1] = Particule(3,3,&matiere); // P1
 
     // Création de la matrice
-    MatriceParticules m(4,4,4,4, particules, 2);
+    MatriceParticules m(16,16,4,4, particules, 2);
 
     // Application d'une force
-    particules[0].appliquerForce(Vecteur(1.0,0.5));
+    particules[1].appliquerForce(Vecteur(1.0,0.5));
 
     for(int i = 0 ; i < 15 ; i++)
     {
         m.calculerDeplacement(1.0);
-        m.deplacer();
+        m.deplacer(0.5);
 
         // Affichage
         SDL_SetRenderDrawColor(rendu,255,255,255,255);
         SDL_RenderClear(rendu);
-        m.afficher(rendu, 4, 10);
+        m.afficher(rendu, 1, 10);
         afficherGrille(rendu, 32, 32, 10, 4, 4);
         SDL_RenderPresent(rendu);
         SDL_Delay(500);

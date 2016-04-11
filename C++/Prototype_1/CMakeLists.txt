@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(Prototype_1)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lmingw32 -lSDL2main -lSDL2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lmingw32 -lSDL2main -lSDL2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lshell32 -lversion -luuid -static-libgcc")
 
@@ -19,9 +19,14 @@ set(SOURCE_FILES    Sources/main.cpp
                     Header/MatriceCreuse.h
                     Header/MatriceParticules.h  Sources/MatriceParticules.cpp
                     Header/Matiere.h            Sources/Matiere.cpp
-                    Header/Grille.h             Sources/Grille.cpp
                     Header/Erreur.h             Sources/Erreur.cpp
-                    Header/Definitions.h        Sources/Definitions.cpp Header/demoMatriceCreuse.h Header/demoMatriceParticules.h Header/demoGraphique1.h Header/demoLiaison.h)
+                    Header/Definitions.h        Sources/Definitions.cpp
+                    Header/demoMatriceCreuse.h
+                    Header/demoMatriceParticules.h
+                    Header/demoGraphique1.h
+                    Header/demoLiaison.h
+                    Header/demoCohesion.h
+                    Header/demoCollision1.h)
 
 add_executable(Prototype_1 ${SOURCE_FILES})
 

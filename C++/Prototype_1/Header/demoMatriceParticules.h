@@ -23,7 +23,7 @@ void demoMatriceParticules()
     particules[1] = Particule(3,3,&matiere); // P1
 
     // Création de la matrice
-    MatriceParticules m(4,4,4,4, particules, 2);
+    MatriceParticules m(16,16,4,4, particules, 2);
 
     // Affichage
     std::cout << "Ajout de 2 particules en (2,2) et (3,3) :" << std::endl;
@@ -34,7 +34,7 @@ void demoMatriceParticules()
     std::cout << "   ----------" << std::endl << std::endl;
     std::cout << "On bouge la particule de (3.5,3.5) a (3.7,5.1)" << std::endl;
     particules[1].setPos(Vecteur(3.7,5.1));
-    m.deplacer();
+    m.deplacer(0.0);
     afficherMat(m.m_tabCnt,4,4);
     std::cout << "Sous-matrice (0,0) :" << std::endl;
     afficherMat(m.getSM(0,0),4,4);

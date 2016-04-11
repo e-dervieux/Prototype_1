@@ -9,7 +9,7 @@ class Particule;
 class Matiere
 {
 public:
-    Matiere(SDL_Color couleur, double masse, double l0, double raideur, double amortissement);
+    Matiere(SDL_Color couleur = {255,255,255,0}, double masse = 1.0, double l0 = 0.0, double raideur = 0.0, double amortissement = 0.0);
 
     double getMasse(const Particule& p) const;
     SDL_Color getCouleur() const { return m_couleur; }
