@@ -28,6 +28,7 @@ namespace def
         def::partPP = partPP;
         def::grilleAffichee = grilleAffichee;
         def::divisionsAffichees = divisionsAffichees;
+        def::pasGrille = pasGrille;
         def::divisionGrille = divisionGrille;
     }
 

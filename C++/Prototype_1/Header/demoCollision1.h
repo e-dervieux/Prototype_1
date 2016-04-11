@@ -31,6 +31,8 @@ public:
                 m_part[3].setV(Vecteur(-5.0,0.0));
         }
         m_titre = "Test de collisions entre particules (non liees)";
+
+        m_mat.reinit();
     }
 
 private:
@@ -53,7 +55,7 @@ void demoCollision1()
     // On crée au préalable les particules
     Particule* particules = new Particule[NB_PART];
     for(int i = 0 ; i < NB_PART ; i++)
-        particules[i] = Particule(0,0,&matieres[i]);
+        particules[i] = Particule(-1,-1,&matieres[i]);
 
     // Création de la matrice
     MatriceParticules m(32,32,4,4, particules, NB_PART);

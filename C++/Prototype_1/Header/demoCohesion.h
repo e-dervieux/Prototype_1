@@ -166,13 +166,6 @@ public:
         std::stringstream tmp;
         tmp << "Test de cohésion : k = " << m_k << ", c = " << m_cc;
         m_titre = tmp.str();
-
-        if (m_config != config)
-        {
-            def::pasGrille = 16;
-            def::partPP = 1;
-        }
-        def::divisionGrille = 5;
     }
 
 private:
