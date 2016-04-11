@@ -1,7 +1,3 @@
-//
-// Created by Marc on 10/02/2016.
-//
-
 #ifndef PROTOTYPE_1_DEMOLIAISON_H
 #define PROTOTYPE_1_DEMOLIAISON_H
 

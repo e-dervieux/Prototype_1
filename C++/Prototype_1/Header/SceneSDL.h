@@ -10,45 +10,32 @@
 #include "Erreur.h"
 #include "MatriceParticules.h"
 
-struct ActionClavier
-{ virtual void operator()(std::vector<bool>& clavier, bool & continuer) = 0; };
-
-class ActionClavierDefaut : public ActionClavier
-{
-public:
-    ActionClavierDefaut() : m_plusTraite(false), m_moinsTraite(false) {}
-    virtual void operator()(std::vector<bool>& clavier, bool & continuer);
-
-private:
-    bool m_plusTraite, m_moinsTraite; // Pour ne détecter que l'appui
-};
-
 class SceneSDL
 {
 public:
-    SceneSDL(MatriceParticules& mat, ActionClavier& action, int config = 1);
+    SceneSDL(MatriceParticules& mat, int config = 1);
     ~SceneSDL();
 
-    void init(int config);
-    void reinit(int config);
-    void bouclePrincipale();
-    void affichage(bool& continuer);
-    void afficherGrille();
-    void gererEvent(bool& continuer, bool& recommencer);
+    virtual void charger(int config) = 0; // Charge la configuration config
+    virtual void init(int config); // Initialise la scène après avoir chargé la configuration
+    virtual void reinit(int config); // Réinitialise la scène : reset, puis init()
+    void bouclePrincipale(); // BOUCLE A APPELER POUR FAIRE TOURNER A SCNENE
+    void affichage(bool& continuer); // Fonction d'affichage
+    void afficherGrille(); // Affichage de la grille de debug
+    void gererEvent(bool& continuer, bool& recommencer); // Gère les évènements SDL : actions de base, actualisation du clavier
+    virtual void actionClavier(bool& continuer, bool& recommencer); // Action à faire à partir du clavier
 
-    static ActionClavierDefaut acDefaut;
-
-private:
+protected:
     std::string m_titre;
     MatriceParticules& m_mat;
-    ActionClavier& m_actionClavier;
     int m_config;
 
     SDL_Window* m_fenetre;
     SDL_Renderer* m_rendu;
     SDL_Event m_event;
 
-    std::vector<bool> m_clavier;
+    std::vector<bool> m_clavier; // Un booléen par touche : touche appuyée ou non
+    bool m_plusTraite, m_moinsTraite; // Pour gérer le moment d'appui d'une touche
 };
 
 #endif // SCENESDL_H_INCLUDED

@@ -55,8 +55,12 @@ void MatriceParticules::reinit()
         }
     }
 
-    // Rajout des particules
+    // Rajout des particules dans la matrice
     ajouterParticules();
+
+    // Suppression des forces rémanentes
+    for(int i = 0 ; i < m_nbPart ; i++)
+        m_part[i].annulerForces();
 }
 
 bool MatriceParticules::estValide(Particule &p)

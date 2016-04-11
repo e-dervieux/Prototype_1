@@ -33,6 +33,7 @@ public:
 
     void appliquerForce(Vecteur f);
     void appliquerForcesLiaison();
+    void annulerForces() { m_resf = Vecteur(); }
     void collision(Particule& p, double dt); // Applique la force de collision avec p ET repositionne cette particule
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     void calculerDeplacement(double dt);

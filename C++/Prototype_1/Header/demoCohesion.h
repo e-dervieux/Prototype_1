@@ -5,6 +5,7 @@
 #ifndef PROTOTYPE_1_DEMOCOHESION_H
 #define PROTOTYPE_1_DEMOCOHESION_H
 
+#include <sstream>
 #include "demoLiaison.h"
 #include "SceneSDL.h"
 
@@ -119,34 +120,74 @@ private:
     double m_l;
 };
 
-class ActionCohesion1 : public ActionClavier
+class SceneDemoCohesion : public SceneSDL
 {
 public:
-    ActionCohesion1(Jambon & j1, Jambon & j2, MatriceParticules& m)
-     : m_j1(j1),m_j2(j2),  m_m(m)
-    {}
-    virtual void operator()(std::vector<bool>& clavier, bool& continuer)
+    SceneDemoCohesion(MatriceParticules& mat, Jambon & j1, Jambon & j2, Matiere& m)
+     : SceneSDL(mat), m_j1(j1), m_j2(j2), m_m(m)
     {
-        SceneSDL::acDefaut(clavier,continuer);
+        init(1);
+    }
 
-        if (clavier[def::K_ESPACE])
+    virtual void actionClavier(bool& continuer, bool& recommencer)
+    {
+        SceneSDL::actionClavier(continuer, recommencer);
+
+        if (m_clavier[def::K_SHIFT])
+            def::delaiEntreFrames = 150;
+        else
+            def::delaiEntreFrames = 0;
+    }
+
+    void charger(int config)
+    {
+        m_j1.init();
+        m_j2.init();
+        m_mat.reinit();
+
+        SDL_Color rouge = {255,0,0,255};
+        switch(config)
         {
-            m_j1.init();
-            m_j2.init();
-            m_m.reinit();
+            case 2:
+                m_k = 800.0;
+                m_cc = 85.0;
+                break;
+
+            case 3:
+                m_k = 1000.0;
+                m_cc = 100.0;
+                break;
+
+            default:
+                m_k = 500.0;
+                m_cc = 60.0;
         }
-        else if (clavier[def::K_SHIFT])
-            SDL_Delay(200);
+        m_m = Matiere(rouge,1.0,3.0,m_k,m_cc);
+        std::stringstream tmp;
+        tmp << "Test de cohésion : k = " << m_k << ", c = " << m_cc;
+        m_titre = tmp.str();
+
+        if (m_config != config)
+        {
+            def::pasGrille = 16;
+            def::partPP = 1;
+        }
+        def::divisionGrille = 5;
     }
 
 private:
     Jambon & m_j1;
     Jambon & m_j2;
-    MatriceParticules& m_m;
+
+    Matiere& m_m;
+    double m_k, m_cc;
 };
 
-void demoCohesion(double L, double L0, double K, double CC)
+void demoCohesion()
 {
+    double L = 5.0;
+    double L0, K, CC; // Initialisés par la scène
+
     def::redefGrille(200,120,5,1,false);
     def::redefTemp(true, 0.003, 0);
 
@@ -170,16 +211,9 @@ void demoCohesion(double L, double L0, double K, double CC)
     MatriceParticules mat(200, 120, 16, 16, particules, nbPart);
 
     // Lancement de la scène SDL
-    ActionCohesion1 a(j1, j2, mat);
-    SceneSDL scene(mat, a);
-    try
-    {
-        scene.bouclePrincipale();
-    }
-    catch(Erreur& e)
-    {
-        std::cout << "Erreur !!" << std::endl << e.what() << std::endl;
-    }
+    SceneDemoCohesion scene(mat, j1, j2, m);
+    try { scene.bouclePrincipale(); }
+    catch(Erreur& e) { std::cout << "Erreur !!" << std::endl << e.what() << std::endl; }
 
     delete[] particules;
 }

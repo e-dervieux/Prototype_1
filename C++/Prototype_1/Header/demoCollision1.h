@@ -1,60 +1,67 @@
 #ifndef PROTOTYPE_1_DEMOCOLLISION1_H
 #define PROTOTYPE_1_DEMOCOLLISION1_H
 
-#include "../Header/demoCohesion.h"
+#include <sstream>
+#include "SceneSDL.h"
+
+#define NB_PART 4
+
+class SceneDemoCollision1 : public SceneSDL
+{
+public:
+    SceneDemoCollision1(MatriceParticules& mat, Particule* part, Matiere* matieres)
+     : SceneSDL(mat), m_part(part), m_matieres(matieres)
+    {
+        init(1);
+    }
+
+    void charger(int config)
+    {
+        switch(config)
+        {
+            default:
+                m_part[0].setPosInt(Vecteur(5.5,5.5));
+                m_part[1].setPosInt(Vecteur(25.5,5.5));
+                m_part[2].setPosInt(Vecteur(5.5,25.5));
+                m_part[3].setPosInt(Vecteur(25.5,25.5));
+
+                m_part[0].setV(Vecteur(5.0,0.0));
+                m_part[1].setV(Vecteur(-5.0,0.0));
+                m_part[2].setV(Vecteur(5.0,0.0));
+                m_part[3].setV(Vecteur(-5.0,0.0));
+        }
+        m_titre = "Test de collisions entre particules (non liees)";
+    }
+
+private:
+    Particule* m_part;
+    Matiere* m_matieres;
+};
 
 void demoCollision1()
 {
-    def::redefGrille(16,16,10,1,true,true,4,4);
-
-    // Initiation de la fenetre
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window* fenetre = SDL_CreateWindow("Premier test graphique",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,321,321,0);
-    SDL_Renderer* rendu = SDL_CreateRenderer(fenetre, -1, 0);
+    def::redefGrille(32,32,10,1,false,true,4,4);
+    def::redefTemp(true, 0.05, 0);
 
     // Création de la matière
-    Matiere* matieres = new Matiere[4];
+    Matiere* matieres = new Matiere[NB_PART];
     matieres[0] = Matiere({255,0,0,255}, 1.0, 2.0, 1.0, 0.0);
     matieres[1] = Matiere({0,0,255,255}, 1.0, 2.0, 1.0, 0.0);
     matieres[2] = Matiere({0,255,0,255}, 3.0);
     matieres[3] = Matiere({0,255,255,255}, 1.0);
 
     // On crée au préalable les particules
-    Particule* particules = new Particule[4];
-    particules[0] = Particule(5,5,&matieres[0]); // P0
-    particules[1] = Particule(25,5,&matieres[1]); // P1
-    particules[2] = Particule(5,25,&matieres[2]); // P2
-    particules[3] = Particule(25,25,&matieres[3]); // P3
+    Particule* particules = new Particule[NB_PART];
+    for(int i = 0 ; i < NB_PART ; i++)
+        particules[i] = Particule(0,0,&matieres[i]);
 
     // Création de la matrice
-    MatriceParticules m(32,32,4,4, particules, 4);
+    MatriceParticules m(32,32,4,4, particules, NB_PART);
 
-    // Application des vitesses de base
-    particules[0].setV(Vecteur(5.0,0.0));
-    particules[1].setV(Vecteur(-5.0,0.0));
-    particules[2].setV(Vecteur(5.0,0.0));
-    particules[3].setV(Vecteur(-5.0,0.0));
-
-    for(int i = 0 ; i < 80 ; i++)
-    {
-        m.calculerDeplacement(0.1);
-        m.deplacer(0.1);
-
-        // Affichage
-        SDL_SetRenderDrawColor(rendu,255,255,255,255);
-        SDL_RenderClear(rendu);
-        m.afficher(rendu, 1, 10);
-
-        //afficherGrille(rendu, 32, 32, 10, 4, 4);
-
-        SDL_RenderPresent(rendu);
-        SDL_Delay(100);
-    }
-
-    // Fin
-    SDL_DestroyRenderer(rendu);
-    SDL_DestroyWindow(fenetre);
-    SDL_Quit();
+    // On fait tourner la scène
+    SceneDemoCollision1 scene(m, particules, matieres);
+    try { scene.bouclePrincipale(); }
+    catch(Erreur& e) { std::cout << "Erreur !!" << std::endl << e.what() << std::endl; }
 
     delete[] particules;
     delete[] matieres;

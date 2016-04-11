@@ -10,9 +10,6 @@
 
 int main(int argv, char** argc)
 {
-    //demoCollision1();
-    //return 0;
-
     bool continuer = true;
     while(continuer)
     {
@@ -40,13 +37,10 @@ int main(int argv, char** argc)
             demoLiaison();
             break;
         case 5:
-            demoCohesion(5.0, 3.0, 500.0, 60.0);
+            demoCohesion();
             break;
         case 6:
             demoCollision1();
-            break;
-        case 7:
-            demoCohesion(5.0, 3.0, 800.0, 20.0);
             break;
         default:
             continuer=false;
