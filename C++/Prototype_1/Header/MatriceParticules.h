@@ -3,7 +3,6 @@
 
 #include <iostream> // DEBUG
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
 
 #include "MatriceCreuse.h"
 #include "Particule.h"
