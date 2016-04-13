@@ -234,5 +234,5 @@ void Particule::collision(Particule& p, double dt)
     appliquerForce(f);
     p.appliquerForce(-f);
 
-    //std::cout << "Collision : f=(" << f.getX() << ", " << f.getY() << ")" << std::endl;
+    std::cout << "Collision : f=(" << f.getX() << ", " << f.getY() << ")" << std::endl;
 }

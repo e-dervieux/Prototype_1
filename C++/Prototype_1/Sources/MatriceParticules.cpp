@@ -109,29 +109,23 @@ void MatriceParticules::deplacer(double dt)
             // Seulement si la particule bouge :
             if (xOldPart != xNouvPart || yOldPart != yNouvPart)
             {
-                // Si la particule sort déjà de la grille
-                if (xNouvPart < 0 || xNouvPart >= m_mpX*m_smX || yNouvPart < 0 || yNouvPart >= m_mpY*m_smY)
+                // Si la particule sort de la grille
+                if (xNouvPart < 0 || xNouvPart >= m_w || yNouvPart < 0 || yNouvPart >= m_h)
                 {
                     p.supprimerLiaisons();
                     suppr(xOldPart,yOldPart);
                 }
                 else
                 {
-                    // Cette boucle sera la partie à améliorer pour gérer convenablement les collisions
                     Particule* p2 = get(xNouvPart,yNouvPart);
+                    // Si la nouvelle position est déjà occupée, il y a collision
                     if (p2 != NULL)
                         p.collision(*p2, dt);
                     else
                     {
                         // On bouge les coordonnées entières de la particule
                         p.setInt(xNouvPart, yNouvPart);
-
-                        // Si on sort de la grille...
-                        if (!estValide(p))
-                            p.supprimerLiaisons();
-                        else
-                            set(xNouvPart, yNouvPart, &p);
-
+                        set(xNouvPart, yNouvPart, &p);
                         suppr(xOldPart, yOldPart);
                     }
                 }

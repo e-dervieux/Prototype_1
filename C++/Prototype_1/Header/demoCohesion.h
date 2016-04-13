@@ -145,26 +145,31 @@ public:
         m_j2.init();
         m_mat.reinit();
 
+        double k, cc, l0;
+
         SDL_Color rouge = {255,0,0,255};
         switch(config)
         {
             case 2:
-                m_k = 800.0;
-                m_cc = 85.0;
+                l0 = 3.0;
+                k = 1300.0;
+                cc = 60.0;
                 break;
 
             case 3:
-                m_k = 1000.0;
-                m_cc = 100.0;
+                l0 = 3.0;
+                k = 2500.0;
+                cc = 60.0;
                 break;
 
             default:
-                m_k = 500.0;
-                m_cc = 60.0;
+                l0 = 3.0;
+                k = 500.0;
+                cc = 60.0;
         }
-        m_m = Matiere(rouge,1.0,3.0,m_k,m_cc);
+        m_m = Matiere(rouge,1.0,l0,k,cc);
         std::stringstream tmp;
-        tmp << "Test de cohésion : k = " << m_k << ", c = " << m_cc;
+        tmp << "Test de cohésion : l0 = " << l0 << ", k = " << k << ", c = " << cc;
         m_titre = tmp.str();
     }
 
@@ -173,7 +178,6 @@ private:
     Jambon & m_j2;
 
     Matiere& m_m;
-    double m_k, m_cc;
 };
 
 void demoCohesion()

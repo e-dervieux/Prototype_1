@@ -19,6 +19,18 @@ public:
     {
         switch(config)
         {
+            case 2:
+                m_part[0].setPosInt(Vecteur(5.5,5.5));
+                m_part[1].setPosInt(Vecteur(25.5,5.5));
+                m_part[2].setPosInt(Vecteur(5.5,25.5));
+                m_part[3].setPosInt(Vecteur(25.5,25.5));
+
+                m_part[0].setV(Vecteur(5.0,1.0));
+                m_part[1].setV(Vecteur(-5.0,1.0));
+                m_part[2].setV(Vecteur(5.0,-1.0));
+                m_part[3].setV(Vecteur(-5.0,-1.0));
+                break;
+
             default:
                 m_part[0].setPosInt(Vecteur(5.5,5.5));
                 m_part[1].setPosInt(Vecteur(25.5,5.5));
@@ -49,7 +61,7 @@ void demoCollision1()
     Matiere* matieres = new Matiere[NB_PART];
     matieres[0] = Matiere({255,0,0,255}, 1.0, 2.0, 1.0, 0.0);
     matieres[1] = Matiere({0,0,255,255}, 1.0, 2.0, 1.0, 0.0);
-    matieres[2] = Matiere({0,255,0,255}, 3.0);
+    matieres[2] = Matiere({0,255,0,255}, 2.0);
     matieres[3] = Matiere({0,255,255,255}, 1.0);
 
     // On crée au préalable les particules
