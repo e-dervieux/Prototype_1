@@ -13,7 +13,7 @@
 class SceneSDL
 {
 public:
-    SceneSDL(MatriceParticules& mat, int config = 1);
+    SceneSDL(MatriceParticules& mat);
     ~SceneSDL();
 
     virtual void charger(int config) = 0; // Charge la configuration config

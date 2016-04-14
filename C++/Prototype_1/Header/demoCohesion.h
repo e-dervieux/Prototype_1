@@ -151,7 +151,7 @@ public:
         switch(config)
         {
             case 2:
-                l0 = 3.0;
+                l0 = 2.5;
                 k = 1300.0;
                 cc = 60.0;
                 break;

@@ -4,7 +4,6 @@
 #include <iostream> // DEBUG
 #include <SDL2/SDL.h>
 
-#include "MatriceCreuse.h"
 #include "Particule.h"
 #include "Definitions.h"
 

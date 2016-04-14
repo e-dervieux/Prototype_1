@@ -4,22 +4,72 @@
 #include <sstream>
 #include "SceneSDL.h"
 
-#define NB_PART 4
+#define NB_PART 10
 
 class SceneDemoCollision1 : public SceneSDL
 {
 public:
-    SceneDemoCollision1(MatriceParticules& mat, Particule* part, Matiere* matieres)
+    SceneDemoCollision1(MatriceParticules& mat, int config, Particule* part, Matiere* matieres)
      : SceneSDL(mat), m_part(part), m_matieres(matieres)
     {
-        init(1);
+        init(config);
+    }
+
+    virtual void actionClavier(bool& continuer, bool& recommencer)
+    {
+        SceneSDL::actionClavier(continuer, recommencer);
+
+        if (m_clavier[def::K_SHIFT])
+            def::delaiEntreFrames = 150;
+        else
+            def::delaiEntreFrames = 0;
     }
 
     void charger(int config)
     {
+        for(int i = 0 ; i < NB_PART ; i++)
+        {
+            m_matieres[i] = Matiere();
+            m_part[i] = Particule(-1,-1,&m_matieres[i]);
+        }
+
+        double k = 300.0;
+        double cc = 3.0;
+
         switch(config)
         {
+            case 3:
+                for(int i = 0 ; i < 4 ; i++)
+                {
+                    m_matieres[i] = Matiere({255,0,0,255},100.0,3.0,k,cc);
+                    m_part[i].setPosInt(Vecteur(10.5,5.5+3.0*(double)i));
+                    m_matieres[i+4] = Matiere({255,0,0,255},100.0,3.0,k,cc);
+                    m_part[i+4].setPosInt(Vecteur(13.5,5.5+3.0*(double)i));
+
+                    m_part[i].lier(&m_part[i+4]);
+                }
+                for(int i = 0 ; i < 3 ; i++)
+                {
+                    m_part[i].lier(&m_part[i+1]);
+                    m_part[i+4].lier(&m_part[i+5]);
+                }
+
+                m_matieres[8] = Matiere({0,0,255,255},2.0,3.0,k,cc);
+                m_matieres[9] = Matiere({0,0,255,255},2.0,3.0,k,cc);
+                m_part[8].setPosInt(Vecteur(2.5,14.2));
+                m_part[8].setV(Vecteur(3.0,0.0));
+                m_part[9].setPosInt(Vecteur(5.5,14.2));
+                m_part[9].setV(Vecteur(3.0,0.0));
+
+                m_part[8].lier(&m_part[9]);
+                break;
+
             case 2:
+                m_matieres[0] = Matiere({255,0,0,255}, 1.0);
+                m_matieres[1] = Matiere({255,0,0,255}, 1.0);
+                m_matieres[2] = Matiere({0,0,255,255}, 2.0);
+                m_matieres[3] = Matiere({255,0,0,255}, 1.0);
+
                 m_part[0].setPosInt(Vecteur(5.5,5.5));
                 m_part[1].setPosInt(Vecteur(25.5,5.5));
                 m_part[2].setPosInt(Vecteur(5.5,25.5));
@@ -32,6 +82,11 @@ public:
                 break;
 
             default:
+                m_matieres[0] = Matiere({255,0,0,255}, 1.0, 2.0, 1.0, 0.0);
+                m_matieres[1] = Matiere({0,0,255,255}, 1.0, 2.0, 1.0, 0.0);
+                m_matieres[2] = Matiere({0,255,0,255}, 2.0);
+                m_matieres[3] = Matiere({0,255,255,255}, 1.0);
+
                 m_part[0].setPosInt(Vecteur(5.5,5.5));
                 m_part[1].setPosInt(Vecteur(25.5,5.5));
                 m_part[2].setPosInt(Vecteur(5.5,25.5));
@@ -52,28 +107,22 @@ private:
     Matiere* m_matieres;
 };
 
-void demoCollision1()
+void demoCollision1(int config = 1)
 {
     def::redefGrille(32,32,10,1,false,true,4,4);
     def::redefTemp(true, 0.05, 0);
 
     // Création de la matière
     Matiere* matieres = new Matiere[NB_PART];
-    matieres[0] = Matiere({255,0,0,255}, 1.0, 2.0, 1.0, 0.0);
-    matieres[1] = Matiere({0,0,255,255}, 1.0, 2.0, 1.0, 0.0);
-    matieres[2] = Matiere({0,255,0,255}, 2.0);
-    matieres[3] = Matiere({0,255,255,255}, 1.0);
 
     // On crée au préalable les particules
     Particule* particules = new Particule[NB_PART];
-    for(int i = 0 ; i < NB_PART ; i++)
-        particules[i] = Particule(-1,-1,&matieres[i]);
 
     // Création de la matrice
     MatriceParticules m(32,32,4,4, particules, NB_PART);
 
     // On fait tourner la scène
-    SceneDemoCollision1 scene(m, particules, matieres);
+    SceneDemoCollision1 scene(m, config, particules, matieres);
     try { scene.bouclePrincipale(); }
     catch(Erreur& e) { std::cout << "Erreur !!" << std::endl << e.what() << std::endl; }
 

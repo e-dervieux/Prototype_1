@@ -21,6 +21,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Header/MatriceParticules.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceParticules.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoGraphique1.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/MatriceCreuseDemo.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoCollision1.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/SceneSDL.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoLiaison.h" isTestSource="false" />

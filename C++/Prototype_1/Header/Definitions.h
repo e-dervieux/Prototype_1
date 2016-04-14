@@ -1,8 +1,10 @@
 #ifndef DEFINITIONS_H_INCLUDED
 #define DEFINITIONS_H_INCLUDED
 
-#include "MatriceCreuse.h"
+#include "MatriceCreuseDemo.h"
 #include "Particule.h"
+
+#define OFFSET_COLLISION 0.0001
 
 namespace def
 {
@@ -11,7 +13,7 @@ namespace def
     // Elements liés à la grille
     extern int width;
     extern int height;
-    extern int taillePixel; // Taille graphique d'un pixel (en pixels graphiques) (=�chelle)
+    extern int taillePixel; // Taille graphique d'un pixel (en vrais pixels)
     extern int partPP; // Nombre de particules sur une longueur de pixel
     extern bool grilleAffichee;
     extern bool divisionsAffichees;

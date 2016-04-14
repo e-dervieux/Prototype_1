@@ -7,9 +7,15 @@
 #include "../Header/demoLiaison.h"
 #include "../Header/demoCohesion.h"
 #include "../Header/demoCollision1.h"
+#include "../Header/MatriceCreuse.h"
 
 int main(int argv, char** argc)
 {
+    MatriceCreuse<int,2> m;
+
+    demoCollision1(3);
+    return 0;
+
     bool continuer = true;
     while(continuer)
     {

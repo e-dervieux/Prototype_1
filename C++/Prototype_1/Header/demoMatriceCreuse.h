@@ -51,7 +51,7 @@ void demoMatriceCreuse()
     EstNulInt estNul;
     SupprInt suppr;
 
-    MatriceCreuse<int> m(4,4,4,4,estNul,defaut,suppr);
+    MatriceCreuseDemo<int> m(4, 4, 4, 4, estNul, defaut, suppr);
 
     afficherMat(m.m_tabCnt,4,4);
 

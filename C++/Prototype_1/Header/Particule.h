@@ -9,7 +9,7 @@
 class Particule
 {
 public:
-    Particule() : m_liaisons(NULL), m_matiere(NULL) {}
+    Particule();
     Particule(int x, int y, Matiere* matiere = NULL);
     Particule(int x, int y, double xd, double yd, Matiere* matiere = NULL);
     ~Particule();

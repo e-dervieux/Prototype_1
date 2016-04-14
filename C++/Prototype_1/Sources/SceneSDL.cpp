@@ -1,6 +1,6 @@
 #include "../Header/SceneSDL.h"
 
-SceneSDL::SceneSDL(MatriceParticules& mat, int config)
+SceneSDL::SceneSDL(MatriceParticules& mat)
  : m_mat(mat),
    m_clavier(def::NB_TOUCHES, false), m_plusTraite(false), m_moinsTraite(false)
 {

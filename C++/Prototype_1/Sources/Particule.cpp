@@ -1,6 +1,14 @@
 #include "../Header/Particule.h"
 #include "../Header/Definitions.h"
 
+Particule::Particule()
+ : m_matiere(NULL)
+{
+    m_liaisons = new Particule*[def::nbLiaisons];
+    for(int i = 0 ; i < def::nbLiaisons ; i++)
+        m_liaisons[i] = NULL;
+}
+
 Particule::Particule(int x, int y, Matiere* matiere)
  : m_x(x), m_y(y), m_pos(x+0.5, y+0.5), m_v(), m_resf(), m_matiere(matiere)
 {
@@ -38,7 +46,6 @@ Particule& Particule::operator=(const Particule& p)
 
 void Particule::creerLiaisons(Particule** liaisons)
 {
-    m_liaisons=new Particule*[def::nbLiaisons];
     for(int i=0;i<def::nbLiaisons;i++)
     {
         m_liaisons[i]=liaisons[i];
@@ -179,7 +186,7 @@ void Particule::collision(Particule& p, double dt)
 
     if (p.m_x < m_x)
     {
-        newX = (double)m_x;
+        newX = (double)m_x + OFFSET_COLLISION;
 
         // Logiquement, vx != 0.0
         xCol = (double)(p.m_x+1);
@@ -188,7 +195,7 @@ void Particule::collision(Particule& p, double dt)
     }
     else if (p.m_x > m_x)
     {
-        newX = (double)(m_x+1);
+        newX = (double)(m_x+1) - OFFSET_COLLISION;
 
         // Logiquement, vx != 0.0
         xCol = (double)p.m_x;
@@ -198,7 +205,7 @@ void Particule::collision(Particule& p, double dt)
 
     if (p.m_y < m_y)
     {
-        newY = (double)m_y;
+        newY = (double)m_y + OFFSET_COLLISION;
 
         if (deplacementX && yCol > (double)(p.m_y+1))
         {
@@ -207,9 +214,9 @@ void Particule::collision(Particule& p, double dt)
             xCol = m_pos.getX() + vx/vy*((double)(p.m_y+1)-m_pos.getY());
         }
     }
-    else if (p.m_x > m_x)
+    else if (p.m_y > m_y)
     {
-        newY = (double)(m_y+1);
+        newY = (double)(m_y+1) - OFFSET_COLLISION;
 
         if (deplacementX && yCol < (double)p.m_y)
         {
@@ -223,16 +230,16 @@ void Particule::collision(Particule& p, double dt)
 
     // Calcul de la force de collision (peut être optimisé ?)
     Vecteur n(
-            Point((double)p.m_x+0.5,(double)p.m_y+0.5), // Centre
+            p.m_pos, // Centre de p
             Point(xCol,yCol) ); // Point de collision
     Vecteur vr = m_v - p.m_v; // Vitesse relative
     double m1 = getMasse();
     double m2 = p.getMasse();
-    Vecteur f = -2.0 * m1*m2/(m1+m2) / dt / n.normeCarre()*(vr*n)*n; // Force correspondante sur cette particule
+    Vecteur dvm = -2.0 / (m1+m2) / n.normeCarre()*(vr*n)*n; // Variation de vitesse, à la masse de la particule opposée près
 
     // Application de la force de collision
-    appliquerForce(f);
-    p.appliquerForce(-f);
+    m_v += dvm*m2;
+    p.m_v -= dvm*m1;
 
-    std::cout << "Collision : f=(" << f.getX() << ", " << f.getY() << ")" << std::endl;
+    std::cout << "Collision : dvm=(" << dvm.getX() << ", " << dvm.getY() << ")" << std::endl;
 }
