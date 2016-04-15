@@ -16,6 +16,8 @@ set(SOURCE_FILES    Sources/main.cpp
                     Header/Vecteur.h            Sources/Vecteur.cpp
                     Header/SceneSDL.h           Sources/SceneSDL.cpp
                     Header/Element.h
+                    Header/Conteneur.h
+                    Header/CouchesParticules.h
                     Header/Particule.h          Sources/Particule.cpp
                     Header/MatriceCreuseDemo.h
                     Header/MatriceParticules.h  Sources/MatriceParticules.cpp
@@ -27,7 +29,10 @@ set(SOURCE_FILES    Sources/main.cpp
                     Header/demoGraphique1.h
                     Header/demoLiaison.h
                     Header/demoCohesion.h
-                    Header/demoCollision1.h Header/MatriceCreuse.h)
+                    Header/demoCollision1.h
+                    Header/MatriceCreuse.h
+                    Header/MatriceP.h
+                    Header/Conteneur.h)
 
 add_executable(Prototype_1 ${SOURCE_FILES})
 

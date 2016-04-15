@@ -1,34 +1,17 @@
 #ifndef PROTOTYPE_1_MATRICECREUSE_H
 #define PROTOTYPE_1_MATRICECREUSE_H
 
-#include "Particule.h"
+#include "Conteneur.h"
 
-class Conteneur : public Element
-{
-public:
-    Conteneur()
-     : m_nbE(0)
-    {}
-
-    virtual void actualiserBarycentre() = 0;
-    bool estVide() { return m_nbE==0; };
-    inline int getNbE() const { return m_nbE; }
-    inline int getPTot() const { return m_pTot; }
-
-protected:
-    int m_nbE; // Nombre de sous-éléments non vides (utile ?)
-    int m_pTot; // Nombre de particules total
-};
-
-// TODO Ensuite, spécialiser MatriceCreuse<Particule, 1>
+// Conteneur défini de manière récursive
 template<typename T, size_t dimSM>
 class MatriceCreuse : public Conteneur
 {
-    // On suppose que T est ici forcément un type MatriceCreuse !
+    // On suppose que T est ici forcément un type de MatriceCreuse !
     // Le cas de Particule sera géré plus tard
 
 public:
-    MatriceCreuse(int w, int h)
+    MatriceCreuse(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
        m_w(w), m_h(h), m_smX((int)ceil((double)w/(double)dimSM)), m_smY((int)ceil((double)h/(double)dimSM))
     {}
@@ -116,7 +99,7 @@ public:
         T& sm = m_tab[indSM];
 
         // Insertion du nouvel élément dans la sous-matrice
-        if (sm.set(x%dimSM, y%dimSM))
+        if (sm.set(x%dimSM, y%dimSM, p))
         {
             m_nbE++;
             return m_nbE==1;
@@ -128,8 +111,8 @@ public:
     // Retourne true si cela vide la matrice
     bool suppr(int x, int y)
     {
-        if (m_tab == NULL)
-            return true;
+        if (m_tab == NULL || x < 0 || x >= m_w || y < 0 || y >= m_h)
+            return false;
 
         // Coordonnées de la sous-matrice concernée
         int sx = x/dimSM;
@@ -137,8 +120,6 @@ public:
         int indSM = sx*m_smY + sy;
 
         T& sm = m_tab[indSM];
-        if (sm.estVide(x%dimSM, y%dimSM)) // (x,y) est déjà vide...
-            return false; // Cette matrice n'est pas plus vide qu'avant donc
 
         // On vide le niveau inférieur
         if (sm.suppr(x%dimSM,y%dimSM))
@@ -148,6 +129,7 @@ public:
             if (m_nbE == 0)
             {
                 delete[] m_tab;
+                m_tab = NULL;
                 return true;
             }
             else
@@ -157,18 +139,84 @@ public:
             return false;
     }
 
+    // Supprime tous les sous-éléments, après les avoir vidés
+    virtual void reinit()
+    {
+        if (m_tab != NULL)
+        {
+            for(int i = 0 ; i < m_smX*m_smY ; i++)
+                m_tab[i].reinit();
+
+            delete[] m_tab;
+            m_tab = NULL;
+            Conteneur::reinit();
+        }
+    }
+
+    // Retourne la particule contenue aux coordonnées (x,y)
+    Particule* get(int x, int y)
+    {
+        if (m_tab == NULL)
+            return NULL;
+
+        // Coordonnées de la sous-matrice concernée
+        int sx = x/dimSM;
+        int sy = y/dimSM;
+        int indSM = sx*m_smY + sy;
+
+        T& sm = m_tab[indSM];
+        return sm.get(x%dimSM,y%dimSM);
+    }
+
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel)
+    {
+        afficher(rendu, coucheAffichage, taillePixel, 0, 0);
+    }
+
+    // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel, int x, int y)
+    {
+        if (coucheAffichage < getProfondeur())
+        {
+            if (m_tab != NULL)
+            {
+                for(int i = 0 ; i < m_smX ; i++)
+                {
+                    for(int j = 0 ; j < m_smY ; j++)
+                        m_tab[i*m_smY+j].afficher(rendu, coucheAffichage, taillePixel, x+dimSM*i, y+dimSM*j);
+                }
+            }
+        }
+        else if (coucheAffichage == getProfondeur())
+        {
+            SDL_SetRenderDrawColor(rendu, m_couleur.r, m_couleur.g, m_couleur.b, m_couleur.a);
+            SDL_Rect rect = {taillePixel*x, taillePixel*y,taillePixel,taillePixel};
+            SDL_RenderFillRect(rendu, &rect);
+        }
+    }
+
+    virtual void actualiser(double dt)
+    {
+        if (m_tab != NULL)
+        {
+            for(int i = 0 ; i < m_smX*m_smY ; i++)
+                m_tab[i].actualiser(dt);
+        }
+    }
+
 protected:
     T* m_tab; // Tableaux des sous-éléments
 
-    int m_w, m_h; // Dimensions
+    size_t m_w, m_h; // Dimensions
     int m_smX, m_smY; // Nombre de sous-matrices selon X et Y
 };
 
+// Spécialisation : Cas de base = matrice simple de particules, n'allouant pas forcément son tableau
 template<>
 class MatriceCreuse<Particule,1> : public Conteneur
 {
 public:
-    MatriceCreuse(int w, int h)
+    MatriceCreuse(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
        m_w(w), m_h(h)
     {}
@@ -268,8 +316,8 @@ public:
     // Retourne true si cela vide la matrice
     bool suppr(int x, int y)
     {
-        if (m_tab == NULL)
-            return true;
+        if (m_tab == NULL || x < 0 || x >= m_w || y < 0 || y >= m_h)
+            return false;
 
         // Coordonnées de la particule concernée
         int indSM = x*m_h + y;
@@ -286,16 +334,94 @@ public:
         if (m_nbE == 0)
         {
             delete[] m_tab;
+            m_tab = NULL;
             return true;
         }
         else
             return false;
     }
 
+    virtual void reinit()
+    {
+        if (m_tab != NULL)
+        {
+            for(int i = 0 ; i < m_w*m_h ; i++)
+                m_tab[i] = NULL;
+
+            delete[] m_tab;
+            m_tab = NULL;
+            Conteneur::reinit();
+        }
+    }
+
+    Particule* get(int x, int y)
+    {
+        if (m_tab == NULL)
+            return NULL;
+
+        return (m_tab[x*m_h + y]);
+    }
+
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel)
+    {
+        afficher(rendu, coucheAffichage, taillePixel, 0, 0);
+    }
+
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel, int x, int y)
+    {
+        if (coucheAffichage == 0)
+        {
+            if (m_tab != NULL)
+            {
+                for(int i = 0 ; i < m_w ; i++)
+                {
+                    for(int j = 0 ; j < m_h ; j++)
+                    {
+                        Particule* p = m_tab[i*m_h+j];
+                        if (p != NULL)
+                            p->afficher(rendu, coucheAffichage, taillePixel);
+                    }
+                }
+            }
+        }
+        else if (coucheAffichage == 1)
+        {
+            SDL_SetRenderDrawColor(rendu, m_couleur.r, m_couleur.g, m_couleur.b, m_couleur.a);
+            SDL_Rect rect = {taillePixel*x, taillePixel*y,taillePixel,taillePixel};
+            SDL_RenderFillRect(rendu, &rect);
+        }
+    }
+
+    virtual void actualiser(double dt)
+    {
+        if (m_tab != NULL)
+        {
+            for(int i = 0 ; i < m_w*m_h ; i++)
+            {
+                if (m_tab[i] != NULL)
+                    m_tab[i]->actualiser(dt);
+            }
+        }
+    }
+
 protected:
     Particule** m_tab; // Tableaux des particules
 
-    int m_w, m_h; // Dimensions
+    size_t m_w, m_h; // Dimensions
 };
+
+// DEBUG : sert à avoir un apperçu du conteneur de particules
+template<typename T, size_t dimSM>
+void afficher(MatriceCreuse<T, dimSM>& m, int w, int h)
+{
+    std::cout << "Nombre de sous-elements : " << m.getNbE() << std::endl;
+    std::cout << "Profondeur : " << m.getProfondeur() << std::endl;
+    for(int j = 0 ; j < h ; j++)
+    {
+        for(int i = 0 ; i < w ; i++)
+            std::cout << (m.get(i,j)!=NULL) << " ";
+        std::cout << std::endl;
+    }
+}
 
 #endif //PROTOTYPE_1_MATRICECREUSE_H

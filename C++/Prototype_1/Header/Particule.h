@@ -34,6 +34,8 @@ public:
     void collision(Particule& p, double dt); // Applique la force de collision avec p ET repositionne cette particule
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     void calculerDeplacement(double dt);
+    inline void actualiser(double dt) { calculerDeplacement(dt); }
+    void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel);
     void surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
     void afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel);
 

@@ -3,6 +3,8 @@
 
 #include "Vecteur.h"
 
+// Element physique : masse, couleur, position, etc...
+// Cela concerne également les barycentres, modèles équivalents des conteneurs
 class Element
 {
 public:
@@ -10,12 +12,21 @@ public:
      : m_pos(pos), m_v(v), m_masse(0.0)
     {}
 
+    virtual void actualiser(double dt) = 0; // Calcule la frame suivante
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel) = 0; // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
+
     inline Vecteur getPos() const { return m_pos; }
     inline void setPos(Vecteur pos) { m_pos = pos; }
     inline Vecteur getV() const { return m_v; }
     inline void setV(Vecteur v) { m_v = v; }
     virtual SDL_Color getCouleur() const { return m_couleur; }
     virtual double getMasse() const { return m_masse; }
+
+    virtual void reinit()
+    {
+        m_masse = 0.0;
+        m_couleur = {255,255,255,0};
+    }
 
 protected:
     Vecteur m_pos;

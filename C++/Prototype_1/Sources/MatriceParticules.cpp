@@ -1,7 +1,5 @@
 #include "../Header/MatriceParticules.h"
 
-int nbC = 0;
-
 MatriceParticules::MatriceParticules(int w, int h, int smX, int smY, Particule* particules, int nbParticules)
  : m_w(w), m_h(h), m_mpX((int)ceil((double)w/(double)smX)), m_mpY((int)ceil((double)h/(double)smY)), m_smX(smX), m_smY(smY), m_part(particules), m_nbPart(nbParticules)
 {
@@ -84,9 +82,9 @@ void MatriceParticules::calculerDeplacement(double dt)
 {
     for(int i = 0 ; i < m_nbPart ; i++)
     {
-            Particule& p = m_part[i];
-            if (estValide(p))
-                p.calculerDeplacement(dt);
+        Particule& p = m_part[i];
+        if (estValide(p))
+            p.calculerDeplacement(dt);
     }
 }
 

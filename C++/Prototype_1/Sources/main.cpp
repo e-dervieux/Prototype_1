@@ -7,13 +7,28 @@
 #include "../Header/demoLiaison.h"
 #include "../Header/demoCohesion.h"
 #include "../Header/demoCollision1.h"
-#include "../Header/MatriceCreuse.h"
+#include "../Header/CouchesParticules.h"
 
 int main(int argv, char** argc)
 {
-    MatriceCreuse<Particule, 1> m(16,16);
+    CouchesParticules<4,2> m(8,8);
+    Particule p;
+    std::string com;
+    while (com != "exit")
+    {
+        afficher(m, 8, 8);
 
-    
+        int x,y;
+        std::cin >> com;
+        if (com == "exit")
+            return 0;
+        std::cin >> x >> y; std::cin.ignore();
+        if (com == "set")
+            m.set(x,y,&p);
+        else if (com == "suppr")
+            m.suppr(x,y);
+    }
+
     return 0;
 
     bool continuer = true;

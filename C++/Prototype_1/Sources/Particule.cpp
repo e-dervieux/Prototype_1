@@ -237,3 +237,11 @@ void Particule::collision(Particule& p, double dt)
 
     std::cout << "Collision : dvm=(" << dvm.getX() << ", " << dvm.getY() << ")" << std::endl;
 }
+
+void Particule::afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel)
+{
+    SDL_Color c = getCouleur();
+    SDL_SetRenderDrawColor(rendu, c.r, c.g, c.b, c.a);
+    SDL_Rect rect = {taillePixel*m_x, taillePixel*m_y,taillePixel,taillePixel};
+    SDL_RenderFillRect(rendu, &rect);
+}
