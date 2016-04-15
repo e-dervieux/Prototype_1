@@ -5,8 +5,9 @@
 #include <vector>
 #include "Vecteur.h"
 #include "Matiere.h"
+#include "Element.h"
 
-class Particule
+class Particule : public Element
 {
 public:
     Particule();
@@ -24,12 +25,8 @@ public:
     int getYInt() const { return m_y; }
     void setInt(int x, int y); // Donne les nouvelles coordonnées entières de la particule
     void setPosInt(Vecteur pos); // Donne les nouvelles coordonnées double, et actualise les int correspondants
-    Vecteur getPos() const { return m_pos; }
-    void setPos(Vecteur pos);
-    Vecteur getV() const { return m_v; }
-    void setV(Vecteur v) { m_v = v; }
-    SDL_Color getCouleur() const { return m_matiere->getCouleur(); };
-    double getMasse() const;
+    virtual SDL_Color getCouleur() const { return m_matiere->getCouleur(); }
+    virtual double getMasse() const { return m_matiere->getMasse(); }
 
     void appliquerForce(Vecteur f);
     void appliquerForcesLiaison();
@@ -42,7 +39,7 @@ public:
 
 private:
     int m_x, m_y; // Pas sur que ca serve...
-    Vecteur m_pos, m_v, m_resf; // resf est la resultante des forces a l'instant considere
+    Vecteur m_resf; // resf est la resultante des forces a l'instant considere
 
     Particule** m_liaisons;
 

@@ -253,7 +253,7 @@ void MatriceParticules::afficherLiaisons(SDL_Renderer* rendu, int partPP, int ta
 
 void MatriceParticules::set(int x, int y, Particule *p)
 {
-    if (x < 0 || x >= m_mpX*m_smX || y < 0 || y >= m_mpY*m_smY)
+    if (x < 0 || x >= m_w || y < 0 || y >= m_h)
         return;
 
     int indSM = (x/m_smX)*m_mpY + (y/m_smY);
