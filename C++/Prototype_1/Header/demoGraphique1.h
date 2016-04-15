@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
-#include "MatriceParticules.h"
+#include "MatriceParticulesOld.h"
 
 void afficherGrille(SDL_Renderer* rendu, int w, int h, int echelle, int pasGrille, int divisionGrille) {
     // Lignes verticales
@@ -53,7 +53,7 @@ void demoGraphique1()
     particules[1] = Particule(3,3,&matiere); // P1
 
     // Création de la matrice
-    MatriceParticules m(16,16,4,4, particules, 2);
+    MatriceParticulesOld m(16,16,4,4, particules, 2);
 
     // Application d'une force
     particules[1].appliquerForce(Vecteur(1.0,0.5));

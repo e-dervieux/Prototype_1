@@ -16,7 +16,7 @@ public:
     inline int getNbE() const { return m_nbE; }
     inline int getPTot() const { return m_pTot; }
 
-    // Vide le conteneur et le re-remplit s'il est attaché à d'autres données (cf MatriceParticules)
+    // Vide le conteneur et le re-remplit s'il est attaché à d'autres données (cf MatriceParticulesOld)
     virtual void reinit()
     {
         m_nbE = 0;

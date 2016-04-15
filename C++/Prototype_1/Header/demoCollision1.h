@@ -9,7 +9,7 @@
 class SceneDemoCollision1 : public SceneSDL
 {
 public:
-    SceneDemoCollision1(MatriceParticules& mat, int config, Particule* part, Matiere* matieres)
+    SceneDemoCollision1(MatriceParticulesOld& mat, int config, Particule* part, Matiere* matieres)
      : SceneSDL(mat), m_part(part), m_matieres(matieres)
     {
         init(config);
@@ -99,7 +99,7 @@ public:
         }
         m_titre = "Test de collisions entre particules (non liees)";
 
-        m_mat.reinit();
+        m_element.reinit();
     }
 
 private:
@@ -109,7 +109,7 @@ private:
 
 void demoCollision1(int config = 1)
 {
-    def::redefGrille(32,32,10,1,false,true,4,4);
+    def::redefGrille(32,32,10,0,false,true,4,4);
     def::redefTemp(true, 0.05, 0);
 
     // Création de la matière
@@ -119,7 +119,7 @@ void demoCollision1(int config = 1)
     Particule* particules = new Particule[NB_PART];
 
     // Création de la matrice
-    MatriceParticules m(32,32,4,4, particules, NB_PART);
+    MatriceParticulesOld m(32,32,4,4, particules, NB_PART);
 
     // On fait tourner la scène
     SceneDemoCollision1 scene(m, config, particules, matieres);

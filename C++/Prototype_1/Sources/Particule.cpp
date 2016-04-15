@@ -150,17 +150,15 @@ void Particule::surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint
     SDL_RenderFillRect(rendu, &rect);
 }
 
-void Particule::afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel)
+void Particule::afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
 {
-    double echelle = taillePixel/partPP;
-
     for(int i = 0 ; i < def::nbLiaisons ; i++)
     {
         Particule* p = m_liaisons[i];
         if (p != NULL)
             SDL_RenderDrawLine(rendu,
-                               (int)(echelle*m_pos.getX()),(int)(echelle*m_pos.getY()),
-                               (int)(echelle*p->m_pos.getX()),(int)(echelle*p->m_pos.getY()));
+                               (int)(tailleParticule*m_pos.getX()),(int)(tailleParticule*m_pos.getY()),
+                               (int)(tailleParticule*p->m_pos.getX()),(int)(tailleParticule*p->m_pos.getY()));
     }
 }
 
@@ -238,10 +236,10 @@ void Particule::collision(Particule& p, double dt)
     std::cout << "Collision : dvm=(" << dvm.getX() << ", " << dvm.getY() << ")" << std::endl;
 }
 
-void Particule::afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel)
+void Particule::afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
 {
     SDL_Color c = getCouleur();
     SDL_SetRenderDrawColor(rendu, c.r, c.g, c.b, c.a);
-    SDL_Rect rect = {taillePixel*m_x, taillePixel*m_y,taillePixel,taillePixel};
+    SDL_Rect rect = {(int)(tailleParticule*(double)m_x), (int)(tailleParticule*(double)m_y),(int)tailleParticule,(int)tailleParticule};
     SDL_RenderFillRect(rendu, &rect);
 }

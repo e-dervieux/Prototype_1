@@ -20,7 +20,7 @@ set(SOURCE_FILES    Sources/main.cpp
                     Header/CouchesParticules.h
                     Header/Particule.h          Sources/Particule.cpp
                     Header/MatriceCreuseDemo.h
-                    Header/MatriceParticules.h  Sources/MatriceParticules.cpp
+        Header/MatriceParticulesOld.h Sources/MatriceParticulesOld.cpp
                     Header/Matiere.h            Sources/Matiere.cpp
                     Header/Erreur.h             Sources/Erreur.cpp
                     Header/Definitions.h        Sources/Definitions.cpp
@@ -31,8 +31,8 @@ set(SOURCE_FILES    Sources/main.cpp
                     Header/demoCohesion.h
                     Header/demoCollision1.h
                     Header/MatriceCreuse.h
-                    Header/MatriceP.h
-                    Header/Conteneur.h)
+        Header/MatriceParticules.h
+                    Header/Conteneur.h Header/demoMatricesRecursives.h)
 
 add_executable(Prototype_1 ${SOURCE_FILES})
 

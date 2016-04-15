@@ -1,6 +1,6 @@
-#include "../Header/MatriceParticules.h"
+#include "../Header/MatriceParticulesOld.h"
 
-MatriceParticules::MatriceParticules(int w, int h, int smX, int smY, Particule* particules, int nbParticules)
+MatriceParticulesOld::MatriceParticulesOld(int w, int h, int smX, int smY, Particule* particules, int nbParticules)
  : m_w(w), m_h(h), m_mpX((int)ceil((double)w/(double)smX)), m_mpY((int)ceil((double)h/(double)smY)), m_smX(smX), m_smY(smY), m_part(particules), m_nbPart(nbParticules)
 {
     // Initialisation des tableaux
@@ -16,7 +16,7 @@ MatriceParticules::MatriceParticules(int w, int h, int smX, int smY, Particule* 
     ajouterParticules();
 }
 
-MatriceParticules::~MatriceParticules()
+MatriceParticulesOld::~MatriceParticulesOld()
 {
     // Libération des sous-matrices
     for(int i = 0 ; i < m_mpX*m_mpY ; i++)
@@ -28,7 +28,7 @@ MatriceParticules::~MatriceParticules()
     delete[] m_tabCnt;
 }
 
-void MatriceParticules::ajouterParticules()
+void MatriceParticulesOld::ajouterParticules()
 {
     for(int i = 0 ; i < m_nbPart ; i++)
     {
@@ -40,7 +40,7 @@ void MatriceParticules::ajouterParticules()
     }
 }
 
-void MatriceParticules::reinit()
+void MatriceParticulesOld::reinit()
 {
     // Suppression du contenu de la matrice Creuse
     for(int i = 0 ; i < m_mpX*m_mpY ; i++)
@@ -61,14 +61,14 @@ void MatriceParticules::reinit()
         m_part[i].annulerForces();
 }
 
-bool MatriceParticules::estValide(Particule &p)
+bool MatriceParticulesOld::estValide(Particule &p)
 {
     int x = p.getXInt();
     int y = p.getYInt();
     return (x >= 0 && x < m_w && y >= 0 && y < m_h);
 }
 
-void MatriceParticules::forcesLiaison()
+void MatriceParticulesOld::forcesLiaison()
 {
     for(int i = 0 ; i < m_nbPart ; i++)
     {
@@ -78,7 +78,7 @@ void MatriceParticules::forcesLiaison()
     }
 }
 
-void MatriceParticules::calculerDeplacement(double dt)
+void MatriceParticulesOld::calculerDeplacement(double dt)
 {
     for(int i = 0 ; i < m_nbPart ; i++)
     {
@@ -88,7 +88,7 @@ void MatriceParticules::calculerDeplacement(double dt)
     }
 }
 
-void MatriceParticules::deplacer(double dt)
+void MatriceParticulesOld::deplacer(double dt)
 {
     for(int i = 0 ; i < m_nbPart ; i++)
     {
@@ -132,7 +132,7 @@ void MatriceParticules::deplacer(double dt)
     }
 }
 
-void MatriceParticules::actualiser(double dt)
+void MatriceParticulesOld::actualiser(double dt)
 {
     // Calculer la force à appliquer et l'appliquer à chaque particule
     forcesLiaison();
@@ -144,8 +144,10 @@ void MatriceParticules::actualiser(double dt)
     deplacer(dt);
 }
 
-void MatriceParticules::afficher(SDL_Renderer* rendu, int partPP, int taillePixel)
+void MatriceParticulesOld::afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
 {
+    int partPP = pow(2,coucheAffichage);
+    int taillePixel = partPP*tailleParticule;
     // Pour l'instant, on suppose que les sous-matrices sont carrées !!!
 
     /* 3 cas de figure :
@@ -241,15 +243,15 @@ void MatriceParticules::afficher(SDL_Renderer* rendu, int partPP, int taillePixe
     }
 }
 
-void MatriceParticules::afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel)
+void MatriceParticulesOld::afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
 {
     SDL_SetRenderDrawColor(rendu, 0,255,0,60);
 
     for(int i = 0 ; i < m_nbPart ; i++)
-        m_part[i].afficherLiaisons(rendu, partPP, taillePixel);
+        m_part[i].afficherLiaisons(rendu, coucheAffichage, tailleParticule);
 }
 
-void MatriceParticules::set(int x, int y, Particule *p)
+void MatriceParticulesOld::set(int x, int y, Particule *p)
 {
     if (x < 0 || x >= m_w || y < 0 || y >= m_h)
         return;
@@ -271,7 +273,7 @@ void MatriceParticules::set(int x, int y, Particule *p)
     tmp = p;
 }
 
-void MatriceParticules::suppr(int x, int y)
+void MatriceParticulesOld::suppr(int x, int y)
 {
     int indSM = (x/m_smX)*m_mpY + (y/m_smY);
     Particule**& sm = m_tabSM[indSM];
@@ -294,7 +296,7 @@ void MatriceParticules::suppr(int x, int y)
     }
 }
 
-bool MatriceParticules::estVide(int x, int y)
+bool MatriceParticulesOld::estVide(int x, int y)
 {
     if (x < 0 || x >= m_mpX*m_smX || y < 0 || y >= m_mpY*m_smY)
         return true;
@@ -308,7 +310,7 @@ bool MatriceParticules::estVide(int x, int y)
     return (tmp == NULL);
 }
 
-Particule* MatriceParticules::get(int x, int y)
+Particule* MatriceParticulesOld::get(int x, int y)
 {
     int indSM = (x/m_smX)*m_mpY + (y/m_smY);
     Particule** sm = m_tabSM[indSM];

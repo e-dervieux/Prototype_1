@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "demoMatriceCreuse.h"
-#include "MatriceParticules.h"
+#include "MatriceParticulesOld.h"
 
 void demoMatriceParticules()
 {
@@ -23,7 +23,7 @@ void demoMatriceParticules()
     particules[1] = Particule(3,3,&matiere); // P1
 
     // Création de la matrice
-    MatriceParticules m(16,16,4,4, particules, 2);
+    MatriceParticulesOld m(16,16,4,4, particules, 2);
 
     // Affichage
     std::cout << "Ajout de 2 particules en (2,2) et (3,3) :" << std::endl;

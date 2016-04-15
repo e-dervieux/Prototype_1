@@ -13,7 +13,8 @@ public:
     {}
 
     virtual void actualiser(double dt) = 0; // Calcule la frame suivante
-    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel) = 0; // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule) = 0; // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
+    virtual void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule) {} // Utilisé par SceneSDL
 
     inline Vecteur getPos() const { return m_pos; }
     inline void setPos(Vecteur pos) { m_pos = pos; }

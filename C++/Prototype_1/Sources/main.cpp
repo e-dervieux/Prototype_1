@@ -11,6 +11,7 @@
 
 int main(int argv, char** argc)
 {
+    /*
     CouchesParticules<4,2> m(8,8);
     Particule p;
     std::string com;
@@ -29,7 +30,7 @@ int main(int argv, char** argc)
             m.suppr(x,y);
     }
 
-    return 0;
+    return 0;*/
 
     bool continuer = true;
     while(continuer)
