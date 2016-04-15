@@ -11,11 +11,9 @@
 
 int main(int argv, char** argc)
 {
-    MatriceCreuse<2> m(16,16);
+    MatriceCreuse<Particule, 1> m(16,16);
 
-    //std::cout << Couches<A,X,8,4,2>::getProfondeur();
-
-    //demoCollision1(3);
+    
     return 0;
 
     bool continuer = true;

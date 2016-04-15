@@ -15,8 +15,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lshell32 -lversion -luuid -static-libgc
 set(SOURCE_FILES    Sources/main.cpp
                     Header/Vecteur.h            Sources/Vecteur.cpp
                     Header/SceneSDL.h           Sources/SceneSDL.cpp
+                    Header/Element.h
                     Header/Particule.h          Sources/Particule.cpp
-        Header/MatriceCreuseDemo.h
+                    Header/MatriceCreuseDemo.h
                     Header/MatriceParticules.h  Sources/MatriceParticules.cpp
                     Header/Matiere.h            Sources/Matiere.cpp
                     Header/Erreur.h             Sources/Erreur.cpp

@@ -2,7 +2,7 @@
 #include "../Header/Definitions.h"
 
 Particule::Particule()
- : m_matiere(NULL)
+ : Element(), m_matiere(NULL)
 {
     m_liaisons = new Particule*[def::nbLiaisons];
     for(int i = 0 ; i < def::nbLiaisons ; i++)
@@ -10,7 +10,7 @@ Particule::Particule()
 }
 
 Particule::Particule(int x, int y, Matiere* matiere)
- : m_x(x), m_y(y), m_pos(x+0.5, y+0.5), m_v(), m_resf(), m_matiere(matiere)
+ : Element(Vecteur(x+0.5, y+0.5)), m_x(x), m_y(y), m_resf(), m_matiere(matiere)
 {
     m_liaisons = new Particule*[def::nbLiaisons];
     for(int i = 0 ; i < def::nbLiaisons ; i++)
@@ -18,7 +18,7 @@ Particule::Particule(int x, int y, Matiere* matiere)
 }
 
 Particule::Particule(int x, int y, double xd, double yd, Matiere* matiere)
- : m_x(x), m_y(y), m_pos(xd,yd), m_v(), m_resf(), m_matiere(matiere)
+ : Element(Vecteur(xd,yd)), m_x(x), m_y(y), m_resf(), m_matiere(matiere)
 {
     m_liaisons = new Particule*[def::nbLiaisons];
     for(int i = 0 ; i < def::nbLiaisons ; i++)
@@ -80,17 +80,11 @@ void Particule::setInt(int x, int y)
     m_y = y;
 }
 
-void Particule::setPos(Vecteur pos)
-{
-    m_pos = pos;
-}
-
-
 double Particule::getMasse() const
 {
     if (m_matiere == NULL)
         return 0.0;
-    return m_matiere->getMasse(*this);
+    return m_matiere->getMasse();
 }
 
 void Particule::appliquerForce(Vecteur f)
@@ -175,7 +169,7 @@ void Particule::collision(Particule& p, double dt)
     // A ce stade, p et cette particule sont dans la même "boîte"
     // d'après les coordonnées en double, les coordonnées entières ne sont pas les mêmes
 
-    double xCol, yCol; // Coordonnées double de la collision (au bord de la "boîte" de p)
+    double xCol=0.0, yCol=0.0; // Coordonnées double de la collision (au bord de la "boîte" de p)
     double vx = m_v.getX();
     double vy = m_v.getY();
     bool deplacementX = false; // Détecte si cette particule s'est déplacé selon m_x (int)
@@ -207,7 +201,7 @@ void Particule::collision(Particule& p, double dt)
     {
         newY = (double)m_y + OFFSET_COLLISION;
 
-        if (deplacementX && yCol > (double)(p.m_y+1))
+        if (!deplacementX || yCol > (double)(p.m_y+1))
         {
             // Logiquement, vy != 0.0
             yCol = (double)(p.m_y+1);
@@ -218,7 +212,7 @@ void Particule::collision(Particule& p, double dt)
     {
         newY = (double)(m_y+1) - OFFSET_COLLISION;
 
-        if (deplacementX && yCol < (double)p.m_y)
+        if (!deplacementX || yCol < (double)p.m_y)
         {
             // Logiquement, vy != 0.0
             yCol = (double)p.m_y;

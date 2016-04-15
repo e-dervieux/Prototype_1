@@ -26,7 +26,7 @@ public:
     void setInt(int x, int y); // Donne les nouvelles coordonnées entières de la particule
     void setPosInt(Vecteur pos); // Donne les nouvelles coordonnées double, et actualise les int correspondants
     virtual SDL_Color getCouleur() const { return m_matiere->getCouleur(); }
-    virtual double getMasse() const { return m_matiere->getMasse(); }
+    virtual double getMasse() const;
 
     void appliquerForce(Vecteur f);
     void appliquerForcesLiaison();
