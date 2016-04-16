@@ -26,9 +26,9 @@ void SceneSDL::init(int config)
     if (m_config != config)
     {
         // Chargement de la fenetre
-        int marge = (def::grilleAffichee) ? 1 : 0;
+        double marge = (def::grilleAffichee) ? 1.0 : 0.0;
         m_fenetre = SDL_CreateWindow(m_titre.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                     def::tailleParticule*def::width+marge, def::tailleParticule*def::height+marge, 0);
+                                     (int)(def::tailleParticule*(double)def::width+marge), (int)(def::tailleParticule*(double)def::height+marge), 0);
         if (m_fenetre == NULL)
             throw Erreur(3, "Echec du chargement de la fenetre");
 
@@ -83,7 +83,7 @@ void SceneSDL::bouclePrincipale()
                 dt = def::dtMax;
 
             // Mouvement
-            m_element.actualiser(dt);
+            m_element.actualiser(dt, def::coucheCollision);
 
             // Actualisation du rendu
             affichage(continuer);

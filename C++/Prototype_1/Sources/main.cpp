@@ -8,6 +8,7 @@
 #include "../Header/demoCohesion.h"
 #include "../Header/demoCollision1.h"
 #include "../Header/CouchesParticules.h"
+#include "../Header/demoMatricesRecursives.h"
 
 int main(int argv, char** argc)
 {
@@ -28,9 +29,11 @@ int main(int argv, char** argc)
             m.set(x,y,&p);
         else if (com == "suppr")
             m.suppr(x,y);
-    }
+    }*/
 
-    return 0;*/
+    demoMatricesRecursives();
+
+    return 0;
 
     bool continuer = true;
     while(continuer)

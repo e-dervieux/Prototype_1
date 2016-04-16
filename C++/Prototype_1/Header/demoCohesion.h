@@ -123,7 +123,7 @@ private:
 class SceneDemoCohesion : public SceneSDL
 {
 public:
-    SceneDemoCohesion(MatriceParticulesOld& mat, Jambon & j1, Jambon & j2, Matiere& m)
+    SceneDemoCohesion(Element& mat, Jambon & j1, Jambon & j2, Matiere& m)
      : SceneSDL(mat), m_j1(j1), m_j2(j2), m_m(m)
     {
         init(1);
@@ -185,7 +185,7 @@ void demoCohesion()
     double L = 5.0;
     double L0, K, CC; // Initialisés par la scène
 
-    def::redefGrille(200,120,5.0,0,3,false,false,8,8);
+    def::redefGrille(200,120,5.0,0,0,3,false,false,8,8);
     def::redefTemp(true, 0.003, 0);
 
     // Création de la matière

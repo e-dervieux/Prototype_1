@@ -6,6 +6,7 @@ namespace def
     int height;
     double tailleParticule;
     int coucheAffichage = 0;
+    int coucheCollision = 0;
     int coucheMax = 1;
     bool grilleAffichee = false;
     bool divisionsAffichees = false;
@@ -20,13 +21,14 @@ namespace def
 
     int nbLiaisons = 6;
 
-    void redefGrille(int width, int height, double tailleParticule, int coucheAffichage, int coucheMax,
+    void redefGrille(int width, int height, double tailleParticule, int coucheAffichage, int coucheCollision, int coucheMax,
                      bool grilleAffichee, bool divisionsAffichees, int pasGrille, int divisionGrille)
     {
         def::width = width;
         def::height = height;
         def::tailleParticule = tailleParticule;
         def::coucheAffichage = coucheAffichage;
+        def::coucheCollision = coucheCollision;
         def::coucheMax = coucheMax;
         def::grilleAffichee = grilleAffichee;
         def::divisionsAffichees = divisionsAffichees;

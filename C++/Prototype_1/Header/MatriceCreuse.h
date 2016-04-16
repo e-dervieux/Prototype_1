@@ -78,6 +78,57 @@ public:
         }
     }
 
+    // Se charge de détecter et d'appliquer les collisions lorsque la particule p essaie de se déplacer aux coordonnées (x,y)
+    // (x,y) sont des coordonnées absolues
+    // Retourne true s'il y a eu collision
+    bool gererCollision(Particule& p, int x, int y, int coucheCollision)
+    {
+        if (m_tab == NULL)
+            return false;
+
+        // Coordonnées ramenées dans la matrice
+        int x2 = x%m_w;
+        int y2 = y%m_h;
+
+        // Coordonnées de la sous-matrice
+        int sx = x2/dimSM;
+        int sy = y2/dimSM;
+        T& sm = m_tab[sx*dimSM+sy];
+        if (sm.estVide())
+            return false;
+        else
+        {
+            // Collision au niveau des sous-matrices
+            if (coucheCollision+1 == getProfondeur())
+            {
+                // Si collision au niveau des SM
+                if (p.detecterCollisionSM(x, y, dimSM))
+                {
+                    int xSM = (x/dimSM)*dimSM;
+                    int ySM = (y/dimSM)*dimSM;
+                    p.collision(sm,xSM,ySM,dimSM);
+                    return true;
+                }
+                else // Sinon, collision au niveau des particules
+                    return sm.gererCollision(p, x, y, 0);
+            }
+            else // Si on n'est pas au bon niveau de couches, on continue de descendre dans la hiérarchie des sous-matrices
+                return sm.gererCollision(p, x, y, coucheCollision);
+        }
+    }
+
+    // Changement de vitesse global
+    virtual void appliquerDV(Vecteur dv)
+    {
+        Conteneur::appliquerDV(dv);
+
+        if (m_tab != NULL)
+        {
+            for(int i = 0 ; i < m_smX*m_smY ; i++)
+                m_tab[i].appliquerDV(dv);
+        }
+    }
+
     // Retourne true si la matrice était auparavant vide, et qu'elle se remplit
     bool set(int x, int y, Particule* p)
     {
@@ -168,13 +219,8 @@ public:
         return sm.get(x%dimSM,y%dimSM);
     }
 
-    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel)
-    {
-        afficher(rendu, coucheAffichage, taillePixel, 0, 0);
-    }
-
     // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
-    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel, int x, int y)
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule, int x, int y)
     {
         if (coucheAffichage < getProfondeur())
         {
@@ -183,24 +229,31 @@ public:
                 for(int i = 0 ; i < m_smX ; i++)
                 {
                     for(int j = 0 ; j < m_smY ; j++)
-                        m_tab[i*m_smY+j].afficher(rendu, coucheAffichage, taillePixel, x+dimSM*i, y+dimSM*j);
+                        m_tab[i*m_smY+j].afficher(rendu, coucheAffichage, tailleParticule, x+dimSM*i, y+dimSM*j);
                 }
             }
         }
         else if (coucheAffichage == getProfondeur())
         {
+            int taillePixelX = (int)(tailleParticule*(double)m_w);
+            int taillePixelY = (int)(tailleParticule*(double)m_h);
             SDL_SetRenderDrawColor(rendu, m_couleur.r, m_couleur.g, m_couleur.b, m_couleur.a);
-            SDL_Rect rect = {taillePixel*x, taillePixel*y,taillePixel,taillePixel};
+            SDL_Rect rect = {taillePixelX*x, taillePixelY*y,taillePixelX,taillePixelY};
             SDL_RenderFillRect(rendu, &rect);
         }
     }
 
-    virtual void actualiser(double dt)
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
+    {
+        afficher(rendu, coucheAffichage, tailleParticule, 0, 0);
+    }
+
+    virtual void actualiser(double dt, int coucheCollision)
     {
         if (m_tab != NULL)
         {
             for(int i = 0 ; i < m_smX*m_smY ; i++)
-                m_tab[i].actualiser(dt);
+                m_tab[i].actualiser(dt, coucheCollision);
         }
     }
 
@@ -284,6 +337,44 @@ public:
         }
     }
 
+    // Se charge de détecter et d'appliquer les collisions lorsque la particule p essaie de se déplacer aux coordonnées (x,y)
+    // (x,y) sont des coordonnées absolues
+    // Retourne true s'il y a eu collision
+    bool gererCollision(Particule& p, int x, int y, int coucheCollision)
+    {
+        if (m_tab == NULL)
+            return false;
+
+        // Coordonnées ramenées dans la matrice
+        int x2 = x%m_w;
+        int y2 = y%m_h;
+
+        // Coordonnées de la particule
+        Particule* p2 = m_tab[x2*m_h+y2];
+        if (p2 != NULL)
+        {
+            p.collision(*p2);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    // Changement de vitesse global
+    virtual void appliquerDV(Vecteur dv)
+    {
+        Conteneur::appliquerDV(dv);
+
+        if (m_tab != NULL)
+        {
+            for(int i = 0 ; i < m_w*m_h ; i++)
+            {
+                if (m_tab[i] != NULL)
+                    m_tab[i]->appliquerDV(dv);
+            }
+        }
+    }
+
     // Retourne true si la matrice était auparavant vide, et qu'elle se remplit
     bool set(int x, int y, Particule* p)
     {
@@ -362,12 +453,12 @@ public:
         return (m_tab[x*m_h + y]);
     }
 
-    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel)
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
     {
-        afficher(rendu, coucheAffichage, taillePixel, 0, 0);
+        afficher(rendu, coucheAffichage, tailleParticule, 0, 0);
     }
 
-    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, int taillePixel, int x, int y)
+    virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule, int x, int y)
     {
         if (coucheAffichage == 0)
         {
@@ -379,7 +470,7 @@ public:
                     {
                         Particule* p = m_tab[i*m_h+j];
                         if (p != NULL)
-                            p->afficher(rendu, coucheAffichage, taillePixel);
+                            p->afficher(rendu, coucheAffichage, tailleParticule);
                     }
                 }
             }
@@ -387,19 +478,19 @@ public:
         else if (coucheAffichage == 1)
         {
             SDL_SetRenderDrawColor(rendu, m_couleur.r, m_couleur.g, m_couleur.b, m_couleur.a);
-            SDL_Rect rect = {taillePixel*x, taillePixel*y,taillePixel,taillePixel};
+            SDL_Rect rect = {(int)(tailleParticule*(double)x), (int)(tailleParticule*(double)y),(int)tailleParticule,(int)tailleParticule};
             SDL_RenderFillRect(rendu, &rect);
         }
     }
 
-    virtual void actualiser(double dt)
+    virtual void actualiser(double dt, int coucheCollision)
     {
         if (m_tab != NULL)
         {
             for(int i = 0 ; i < m_w*m_h ; i++)
             {
                 if (m_tab[i] != NULL)
-                    m_tab[i]->actualiser(dt);
+                    m_tab[i]->actualiser(dt, coucheCollision);
             }
         }
     }

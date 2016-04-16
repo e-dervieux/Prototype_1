@@ -9,11 +9,14 @@
 template<size_t ...dims>
 class MatriceParticules : public CouchesParticules<dims...>
 {
+    using Parent = CouchesParticules<dims...>;
+
 public:
     MatriceParticules(size_t w, size_t h, Particule* particules, int nbParticules)
-     : CouchesParticules<dims...>(w,h), m_part(particules), m_nbPart(nbParticules)
+     : Parent(w,h), m_part(particules), m_nbPart(nbParticules)
     {
         ajouterParticules();
+        this->actualiserBarycentre();
     }
 
     // Ajoute les particules de m_particules dans la matrice
@@ -23,7 +26,7 @@ public:
         {
             Particule* p = &m_part[i];
             if (estValide(*p))
-                set(p->getXInt(), p->getYInt(), p);
+                this->set(p->getXInt(), p->getYInt(), p);
             else
                 p->supprimerLiaisons();
         }
@@ -34,14 +37,15 @@ public:
     virtual void reinit()
     {
         // Suppression du contenu de la matrice Creuse
-        CouchesParticules<dims...>::reinit();
+        Parent::reinit();
 
         // Rajout des particules dans la matrice
         ajouterParticules();
+        this->actualiserBarycentre();
 
         // Suppression des forces rémanentes
         for(int i = 0 ; i < m_nbPart ; i++)
-        m_part[i].annulerForces();
+            m_part[i].annulerForces();
     }
 
     // Indique si une particule est bien dans la matrice
@@ -49,7 +53,7 @@ public:
     {
         int x = p.getXInt();
         int y = p.getYInt();
-        return (x >= 0 && x < m_w && y >= 0 && y < m_h);
+        return (x >= 0 && x < this->m_w && y >= 0 && y < this->m_h);
     }
 
     // Calcule et applique les forces de liaison entre les particules
@@ -75,14 +79,45 @@ public:
     }
 
     // Effectue le déplacement des particules dans la matrice
-    // TODO
-    void deplacer(double dt)
+    void deplacer(double dt, int coucheCollision)
     {
+        for(int i = 0 ; i < m_nbPart ; i++)
+        {
+            Particule& p = m_part[i];
+            if (estValide(p))
+            {
+                int xOldPart = p.getXInt();
+                int yOldPart = p.getYInt();
 
+                Vecteur pos = p.getPos(); // Position où mettre le pixel
+                int xNouvPart = (int)pos.getX();
+                int yNouvPart = (int)pos.getY();
+
+                // On tente de mettre la particule aux coordonnees (x,y)
+
+                // Seulement si la particule bouge :
+                if (xOldPart != xNouvPart || yOldPart != yNouvPart)
+                {
+                    // Si la particule sort de la grille
+                    if (xNouvPart < 0 || xNouvPart >= this->m_w || yNouvPart < 0 || yNouvPart >= this->m_h)
+                    {
+                        p.supprimerLiaisons();
+                        this->suppr(xOldPart,yOldPart);
+                    }
+                    // Sinon, calcule les collisions
+                    else if (!this->gererCollision(p, xNouvPart, yNouvPart, coucheCollision))
+                    {
+                        // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
+                        this->suppr(xOldPart, yOldPart);
+                        this->set(xNouvPart, yNouvPart, &p);
+                    }
+                }
+            }
+        }
     }
 
     // Calcule la frame suivante, à partir des méthodes ci-dessus
-    void actualiser(double dt)
+    void actualiser(double dt, int coucheCollision)
     {
         // Calculer la force à appliquer et l'appliquer à chaque particule
         forcesLiaison();
@@ -91,7 +126,10 @@ public:
         calculerDeplacement(dt);
 
         // Deplacer effectivement ces coordonnées dans la grille
-        deplacer(dt);
+        deplacer(dt, coucheCollision);
+
+        // Actualisation des barycentres
+        this->actualiserBarycentre();
     }
 
     void afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel)

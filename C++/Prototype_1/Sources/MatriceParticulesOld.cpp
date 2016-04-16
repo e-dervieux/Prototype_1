@@ -118,7 +118,7 @@ void MatriceParticulesOld::deplacer(double dt)
                     Particule* p2 = get(xNouvPart,yNouvPart);
                     // Si la nouvelle position est déjà occupée, il y a collision
                     if (p2 != NULL)
-                        p.collision(*p2, dt);
+                        p.collision(*p2);
                     else
                     {
                         // On bouge les coordonnées entières de la particule
@@ -132,7 +132,7 @@ void MatriceParticulesOld::deplacer(double dt)
     }
 }
 
-void MatriceParticulesOld::actualiser(double dt)
+void MatriceParticulesOld::actualiser(double dt, int coucheCollision)
 {
     // Calculer la force à appliquer et l'appliquer à chaque particule
     forcesLiaison();
@@ -146,8 +146,8 @@ void MatriceParticulesOld::actualiser(double dt)
 
 void MatriceParticulesOld::afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
 {
-    int partPP = pow(2,coucheAffichage);
-    int taillePixel = partPP*tailleParticule;
+    int partPP = (int)pow(2,coucheAffichage);
+    int taillePixel = (int)((double)partPP*tailleParticule);
     // Pour l'instant, on suppose que les sous-matrices sont carrées !!!
 
     /* 3 cas de figure :
