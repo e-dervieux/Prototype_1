@@ -15,6 +15,7 @@ class Jambon
 {
 public:
     virtual void init() = 0;
+    virtual void appliquerDV(Vecteur&& v) = 0;
 };
 
 // Test de génération d'objets
@@ -27,8 +28,8 @@ public:
 
     void init()
     {
-        Vecteur v1(m_l * sqrt(3.0)/2.0,0.5 * m_l);
-        Vecteur v2(m_l * sqrt(3.0),0.0 * m_l);
+        Vecteur v1((double)m_l * sqrt(3.0)/2.0,0.5 * m_l);
+        Vecteur v2((double)m_l * sqrt(3.0),0.0 * m_l);
         Vecteur v3(0.0, m_l);
         for(int i = 0 ; i < C ; i++)
         {
@@ -69,6 +70,12 @@ public:
         m_part[C*(C-1)].setPosInt(Vecteur(-1.0,-1.0));
         m_part[C*C-1].supprimerLiaisons();
         m_part[C*C-1].setPosInt(Vecteur(-1.0,-1.0));
+    }
+
+    virtual void appliquerDV(Vecteur&& v)
+    {
+        for(int i = 0 ; i < nbPart() ; i++)
+            m_part[i].appliquerDV(v);
     }
 
     static int nbPart() { return C*C + (C-1)*(C-1); }
@@ -112,6 +119,12 @@ public:
             m_part[i].setV(Vecteur());
     }
 
+    virtual void appliquerDV(Vecteur&& v)
+    {
+        for(int i = 0 ; i < nbPart() ; i++)
+            m_part[i].appliquerDV(v);
+    }
+
     static int nbPart() { return C*C; }
 
 private:
@@ -139,7 +152,7 @@ public:
             def::delaiEntreFrames = 0;
     }
 
-    void charger(int config)
+    virtual void charger(int config)
     {
         m_j1.init();
         m_j2.init();
@@ -173,7 +186,7 @@ public:
         m_titre = tmp.str();
     }
 
-private:
+protected:
     Jambon & m_j1;
     Jambon & m_j2;
 

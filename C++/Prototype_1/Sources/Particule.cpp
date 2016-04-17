@@ -165,6 +165,12 @@ void Particule::afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, doubl
 bool Particule::detecterCollisionSM(int x, int y, int tailleSM)
 {
     // Suppose que la SM est non vide
+
+    // Si on ne change pas de SM
+    if (m_x/tailleSM == x/tailleSM && m_y/tailleSM == y/tailleSM)
+        return false;
+
+    // res = collision (il n'y a pas de particule liée à celle-ci dans la nouvelle SM)
     bool res = true;
     for(int i = 0 ; res && i < def::nbLiaisons ; i++)
     {

@@ -101,15 +101,19 @@ public:
                     // Si la particule sort de la grille
                     if (xNouvPart < 0 || xNouvPart >= this->m_w || yNouvPart < 0 || yNouvPart >= this->m_h)
                     {
+                        // On la supprime
                         p.supprimerLiaisons();
                         this->suppr(xOldPart,yOldPart);
                     }
-                    // Sinon, calcule les collisions
+                    // Sinon, on calcule les collisions
                     else if (!this->gererCollision(p, xNouvPart, yNouvPart, coucheCollision))
                     {
                         // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
-                        this->suppr(xOldPart, yOldPart);
+                        p.setInt(xNouvPart, yNouvPart);
                         this->set(xNouvPart, yNouvPart, &p);
+                        this->suppr(xOldPart, yOldPart);
+                        // Le faire dans cet ordre est plus optimisé : s'il y a des SM vidées puis reremplies,
+                        // elles seraient détruites puis recrées
                     }
                 }
             }
@@ -132,12 +136,12 @@ public:
         this->actualiserBarycentre();
     }
 
-    void afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel)
+    void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
     {
         SDL_SetRenderDrawColor(rendu, 0,255,0,60);
 
         for(int i = 0 ; i < m_nbPart ; i++)
-            m_part[i].afficherLiaisons(rendu, partPP, taillePixel);
+            m_part[i].afficherLiaisons(rendu, coucheAffichage, tailleParticule);
     }
 
 private:

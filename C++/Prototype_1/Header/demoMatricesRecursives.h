@@ -8,6 +8,28 @@
 #include "MatriceParticules.h"
 #include "demoCohesion.h"
 
+class SceneDemoMR : public SceneDemoCohesion
+{
+public:
+    SceneDemoMR(Element& mat, Jambon & j1, Jambon & j2, Matiere& m)
+     : SceneDemoCohesion(mat, j1, j2, m)
+    {}
+
+    virtual void charger(int config)
+    {
+        SceneDemoCohesion::charger(config);
+        switch(config)
+        {
+            case 1:
+                m_j2.appliquerDV(Vecteur(30.0,0.0));
+                break;
+
+            default:
+                break;
+        }
+    }
+};
+
 void demoMatricesRecursives()
 {
     double L = 5.0;
@@ -33,10 +55,11 @@ void demoMatricesRecursives()
     j2.init();
 
     // Création de la grille
-    MatriceParticules<> mat(200, 120, particules, nbPart);
+    MatriceParticules<4> mat(200, 120, particules, nbPart);
+    std::cout << mat.getProfondeur();
 
     // Lancement de la scène SDL
-    SceneDemoCohesion scene(mat, j1, j2, m);
+    SceneDemoMR scene(mat, j1, j2, m);
     try { scene.bouclePrincipale(); }
     catch(Erreur& e) { std::cout << "Erreur !!" << std::endl << e.what() << std::endl; }
 
