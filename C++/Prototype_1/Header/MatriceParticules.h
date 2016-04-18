@@ -110,11 +110,21 @@ public:
                     {
                         // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
                         p.setInt(xNouvPart, yNouvPart);
-                        this->set(xNouvPart, yNouvPart, &p);
                         this->suppr(xOldPart, yOldPart);
-                        // Le faire dans cet ordre est plus optimisé : s'il y a des SM vidées puis reremplies,
-                        // elles seraient détruites puis recrées
+                        this->set(xNouvPart, yNouvPart, &p);
                     }
+                    else
+                    {
+                        // Collision, la particule ne bouge pas, mais on actualise les barycentres des matrices mères
+                        this->suppr(xOldPart, yOldPart);
+                        this->set(xOldPart, yOldPart, &p);
+                    }
+                }
+                else
+                {
+                    // Actualisation des barycentres
+                    this->suppr(xOldPart, yOldPart);
+                    this->set(xOldPart, yOldPart, &p);
                 }
             }
         }
@@ -134,6 +144,9 @@ public:
 
         // Actualisation des barycentres
         this->actualiserBarycentre();
+
+        // Actualisation des allocations mémoire
+        this->actualiserAlloc();
     }
 
     void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)

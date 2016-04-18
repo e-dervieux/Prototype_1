@@ -13,7 +13,7 @@ class MatriceCreuse<dimSM, autres...> : public Conteneur
 {
     // On suppose que T est ici forcément un type de MatriceCreuse !
     // Le cas de Particule sera géré plus tard
-    using T = MatriceCreuse<autres...>;
+    using SM = MatriceCreuse<autres...>;
 
 public:
     MatriceCreuse<dimSM, autres...>(size_t w, size_t h)
@@ -41,15 +41,16 @@ public:
             delete [] m_tab;
     }
 
-    static inline int getProfondeur() { return 1+T::getProfondeur(); }
+    static inline int getProfondeur() { return 1+SM::getProfondeur(); }
 
+    // Redéfinit également le nombre de particules, la masse, etc...
+    // /!\ N'est peut-être jamais utilisé !?
     virtual void actualiserBarycentre()
     {
         if (m_tab==NULL)
         {
             m_masse = 0.0;
-            m_pTot = 0;
-            m_nbE = 0;
+            m_nbP = 0;
         }
         else
         {
@@ -59,7 +60,7 @@ public:
             m_v = 0.0;
 
             // Variables pour la couleur
-            m_pTot = 0;
+            m_nbP = 0;
             double r = 0.0, g = 0.0, b = 0.0, a = 0.0;
 
             for(int i = 0 ; i < m_smX*m_smY ; i++)
@@ -68,7 +69,7 @@ public:
                 m_pos += m_tab[i].getPos();
                 m_v += m_tab[i].getV();
 
-                m_pTot += m_tab[i].getPTot();
+                m_nbP += m_tab[i].getNbP();
                 SDL_Color c = m_tab[i].getCouleur();
                 r += (double)c.r;
                 g += (double)c.g;
@@ -76,11 +77,27 @@ public:
                 a += (double)c.a;
             }
             m_couleur = {
-                    (Uint8)(r/(double)m_pTot),
-                    (Uint8)(g/(double)m_pTot),
-                    (Uint8)(b/(double)m_pTot),
-                    (Uint8)(a/(double)m_pTot) };
+                    (Uint8)(r/(double)m_nbP),
+                    (Uint8)(g/(double)m_nbP),
+                    (Uint8)(b/(double)m_nbP),
+                    (Uint8)(a/(double)m_nbP) };
         }
+    }
+
+    void actualiserAlloc()
+    {
+        if (m_tab == NULL)
+            return;
+
+        if (m_nbP == 0)
+        {
+            delete [] m_tab;
+            m_tab = NULL;
+            return;
+        }
+
+        for(int i = 0 ; i < m_smX*m_smY ; i++)
+            m_tab[i].actualiserAlloc();
     }
 
     // Se charge de détecter et d'appliquer les collisions lorsque la particule p essaie de se déplacer aux coordonnées (x,y)
@@ -98,7 +115,7 @@ public:
         // Coordonnées de la sous-matrice
         int sx = x2/dimSM;
         int sy = y2/dimSM;
-        T& sm = m_tab[sx*dimSM+sy];
+        SM& sm = m_tab[sx*dimSM+sy];
         if (sm.estVide())
             return false;
         else
@@ -134,7 +151,7 @@ public:
         }
     }
 
-    // Retourne true si la matrice était auparavant vide, et qu'elle se remplit
+    // Retourne true si la matrice se remplit
     bool set(int x, int y, Particule* p)
     {
         if (x < 0 || x >= m_w || y < 0 || y >= m_h)
@@ -143,7 +160,7 @@ public:
         // Création du tableaux des sous-matrices, s'il n'existait pas encore
         if (m_tab == NULL)
         {
-            m_tab = new T[m_smX*m_smY];
+            m_tab = new SM[m_smX*m_smY];
             for(int i = 0 ; i < m_smX*m_smY ; i++)
                 m_tab[i].setDim(dimSM);
         }
@@ -152,47 +169,39 @@ public:
         int sx = x/dimSM;
         int sy = y/dimSM;
         int indSM = sx*m_smY + sy;
-        T& sm = m_tab[indSM];
+        SM& sm = m_tab[indSM];
 
         // Insertion du nouvel élément dans la sous-matrice
         if (sm.set(x%dimSM, y%dimSM, p))
         {
-            m_nbE++;
-            return m_nbE==1;
+            ajouterParticule(p);
+            return true;
         }
         else
             return false;
     }
 
-    // Retourne true si cela vide la matrice
-    bool suppr(int x, int y)
+    // Retourne la particule supprimée
+    Particule* suppr(int x, int y)
     {
         if (m_tab == NULL || x < 0 || x >= m_w || y < 0 || y >= m_h)
-            return false;
+            return NULL;
 
         // Coordonnées de la sous-matrice concernée
         int sx = x/dimSM;
         int sy = y/dimSM;
         int indSM = sx*m_smY + sy;
 
-        T& sm = m_tab[indSM];
+        SM& sm = m_tab[indSM];
+
+        Particule* p = sm.suppr(x%dimSM,y%dimSM);
 
         // On vide le niveau inférieur
-        if (sm.suppr(x%dimSM,y%dimSM))
-        {
+        if (p != NULL)
             // Si cela vide la sous-matrice, on la supprime
-            m_nbE--;
-            if (m_nbE == 0)
-            {
-                delete[] m_tab;
-                m_tab = NULL;
-                return true;
-            }
-            else
-                return false;
-        }
-        else
-            return false;
+            supprimerParticule(p);
+
+        return p;
     }
 
     // Supprime tous les sous-éléments, après les avoir vidés
@@ -220,7 +229,7 @@ public:
         int sy = y/dimSM;
         int indSM = sx*m_smY + sy;
 
-        T& sm = m_tab[indSM];
+        SM& sm = m_tab[indSM];
         return sm.get(x%dimSM,y%dimSM);
     }
 
@@ -263,7 +272,7 @@ public:
     }
 
 protected:
-    T* m_tab; // Tableaux des sous-éléments
+    SM* m_tab; // Tableaux des sous-éléments
 
     size_t m_w, m_h; // Dimensions
     int m_smX, m_smY; // Nombre de sous-matrices selon X et Y
@@ -304,8 +313,7 @@ public:
         if (m_tab==NULL)
         {
             m_masse = 0.0;
-            m_pTot = 0;
-            m_nbE = 0;
+            m_nbP = 0;
         }
         else
         {
@@ -315,7 +323,7 @@ public:
             m_v = 0.0;
 
             // Variables pour la couleur
-            m_pTot = 0;
+            m_nbP = 0;
             double r = 0.0, g = 0.0, b = 0.0, a = 0.0;
 
             for(int i = 0 ; i < m_w*m_h ; i++)
@@ -326,7 +334,7 @@ public:
                     m_pos += m_tab[i]->getPos();
                     m_v += m_tab[i]->getV();
 
-                    m_pTot++;
+                    m_nbP++;
                     SDL_Color c = m_tab[i]->getCouleur();
                     r += (double)c.r;
                     g += (double)c.g;
@@ -335,10 +343,22 @@ public:
                 }
             }
             m_couleur = {
-                    (Uint8)(r/(double)m_pTot),
-                    (Uint8)(g/(double)m_pTot),
-                    (Uint8)(b/(double)m_pTot),
-                    (Uint8)(a/(double)m_pTot) };
+                    (Uint8)(r/(double)m_nbP),
+                    (Uint8)(g/(double)m_nbP),
+                    (Uint8)(b/(double)m_nbP),
+                    (Uint8)(a/(double)m_nbP) };
+        }
+    }
+
+    void actualiserAlloc()
+    {
+        if (m_tab == NULL)
+            return;
+
+        if (m_nbP == 0)
+        {
+            delete [] m_tab;
+            m_tab = NULL;
         }
     }
 
@@ -380,7 +400,7 @@ public:
         }
     }
 
-    // Retourne true si la matrice était auparavant vide, et qu'elle se remplit
+    // Retourne true si la matrice se remplit
     bool set(int x, int y, Particule* p)
     {
         if (x < 0 || x >= m_w || y < 0 || y >= m_h)
@@ -402,39 +422,29 @@ public:
         if (p2 == NULL)
         {
             p2 = p;
-            m_nbE++;
-            return m_nbE==1;
+            ajouterParticule(p);
+            return true;
         }
         else
             return false;
     }
 
-    // Retourne true si cela vide la matrice
-    bool suppr(int x, int y)
+    // Retourne la particule supprimée
+    Particule* suppr(int x, int y)
     {
         if (m_tab == NULL || x < 0 || x >= m_w || y < 0 || y >= m_h)
-            return false;
+            return NULL;
 
         // Coordonnées de la particule concernée
         int indSM = x*m_h + y;
 
         Particule*& p2 = m_tab[indSM];
-        if (p2 == NULL) // (x,y) est déjà vide...
-            return false; // Cette matrice n'est pas plus vide qu'avant donc
+        Particule* res = p2;
 
-        // On supprime la particule
+        // On supprime la particule de la matrice
         p2 = NULL;
 
-        // Si cela vide la sous-matrice, on la supprime
-        m_nbE--;
-        if (m_nbE == 0)
-        {
-            delete[] m_tab;
-            m_tab = NULL;
-            return true;
-        }
-        else
-            return false;
+        return res;
     }
 
     virtual void reinit()
