@@ -1,15 +1,15 @@
 #ifndef PROTOTYPE_1_MATRICEP_H
 #define PROTOTYPE_1_MATRICEP_H
 
-#include "CouchesParticules.h"
+#include "MatriceCreuse.h"
 
 // Classe définie à partir de CouchesParticules(MatriceCreuse)
 // Les méthodes de gestion des particules sont hybrides : soit à partir du tableau de particules,
 // soit en parcours en profondeur
 template<size_t ...dims>
-class MatriceParticules : public CouchesParticules<dims...>
+class MatriceParticules : public MatriceCreuse<dims...>
 {
-    using Parent = CouchesParticules<dims...>;
+    using Parent = MatriceCreuse<dims...>;
 
 public:
     MatriceParticules(size_t w, size_t h, Particule* particules, int nbParticules)

@@ -3,21 +3,26 @@
 
 #include "Conteneur.h"
 
+template<size_t ...dims>
+class MatriceCreuse;
+
 // Conteneur défini de manière récursive
-template<typename T, size_t dimSM>
-class MatriceCreuse : public Conteneur
+template<>
+template<size_t dimSM, size_t ...autres>
+class MatriceCreuse<dimSM, autres...> : public Conteneur
 {
     // On suppose que T est ici forcément un type de MatriceCreuse !
     // Le cas de Particule sera géré plus tard
+    using T = MatriceCreuse<autres...>;
 
 public:
-    MatriceCreuse(size_t w, size_t h)
+    MatriceCreuse<dimSM, autres...>(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
        m_w(w), m_h(h), m_smX((int)ceil((double)w/(double)dimSM)), m_smY((int)ceil((double)h/(double)dimSM))
     {}
 
     // Constructeur par défaut (utlisé uniquement par le conteneur !!!)
-    MatriceCreuse()
+    MatriceCreuse<dimSM, autres...>()
      : Conteneur(), m_tab(NULL)
     {}
 
@@ -266,7 +271,7 @@ protected:
 
 // Spécialisation : Cas de base = matrice simple de particules, n'allouant pas forcément son tableau
 template<>
-class MatriceCreuse<Particule,1> : public Conteneur
+class MatriceCreuse<> : public Conteneur
 {
 public:
     MatriceCreuse(size_t w, size_t h)
@@ -501,9 +506,13 @@ protected:
     size_t m_w, m_h; // Dimensions
 };
 
+template<>
+class MatriceCreuse<1> : public MatriceCreuse<>
+{};
+
 // DEBUG : sert à avoir un apperçu du conteneur de particules
-template<typename T, size_t dimSM>
-void afficher(MatriceCreuse<T, dimSM>& m, int w, int h)
+template<size_t ...dims>
+void afficher(MatriceCreuse<dims...>& m, int w, int h)
 {
     std::cout << "Nombre de sous-elements : " << m.getNbE() << std::endl;
     std::cout << "Profondeur : " << m.getProfondeur() << std::endl;

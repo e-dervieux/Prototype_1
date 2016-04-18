@@ -17,7 +17,6 @@ set(SOURCE_FILES    Sources/main.cpp
                     Header/SceneSDL.h           Sources/SceneSDL.cpp
                     Header/Element.h
                     Header/Conteneur.h
-                    Header/CouchesParticules.h
                     Header/Particule.h          Sources/Particule.cpp
                     Header/MatriceCreuseDemo.h
         Header/MatriceParticulesOld.h Sources/MatriceParticulesOld.cpp
