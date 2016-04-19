@@ -251,8 +251,10 @@ public:
         {
             int taillePixelX = (int)(tailleParticule*(double)m_w);
             int taillePixelY = (int)(tailleParticule*(double)m_h);
+            int coordX = (int)(tailleParticule*(double)x);
+            int coordY = (int)(tailleParticule*(double)y);
             SDL_SetRenderDrawColor(rendu, m_couleur.r, m_couleur.g, m_couleur.b, m_couleur.a);
-            SDL_Rect rect = {taillePixelX*x, taillePixelY*y,taillePixelX,taillePixelY};
+            SDL_Rect rect = {coordX, coordY, taillePixelX, taillePixelY};
             SDL_RenderFillRect(rendu, &rect);
         }
     }
@@ -492,8 +494,12 @@ public:
         }
         else if (coucheAffichage == 1)
         {
+            int taillePixelX = (int)(tailleParticule*(double)m_w);
+            int taillePixelY = (int)(tailleParticule*(double)m_h);
+            int coordX = (int)(tailleParticule*(double)x);
+            int coordY = (int)(tailleParticule*(double)y);
             SDL_SetRenderDrawColor(rendu, m_couleur.r, m_couleur.g, m_couleur.b, m_couleur.a);
-            SDL_Rect rect = {(int)(tailleParticule*(double)x), (int)(tailleParticule*(double)y),(int)tailleParticule,(int)tailleParticule};
+            SDL_Rect rect = {coordX, coordY, taillePixelX, taillePixelY};
             SDL_RenderFillRect(rendu, &rect);
         }
     }

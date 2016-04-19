@@ -20,11 +20,8 @@ public:
         SceneDemoCohesion::charger(config);
         switch(config)
         {
-            case 1:
-                m_j2.appliquerDV(Vecteur(30.0,0.0));
-                break;
-
             default:
+                m_j2.appliquerDV(Vecteur(30.0,0.0));
                 break;
         }
     }
@@ -35,8 +32,8 @@ void demoMatricesRecursives()
     double L = 5.0;
     double L0, K, CC; // Initialisés par la scène
 
-    def::redefGrille(200,120,5.0,0,1,2,false,false,8,8);
-    def::redefTemp(true, 0.003, 0);
+    def::redefGrille(200,120,5.0,0,0,4,false,false,8,8);
+    def::redefTemp(true, 0.03, 0);
 
     // Création de la matière
     SDL_Color c = {255, 0, 0, 255};
@@ -55,7 +52,7 @@ void demoMatricesRecursives()
     j2.init();
 
     // Création de la grille
-    MatriceParticules<8> mat(200, 120, def::coucheCollision, particules, nbPart);
+    MatriceParticules<8,4,2> mat(200, 120, def::coucheCollision, particules, nbPart);
     std::cout << mat.getProfondeur();
 
     // Lancement de la scène SDL

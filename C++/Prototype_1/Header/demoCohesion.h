@@ -165,20 +165,20 @@ public:
         {
             case 2:
                 l0 = 2.5;
-                k = 1300.0;
-                cc = 60.0;
+                k = 13.0;
+                cc = 6.0;
                 break;
 
             case 3:
                 l0 = 3.0;
-                k = 2500.0;
-                cc = 60.0;
+                k = 25.0;
+                cc = 6.0;
                 break;
 
             default:
                 l0 = 3.0;
-                k = 500.0;
-                cc = 60.0;
+                k = 5.0;
+                cc = 6.0;
         }
         m_m = Matiere(rouge,1.0,l0,k,cc);
         std::stringstream tmp;
@@ -199,7 +199,7 @@ void demoCohesion()
     double L0, K, CC; // Initialisés par la scène
 
     def::redefGrille(200,120,5.0,0,0,3,false,false,8,8);
-    def::redefTemp(true, 0.003, 0);
+    def::redefTemp(true, 0.03, 0);
 
     // Création de la matière
     SDL_Color c = {255, 0, 0, 255};
