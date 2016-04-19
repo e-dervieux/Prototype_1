@@ -115,7 +115,7 @@ public:
         // Coordonnées de la sous-matrice
         int sx = x2/dimSM;
         int sy = y2/dimSM;
-        SM& sm = m_tab[sx*dimSM+sy];
+        SM& sm = m_tab[sx*m_smY+sy];
         if (sm.estVide())
             return false;
         else
@@ -262,12 +262,12 @@ public:
         afficher(rendu, coucheAffichage, tailleParticule, 0, 0);
     }
 
-    virtual void actualiser(double dt, int coucheCollision)
+    virtual void actualiser(double dt)
     {
         if (m_tab != NULL)
         {
             for(int i = 0 ; i < m_smX*m_smY ; i++)
-                m_tab[i].actualiser(dt, coucheCollision);
+                m_tab[i].actualiser(dt);
         }
     }
 
@@ -376,7 +376,7 @@ public:
 
         // Coordonnées de la particule
         Particule* p2 = m_tab[x2*m_h+y2];
-        if (p2 != NULL)
+        if (p2 != NULL && p2 != &p)
         {
             p.collision(*p2);
             return true;
@@ -498,14 +498,15 @@ public:
         }
     }
 
-    virtual void actualiser(double dt, int coucheCollision)
+    // Inutile... mais sait-on jamais
+    virtual void actualiser(double dt)
     {
         if (m_tab != NULL)
         {
             for(int i = 0 ; i < m_w*m_h ; i++)
             {
                 if (m_tab[i] != NULL)
-                    m_tab[i]->actualiser(dt, coucheCollision);
+                    m_tab[i]->actualiser(dt);
             }
         }
     }
@@ -524,7 +525,7 @@ class MatriceCreuse<1> : public MatriceCreuse<>
 template<size_t ...dims>
 void afficher(MatriceCreuse<dims...>& m, int w, int h)
 {
-    std::cout << "Nombre de sous-elements : " << m.getNbE() << std::endl;
+    std::cout << "Nombre de particules : " << m.getNbP() << std::endl;
     std::cout << "Profondeur : " << m.getProfondeur() << std::endl;
     for(int j = 0 ; j < h ; j++)
     {

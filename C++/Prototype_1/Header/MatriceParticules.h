@@ -12,8 +12,8 @@ class MatriceParticules : public MatriceCreuse<dims...>
     using Parent = MatriceCreuse<dims...>;
 
 public:
-    MatriceParticules(size_t w, size_t h, Particule* particules, int nbParticules)
-     : Parent(w,h), m_part(particules), m_nbPart(nbParticules)
+    MatriceParticules(size_t w, size_t h, int coucheCollision, Particule* particules, int nbParticules)
+     : Parent(w,h), m_part(particules), m_nbPart(nbParticules), m_coucheCollision(coucheCollision)
     {
         ajouterParticules();
         this->actualiserBarycentre();
@@ -67,19 +67,8 @@ public:
         }
     }
 
-    //  Calcule la prochaine position des particules
-    void calculerDeplacement(double dt)
-    {
-        for(int i = 0 ; i < m_nbPart ; i++)
-        {
-            Particule& p = m_part[i];
-            if (estValide(p))
-                p.calculerDeplacement(dt);
-        }
-    }
-
     // Effectue le déplacement des particules dans la matrice
-    void deplacer(double dt, int coucheCollision)
+    void deplacer(double dt)
     {
         for(int i = 0 ; i < m_nbPart ; i++)
         {
@@ -89,7 +78,11 @@ public:
                 int xOldPart = p.getXInt();
                 int yOldPart = p.getYInt();
 
-                Vecteur pos = p.getPos(); // Position où mettre le pixel
+                // Déplacement de la particule
+                this->suppr(xOldPart,yOldPart);
+                p.actualiser(dt);
+
+                Vecteur pos = p.getPos(); // Nouvelle position où mettre le pixel
                 int xNouvPart = (int)pos.getX();
                 int yNouvPart = (int)pos.getY();
 
@@ -100,50 +93,36 @@ public:
                 {
                     // Si la particule sort de la grille
                     if (xNouvPart < 0 || xNouvPart >= this->m_w || yNouvPart < 0 || yNouvPart >= this->m_h)
-                    {
-                        // On la supprime
-                        p.supprimerLiaisons();
-                        this->suppr(xOldPart,yOldPart);
-                    }
+                        p.supprimerLiaisons(); // On la supprime
                     // Sinon, on calcule les collisions
-                    else if (!this->gererCollision(p, xNouvPart, yNouvPart, coucheCollision))
+                    else if (!this->gererCollision(p, xNouvPart, yNouvPart, m_coucheCollision))
                     {
                         // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
                         p.setInt(xNouvPart, yNouvPart);
-                        this->suppr(xOldPart, yOldPart);
                         this->set(xNouvPart, yNouvPart, &p);
                     }
                     else
-                    {
-                        // Collision, la particule ne bouge pas, mais on actualise les barycentres des matrices mères
-                        this->suppr(xOldPart, yOldPart);
+                        // Si collision, la particule ne bouge pas
                         this->set(xOldPart, yOldPart, &p);
-                    }
                 }
                 else
-                {
                     // Actualisation des barycentres
-                    this->suppr(xOldPart, yOldPart);
                     this->set(xOldPart, yOldPart, &p);
-                }
             }
         }
     }
 
     // Calcule la frame suivante, à partir des méthodes ci-dessus
-    void actualiser(double dt, int coucheCollision)
+    void actualiser(double dt)
     {
         // Calculer la force à appliquer et l'appliquer à chaque particule
         forcesLiaison();
 
         // Modifier les coordonnées de ces particules
-        calculerDeplacement(dt);
+        deplacer(dt);
 
-        // Deplacer effectivement ces coordonnées dans la grille
-        deplacer(dt, coucheCollision);
-
-        // Actualisation des barycentres
-        this->actualiserBarycentre();
+        // Actualisation des barycentres (plus besoin !)
+        //this->actualiserBarycentre();
 
         // Actualisation des allocations mémoire
         this->actualiserAlloc();
@@ -160,6 +139,7 @@ public:
 private:
     Particule* m_part; // Tableau des particules à gérer
     int m_nbPart; // Nombre de particules dans le tableau
+    int m_coucheCollision;
 };
 
 #endif //PROTOTYPE_1_MATRICEP_H

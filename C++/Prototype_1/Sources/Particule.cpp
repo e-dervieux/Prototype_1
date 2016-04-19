@@ -93,7 +93,7 @@ void Particule::appliquerForce(Vecteur f)
 }
 
 // EULER
-void Particule::calculerDeplacement(double dt)
+void Particule::actualiser(double dt)
 {
     if (m_matiere != NULL)
     {

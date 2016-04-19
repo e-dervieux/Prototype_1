@@ -83,7 +83,7 @@ void SceneSDL::bouclePrincipale()
                 dt = def::dtMax;
 
             // Mouvement
-            m_element.actualiser(dt, def::coucheCollision);
+            m_element.actualiser(dt);
 
             // Actualisation du rendu
             affichage(continuer);

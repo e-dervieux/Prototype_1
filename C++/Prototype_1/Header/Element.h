@@ -12,7 +12,7 @@ public:
      : m_pos(pos), m_v(v), m_masse(0.0)
     {}
 
-    virtual void actualiser(double dt, int coucheCollision) = 0; // Calcule la frame suivante
+    virtual void actualiser(double dt) = 0; // Calcule la frame suivante
     virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule) = 0; // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
     virtual void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule) {} // Utilisé par SceneSDL
 

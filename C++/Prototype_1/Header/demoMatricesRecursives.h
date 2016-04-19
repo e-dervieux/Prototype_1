@@ -35,7 +35,7 @@ void demoMatricesRecursives()
     double L = 5.0;
     double L0, K, CC; // Initialisés par la scène
 
-    def::redefGrille(200,120,5.0,0,0,3,false,false,8,8);
+    def::redefGrille(200,120,5.0,0,1,2,false,false,8,8);
     def::redefTemp(true, 0.003, 0);
 
     // Création de la matière
@@ -55,7 +55,7 @@ void demoMatricesRecursives()
     j2.init();
 
     // Création de la grille
-    MatriceParticules<4> mat(200, 120, particules, nbPart);
+    MatriceParticules<8> mat(200, 120, def::coucheCollision, particules, nbPart);
     std::cout << mat.getProfondeur();
 
     // Lancement de la scène SDL

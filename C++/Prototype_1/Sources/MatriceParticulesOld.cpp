@@ -84,7 +84,7 @@ void MatriceParticulesOld::calculerDeplacement(double dt)
     {
         Particule& p = m_part[i];
         if (estValide(p))
-            p.calculerDeplacement(dt);
+            p.actualiser(dt);
     }
 }
 
@@ -132,7 +132,7 @@ void MatriceParticulesOld::deplacer(double dt)
     }
 }
 
-void MatriceParticulesOld::actualiser(double dt, int coucheCollision)
+void MatriceParticulesOld::actualiser(double dt)
 {
     // Calculer la force à appliquer et l'appliquer à chaque particule
     forcesLiaison();
