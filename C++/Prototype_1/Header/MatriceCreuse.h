@@ -247,7 +247,7 @@ public:
                 }
             }
         }
-        else if (coucheAffichage == getProfondeur())
+        else if (coucheAffichage == getProfondeur() && !estVide())
         {
             int taillePixelX = (int)(tailleParticule*(double)m_w);
             int taillePixelY = (int)(tailleParticule*(double)m_h);
@@ -492,7 +492,7 @@ public:
                 }
             }
         }
-        else if (coucheAffichage == 1)
+        else if (coucheAffichage == 1 && !estVide())
         {
             int taillePixelX = (int)(tailleParticule*(double)m_w);
             int taillePixelY = (int)(tailleParticule*(double)m_h);
