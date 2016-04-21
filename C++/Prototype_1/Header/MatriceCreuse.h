@@ -258,9 +258,9 @@ public:
 
         // Normalement, ces conditons suffisent
         xMin = (xMin <= 0) ? 0 : xMin;
-        xMax = (xMax >= m_smX-1) ? m_smX-1 : xMax;
+        xMax = (xMax >= m_smX) ? m_smX : xMax;
         yMin = (yMin <= 0) ? 0 : yMin;
-        yMax = (yMax >= m_smX-1) ? m_smX-1 : yMax;
+        yMax = (yMax >= m_smY) ? m_smY : yMax;
 
         // Ajout des liaisons récursivement
         for(int i = xMin ; i <= xMax ; i++)
@@ -271,7 +271,9 @@ public:
                     m_tab[i*m_smY+j].lierDroite(nb);
                 if (j != yMax)
                     m_tab[i*m_smY+j].lierBas(nb);
-                m_tab[i*m_smY+j].ajouterLiaison(nb,x1-dimSM*i, y1-dimSM*j,x2-dimSM*i,y2-dimSM*j);
+                // Appel récursif
+                if (i < m_smX && j < m_smY)
+                    m_tab[i*m_smY+j].ajouterLiaison(nb,x1-dimSM*i, y1-dimSM*j,x2-dimSM*i,y2-dimSM*j);
             }
         }
     }
@@ -398,6 +400,7 @@ public:
         }
     }
 
+    // DEBUG
     void afficherLiaisonsSM() const
     {
         if (m_tab == NULL)
@@ -406,18 +409,20 @@ public:
             return;
         }
         std::cout << "Liaisons des sous-matrices : " << std::endl;
-        for(int j = 0 ; j < m_smY-1 ; j++)
+        for(int j = 0 ; j < m_smY ; j++)
         {
-            for(int i = 0 ; i < m_smX-1 ; i++)
+            for(int i = 0 ; i < m_smX ; i++)
                 std::cout << "." << m_tab[i*m_smY+j].getNbLDroite();
-            std::cout << "." << std::endl;
-            for(int i = 0 ; i < m_smX-1 ; i++)
-                std::cout << " " << m_tab[i*m_smY+j].getNbLBas();
+            std::cout << std::endl;
+            for(int i = 0 ; i < m_smX ; i++)
+                std::cout << m_tab[i*m_smY+j].getNbLBas() << " ";
+            std::cout << std::endl;
         }
-        for(int i = 0 ; i < m_smX ; i++)
-            std::cout << "." << m_tab[i*m_smY+m_smY-1].getNbLDroite();
-        std::cout << "." << std::endl;
+        std::cout << std::endl << std::endl;
     }
+
+    // DEBUG
+    SM& getSM(int sx, int sy) const { return m_tab[sx*m_smY+sy]; }
 
 protected:
     SM* m_tab; // Tableaux des sous-éléments

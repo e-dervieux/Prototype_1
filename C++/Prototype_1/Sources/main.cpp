@@ -11,9 +11,6 @@
 
 int main(int argv, char** argc)
 {
-    demoMatricesRecursives();
-    return 0;
-
     Matiere matiere;
     Particule* part = new Particule[2];
     part[0] = Particule(2,2,2.5,2.5,&matiere);
@@ -21,6 +18,8 @@ int main(int argv, char** argc)
     part[0].lier(&part[1]);
     MatriceParticules<4,2> m(8,8,1,part,2);
     m.afficherLiaisonsSM();
+    m.getSM(0,0).afficherLiaisonsSM();
+    m.getSM(0,1).afficherLiaisonsSM();
 
     delete[] part;
     return 0;
