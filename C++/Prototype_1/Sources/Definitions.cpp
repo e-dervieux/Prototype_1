@@ -21,6 +21,8 @@ namespace def
 
     int nbLiaisons = 6;
 
+    SDL_Renderer* rendu;
+
     void redefGrille(int width, int height, double tailleParticule, int coucheAffichage, int coucheCollision, int coucheMax,
                      bool grilleAffichee, bool divisionsAffichees, int pasGrille, int divisionGrille)
     {

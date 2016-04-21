@@ -7,13 +7,6 @@
 // Offset utilisé lors des collisions, pour que la particule ne soit jamais sur l'extreme bord d'une case
 #define OFFSET_COLLISION 0.0001
 
-// Macros min et max
-/*
-#undef min
-#undef max
-#define min(x,y) ( (x <= y) ? x : y )
-#define max(x,y) ( (x >= y) ? x : y )
-*/
 namespace def
 {
     enum TOUCHE{K_ESPACE, K_DROITE, K_HAUT, K_GAUCHE, K_BAS, K_Z, K_Q, K_S, K_D, K_L, K_G, K_SHIFT, K_KP_PLUS, K_KP_MOINS, NB_TOUCHES};
@@ -40,6 +33,9 @@ namespace def
 
     // Calculs physiques
     extern int nbLiaisons; // Nombre de liaisons que peut avoir une particule
+
+    // Pour le debug
+    extern SDL_Renderer* rendu;
 
     // Redéfinir un ensemble de paramètres
     void redefGrille(int width, int height, double tailleParticule, int coucheAffichee = 0, int coucheCollision = 0, int coucheMax = 1,

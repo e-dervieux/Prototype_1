@@ -5,6 +5,12 @@
 
 // TODO utiliser un namespace ! (voire un namespace dans un namespace)
 
+// TODO Utiliser les variables de def plutôt que des arguments (cf coucheCollision, coucheAffichage, etc...)
+
+// TODO Pouvoir utiliser le rendu de def pour afficher les collisions, etc...
+
+// TODO Utiliser un test de préprocesseur pour les fonctions de déboggage (#ifdef DEBUG)
+
 template<size_t ...dims>
 class MatriceCreuse;
 
@@ -226,10 +232,8 @@ public:
     int getNbLDroite() const { return m_nbLDroite; }
     int getNbLBas() const { return m_nbLBas; }
 
-    void lier(Direction d, int nb = 1)
-    {
-        m_nbL[d] += nb;
-    }
+    void lierDroite(int nb = 1) { m_nbLDroite += nb; }
+    void lierBas(int nb = 1) { m_nbLBas += nb; }
 
     // Effectue récursivement les liaisons entre les coordonnées x et y
     // TODO Peut être optimisé avec des suppositions !
@@ -252,6 +256,7 @@ public:
         if (ySM1 <= ySM2) { yMin = ySM1; yMax = ySM2; }
         else { yMin = ySM2; yMax = ySM1; }
 
+        // Normalement, ces conditons suffisent
         xMin = (xMin <= 0) ? 0 : xMin;
         xMax = (xMax >= m_smX-1) ? m_smX-1 : xMax;
         yMin = (yMin <= 0) ? 0 : yMin;
@@ -263,15 +268,9 @@ public:
             for(int j = yMin ; j <= yMax ; j++)
             {
                 if (i != xMax)
-                {
-                    m_tab[i*m_smY+j].lier(DROITE,nb);
-                    m_tab[(i+1)*m_smY+j].lier(GAUCHE,nb);
-                }
+                    m_tab[i*m_smY+j].lierDroite(nb);
                 if (j != yMax)
-                {
-                    m_tab[i*m_smY+j].lier(BAS,nb);
-                    m_tab[i*m_smY+(j+1)].lier(HAUT,nb);
-                }
+                    m_tab[i*m_smY+j].lierBas(nb);
                 m_tab[i*m_smY+j].ajouterLiaison(nb,x1-dimSM*i, y1-dimSM*j,x2-dimSM*i,y2-dimSM*j);
             }
         }
@@ -407,18 +406,17 @@ public:
             return;
         }
         std::cout << "Liaisons des sous-matrices : " << std::endl;
-        for(int j = 0 ; j < m_smY ; j++)
+        for(int j = 0 ; j < m_smY-1 ; j++)
         {
-            for(int i = 0 ; i < m_smX ; i++)
-                std::cout << " " << m_tab[i*m_smY+j].getNbL(HAUT);
-            std::cout << std::endl;
-            for(int i = 0 ; i < m_smX ; i++)
-                std::cout << m_tab[i*m_smY+j].getNbL(GAUCHE) << ".";
-            std::cout << m_tab[(m_smX-1)*m_smY+j].getNbL(DROITE) << std::endl;
+            for(int i = 0 ; i < m_smX-1 ; i++)
+                std::cout << "." << m_tab[i*m_smY+j].getNbLDroite();
+            std::cout << "." << std::endl;
+            for(int i = 0 ; i < m_smX-1 ; i++)
+                std::cout << " " << m_tab[i*m_smY+j].getNbLBas();
         }
         for(int i = 0 ; i < m_smX ; i++)
-            std::cout << " " << m_tab[i*m_smY+m_smY-1].getNbL(BAS);
-        std::cout << std::endl;
+            std::cout << "." << m_tab[i*m_smY+m_smY-1].getNbLDroite();
+        std::cout << "." << std::endl;
     }
 
 protected:
@@ -436,21 +434,15 @@ class MatriceCreuse<> : public Conteneur
 public:
     MatriceCreuse(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
-       m_w(w), m_h(h)
-    {
-        m_nbL = new int[4];
-        for(int i = 0 ; i < 4 ; i++)
-            m_nbL[i] = 0;
-    }
+       m_w(w), m_h(h),
+       m_nbLDroite(0), m_nbLBas(0)
+    {}
 
     // Constructeur par défaut (utlisé uniquement par le conteneur !!!)
     MatriceCreuse()
-     : Conteneur(), m_tab(NULL)
-    {
-        m_nbL = new int[4];
-        for(int i = 0 ; i < 4 ; i++)
-            m_nbL[i] = 0;
-    }
+     : Conteneur(), m_tab(NULL),
+       m_nbLDroite(0), m_nbLBas(0)
+    {}
 
     // Utilisé après pour définir les dimensions
     void setDim(size_t dim)
@@ -463,7 +455,6 @@ public:
     {
         if (m_tab != NULL)
             delete [] m_tab;
-        delete [] m_nbL;
     }
 
     static inline int getProfondeur() { return 1; }
@@ -560,12 +551,11 @@ public:
         }
     }
 
-    int getNbL(Direction d) { return m_nbL[d]; }
+    int getNbLDroite() { return m_nbLDroite; }
+    int getNbLBas() { return m_nbLBas; }
 
-    void lier(Direction d, int nb = 1)
-    {
-        m_nbL[d] += nb;
-    }
+    void lierDroite(int nb = 1) { m_nbLDroite += nb; }
+    void lierBas(int nb = 1) { m_nbLBas += nb; }
 
     void ajouterLiaison(bool ajouter, int x1, int y1, int x2, int y2) {}
 
@@ -688,7 +678,7 @@ protected:
     Particule** m_tab; // Tableaux des particules
 
     size_t m_w, m_h; // Dimensions
-    int * m_nbL;
+    int m_nbLDroite, m_nbLBas; // Liaisons avec les autres sous-matrices
 };
 
 template<>
