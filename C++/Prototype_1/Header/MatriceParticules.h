@@ -2,6 +2,7 @@
 #define PROTOTYPE_1_MATRICEP_H
 
 #include "MatriceCreuse.h"
+#include "Definitions.h"
 
 // Classe définie à partir de CouchesParticules(MatriceCreuse)
 // Les méthodes de gestion des particules sont hybrides : soit à partir du tableau de particules,
@@ -26,7 +27,10 @@ public:
         {
             Particule* p = &m_part[i];
             if (estValide(*p))
+            {
                 this->set(p->getXInt(), p->getYInt(), p);
+                lier(*p,true);
+            }
             else
                 p->supprimerLiaisons();
         }
@@ -54,6 +58,19 @@ public:
         int x = p.getXInt();
         int y = p.getYInt();
         return (x >= 0 && x < this->m_w && y >= 0 && y < this->m_h);
+    }
+
+    // Ajoute/supprime les liaisons que contient la particule p
+    void lier(Particule& p, int nb = 1)
+    {
+        Particule** l = p.getLiaisons(); // l est normalement toujours correct (non NULL, etc...)
+
+        for(int i = 0 ; i < def::nbLiaisons ; i++)
+        {
+            Particule* p2 = l[i];
+            if (p2 != NULL)
+                this->ajouterLiaison(nb, p.getXInt(), p.getYInt(), p2->getXInt(), p2->getYInt());
+        }
     }
 
     // Calcule et applique les forces de liaison entre les particules
@@ -93,12 +110,18 @@ public:
                 {
                     // Si la particule sort de la grille
                     if (xNouvPart < 0 || xNouvPart >= this->m_w || yNouvPart < 0 || yNouvPart >= this->m_h)
-                        p.supprimerLiaisons(); // On la supprime
+                    {
+                        // On supprime les liaisons
+                        lier(p, -2);
+                        p.supprimerLiaisons();
+                    }
                     // Sinon, on calcule les collisions
                     else if (!this->gererCollision(p, xNouvPart, yNouvPart, m_coucheCollision))
                     {
                         // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
+                        lier(p, -2);
                         p.setInt(xNouvPart, yNouvPart);
+                        lier(p, 2);
                         this->set(xNouvPart, yNouvPart, &p);
                     }
                     else
@@ -106,7 +129,6 @@ public:
                         this->set(xOldPart, yOldPart, &p);
                 }
                 else
-                    // Actualisation des barycentres
                     this->set(xOldPart, yOldPart, &p);
             }
         }

@@ -33,6 +33,7 @@ void demoMatricesRecursives()
     double L0, K, CC; // Initialisés par la scène
 
     def::redefGrille(200,120,5.0,0,0,4,false,false,8,8);
+    def::coucheCollision = 1;
     def::redefTemp(true, 0.03, 0);
 
     // Création de la matière

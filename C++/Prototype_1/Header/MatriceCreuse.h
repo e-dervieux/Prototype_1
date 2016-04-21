@@ -3,6 +3,8 @@
 
 #include "Conteneur.h"
 
+// TODO utiliser un namespace ! (voire un namespace dans un namespace)
+
 template<size_t ...dims>
 class MatriceCreuse;
 
@@ -11,19 +13,19 @@ template<>
 template<size_t dimSM, size_t ...autres>
 class MatriceCreuse<dimSM, autres...> : public Conteneur
 {
-    // On suppose que T est ici forcément un type de MatriceCreuse !
-    // Le cas de Particule sera géré plus tard
     using SM = MatriceCreuse<autres...>;
 
 public:
     MatriceCreuse<dimSM, autres...>(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
-       m_w(w), m_h(h), m_smX((int)ceil((double)w/(double)dimSM)), m_smY((int)ceil((double)h/(double)dimSM))
+       m_w(w), m_h(h), m_smX((int)ceil((double)w/(double)dimSM)), m_smY((int)ceil((double)h/(double)dimSM)),
+       m_nbLDroite(0), m_nbLBas(0)
     {}
 
     // Constructeur par défaut (utlisé uniquement par le conteneur !!!)
     MatriceCreuse<dimSM, autres...>()
-     : Conteneur(), m_tab(NULL)
+     : Conteneur(), m_tab(NULL),
+       m_nbLDroite(0), m_nbLBas(0)
     {}
 
     // Utilisé après pour définir les dimensions
@@ -103,7 +105,7 @@ public:
     // Se charge de détecter et d'appliquer les collisions lorsque la particule p essaie de se déplacer aux coordonnées (x,y)
     // (x,y) sont des coordonnées absolues
     // Retourne true s'il y a eu collision
-    bool gererCollision(Particule& p, int x, int y, int coucheCollision)
+    bool gererCollision(Particule& p, int x, int y, int coucheCollision, bool colSMTrouvee = false, bool liaisonSM = false)
     {
         if (m_tab == NULL)
             return false;
@@ -120,11 +122,19 @@ public:
             return false;
         else
         {
+            // Si la collision n'a pas été trouvée, c'est que la particule ET la SM sont dans cette matrice
+            if (!colSMTrouvee)
+            {
+                int px = p.getXInt() / dimSM;
+                int py = p.getYInt() / dimSM;
+                collisionSM(px,py,sx,sy,colSMTrouvee,liaisonSM);
+            }
+
             // Collision au niveau des sous-matrices
             if (coucheCollision+1 == getProfondeur())
             {
                 // Si collision au niveau des SM
-                if (p.detecterCollisionSM(x, y, dimSM))
+                if (!liaisonSM)
                 {
                     int xSM = (x/dimSM)*dimSM;
                     int ySM = (y/dimSM)*dimSM;
@@ -132,10 +142,72 @@ public:
                     return true;
                 }
                 else // Sinon, collision au niveau des particules
-                    return sm.gererCollision(p, x, y, 0);
+                    return sm.gererCollision(p, x, y, 0, true, true);
             }
             else // Si on n'est pas au bon niveau de couches, on continue de descendre dans la hiérarchie des sous-matrices
-                return sm.gererCollision(p, x, y, coucheCollision);
+                return sm.gererCollision(p, x, y, coucheCollision, colSMTrouvee, liaisonSM);
+        }
+    }
+
+    // Pour l'instant, les matrices sont toujours adjacentes
+    // TODO Si les matrices ne sont pas adjacentes, faire un parcours de graphe... fuck it
+    void collisionSM(int sx1, int sy1, int sx2, int sy2, bool& colSMTrouvee, bool& liaisonSM)
+    {
+        // SM1(sx1, sy1) et SM2(sx2, sy2) sont supposés dans cette matrice
+        if (sx1 == sx2)
+        {
+            if (sy1 == sy2) // Même sous-matrice
+                return;
+            else if (sy1 < sy2) // SM2 en bas de SM1
+            {
+                colSMTrouvee = true;
+                liaisonSM = m_tab[sx1*m_smY+sy1].getNbLBas() > 0;
+            }
+            else // SM2 en haut de SM1
+            {
+                colSMTrouvee = true;
+                liaisonSM = m_tab[sx2*m_smY+sy2].getNbLBas() > 0;
+            }
+        }
+        else if (sx1 < sx2)
+        {
+            if (sy1 == sy2) // A droite
+            {
+                colSMTrouvee = true;
+                liaisonSM = m_tab[sx1*m_smY+sy1].getNbLDroite() > 0;
+            }
+            else if (sy1 < sy2) // En bas à droite
+            {
+                colSMTrouvee = true;
+                liaisonSM = ( m_tab[sx1*m_smY+sy1].getNbLBas() > 0 && m_tab[sx1*m_smY+(sy1+1)].getNbLDroite() )
+                         || ( m_tab[sx1*m_smY+sy1].getNbLDroite() > 0 && m_tab[(sx1+1)*m_smY+sy1].getNbLBas() );
+            }
+            else // En haut à droite
+            {
+                colSMTrouvee = true;
+                liaisonSM = ( m_tab[sx1*m_smY+(sy1-1)].getNbLBas() > 0 && m_tab[sx1*m_smY+(sy1-1)].getNbLDroite() )
+                         || ( m_tab[sx1*m_smY+sy1].getNbLDroite() > 0 && m_tab[(sx1+1)*m_smY+(sy1-1)].getNbLBas() );
+            }
+        }
+        else
+        {
+            if (sy1 == sy2) // A gauche
+            {
+                colSMTrouvee = true;
+                liaisonSM = m_tab[(sx1-1)*m_smY+sy1].getNbLDroite() > 0;
+            }
+            else if (sy1 < sy2) // En bas à gauche
+            {
+                colSMTrouvee = true;
+                liaisonSM = ( m_tab[sx1*m_smY+sy1].getNbLBas() > 0 && m_tab[(sx1-1)*m_smY+(sy1+1)].getNbLDroite() )
+                         || ( m_tab[(sx1-1)*m_smY+sy1].getNbLDroite() > 0 && m_tab[(sx1-1)*m_smY+sy1].getNbLBas() );
+            }
+            else // En haut à gauche
+            {
+                colSMTrouvee = true;
+                liaisonSM = ( m_tab[sx2*m_smY+sy2].getNbLBas() > 0 && m_tab[sx2*m_smY+(sy2-1)].getNbLDroite() )
+                         || ( m_tab[sx2*m_smY+sy2].getNbLDroite() > 0 && m_tab[(sx2-1)*m_smY+sy2].getNbLBas() );
+            }
         }
     }
 
@@ -148,6 +220,60 @@ public:
         {
             for(int i = 0 ; i < m_smX*m_smY ; i++)
                 m_tab[i].appliquerDV(dv);
+        }
+    }
+
+    int getNbLDroite() const { return m_nbLDroite; }
+    int getNbLBas() const { return m_nbLBas; }
+
+    void lier(Direction d, int nb = 1)
+    {
+        m_nbL[d] += nb;
+    }
+
+    // Effectue récursivement les liaisons entre les coordonnées x et y
+    // TODO Peut être optimisé avec des suppositions !
+    void ajouterLiaison(int nb, int x1, int y1, int x2, int y2)
+    {
+        if (m_tab == NULL)
+            return;
+
+        // Indices des sous-matrices concernées
+        int xSM1 = x1/dimSM;
+        int ySM1 = y1/dimSM;
+        int xSM2 = x2/dimSM;
+        int ySM2 = y2/dimSM;
+
+        // Indices x/y min/max
+        int xMin, yMin, xMax, yMax;
+        if (xSM1 <= xSM2) { xMin = xSM1; xMax = xSM2; }
+        else { xMin = xSM2; xMax = xSM1; }
+
+        if (ySM1 <= ySM2) { yMin = ySM1; yMax = ySM2; }
+        else { yMin = ySM2; yMax = ySM1; }
+
+        xMin = (xMin <= 0) ? 0 : xMin;
+        xMax = (xMax >= m_smX-1) ? m_smX-1 : xMax;
+        yMin = (yMin <= 0) ? 0 : yMin;
+        yMax = (yMax >= m_smX-1) ? m_smX-1 : yMax;
+
+        // Ajout des liaisons récursivement
+        for(int i = xMin ; i <= xMax ; i++)
+        {
+            for(int j = yMin ; j <= yMax ; j++)
+            {
+                if (i != xMax)
+                {
+                    m_tab[i*m_smY+j].lier(DROITE,nb);
+                    m_tab[(i+1)*m_smY+j].lier(GAUCHE,nb);
+                }
+                if (j != yMax)
+                {
+                    m_tab[i*m_smY+j].lier(BAS,nb);
+                    m_tab[i*m_smY+(j+1)].lier(HAUT,nb);
+                }
+                m_tab[i*m_smY+j].ajouterLiaison(nb,x1-dimSM*i, y1-dimSM*j,x2-dimSM*i,y2-dimSM*j);
+            }
         }
     }
 
@@ -273,11 +399,34 @@ public:
         }
     }
 
+    void afficherLiaisonsSM() const
+    {
+        if (m_tab == NULL)
+        {
+            std::cout << "Matrice vide..." << std::endl;
+            return;
+        }
+        std::cout << "Liaisons des sous-matrices : " << std::endl;
+        for(int j = 0 ; j < m_smY ; j++)
+        {
+            for(int i = 0 ; i < m_smX ; i++)
+                std::cout << " " << m_tab[i*m_smY+j].getNbL(HAUT);
+            std::cout << std::endl;
+            for(int i = 0 ; i < m_smX ; i++)
+                std::cout << m_tab[i*m_smY+j].getNbL(GAUCHE) << ".";
+            std::cout << m_tab[(m_smX-1)*m_smY+j].getNbL(DROITE) << std::endl;
+        }
+        for(int i = 0 ; i < m_smX ; i++)
+            std::cout << " " << m_tab[i*m_smY+m_smY-1].getNbL(BAS);
+        std::cout << std::endl;
+    }
+
 protected:
     SM* m_tab; // Tableaux des sous-éléments
 
     size_t m_w, m_h; // Dimensions
     int m_smX, m_smY; // Nombre de sous-matrices selon X et Y
+    int m_nbLDroite, m_nbLBas; // Nombre de liaisons avec les autres sous-matrices
 };
 
 // Spécialisation : Cas de base = matrice simple de particules, n'allouant pas forcément son tableau
@@ -288,12 +437,20 @@ public:
     MatriceCreuse(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
        m_w(w), m_h(h)
-    {}
+    {
+        m_nbL = new int[4];
+        for(int i = 0 ; i < 4 ; i++)
+            m_nbL[i] = 0;
+    }
 
     // Constructeur par défaut (utlisé uniquement par le conteneur !!!)
     MatriceCreuse()
      : Conteneur(), m_tab(NULL)
-    {}
+    {
+        m_nbL = new int[4];
+        for(int i = 0 ; i < 4 ; i++)
+            m_nbL[i] = 0;
+    }
 
     // Utilisé après pour définir les dimensions
     void setDim(size_t dim)
@@ -306,6 +463,7 @@ public:
     {
         if (m_tab != NULL)
             delete [] m_tab;
+        delete [] m_nbL;
     }
 
     static inline int getProfondeur() { return 1; }
@@ -367,7 +525,7 @@ public:
     // Se charge de détecter et d'appliquer les collisions lorsque la particule p essaie de se déplacer aux coordonnées (x,y)
     // (x,y) sont des coordonnées absolues
     // Retourne true s'il y a eu collision
-    bool gererCollision(Particule& p, int x, int y, int coucheCollision)
+    bool gererCollision(Particule& p, int x, int y, int coucheCollision, bool, bool)
     {
         if (m_tab == NULL)
             return false;
@@ -401,6 +559,15 @@ public:
             }
         }
     }
+
+    int getNbL(Direction d) { return m_nbL[d]; }
+
+    void lier(Direction d, int nb = 1)
+    {
+        m_nbL[d] += nb;
+    }
+
+    void ajouterLiaison(bool ajouter, int x1, int y1, int x2, int y2) {}
 
     // Retourne true si la matrice se remplit
     bool set(int x, int y, Particule* p)
@@ -521,6 +688,7 @@ protected:
     Particule** m_tab; // Tableaux des particules
 
     size_t m_w, m_h; // Dimensions
+    int * m_nbL;
 };
 
 template<>
@@ -540,5 +708,6 @@ void afficher(MatriceCreuse<dims...>& m, int w, int h)
         std::cout << std::endl;
     }
 }
+
 
 #endif //PROTOTYPE_1_MATRICECREUSE_H

@@ -18,6 +18,7 @@ public:
     Particule& operator=(const Particule& p);
 
     void creerLiaisons(Particule** liaisons);
+    Particule** getLiaisons() { return m_liaisons; }
     bool lier(Particule* p); // Lie la particule à p. Retourne false si ce n'est pas possible
     void supprimerLiaisons(); // Supprime la particule de la grille (la remettre vide, et supprimer les liaisons)
 
