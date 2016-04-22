@@ -2,7 +2,6 @@
 #define PROTOTYPE_1_MATRICEP_H
 
 #include "MatriceCreuse.h"
-#include "Definitions.h"
 
 // Classe définie à partir de CouchesParticules(MatriceCreuse)
 // Les méthodes de gestion des particules sont hybrides : soit à partir du tableau de particules,
@@ -13,8 +12,9 @@ class MatriceParticules : public MatriceCreuse<dims...>
     using Parent = MatriceCreuse<dims...>;
 
 public:
-    MatriceParticules(size_t w, size_t h, int coucheCollision, Particule* particules, int nbParticules)
-     : Parent(w,h), m_part(particules), m_nbPart(nbParticules), m_coucheCollision(coucheCollision)
+    MatriceParticules(size_t w, size_t h, int coucheCol, Particule* particules, int nbParticules)
+     : Parent(w,h), m_part(particules), m_nbPart(nbParticules),
+       m_coucheCol(coucheCol), m_dimCol(Parent::getDim(coucheCol))
     {
         ajouterParticules();
         this->actualiserBarycentre();
@@ -29,7 +29,7 @@ public:
             if (estValide(*p))
             {
                 this->set(p->getXInt(), p->getYInt(), p);
-                lier(*p,true);
+                lier(*p,1);
             }
             else
                 p->supprimerLiaisons();
@@ -69,7 +69,7 @@ public:
         {
             Particule* p2 = l[i];
             if (p2 != NULL)
-                this->ajouterLiaison(nb, p.getXInt(), p.getYInt(), p2->getXInt(), p2->getYInt());
+                lier(p.getXInt(), p.getYInt(), p2->getXInt(), p2->getYInt(), nb);
         }
     }
 
@@ -115,21 +115,133 @@ public:
                         lier(p, -2);
                         p.supprimerLiaisons();
                     }
-                    // Sinon, on calcule les collisions
-                    else if (!this->gererCollision(p, xNouvPart, yNouvPart, m_coucheCollision))
+                    // Sinon, on cherche une collision au niveau des SM
+                    else if (!collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
                     {
-                        // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
-                        lier(p, -2);
-                        p.setInt(xNouvPart, yNouvPart);
-                        lier(p, 2);
-                        this->set(xNouvPart, yNouvPart, &p);
-                    }
-                    else
                         // Si collision, la particule ne bouge pas
                         this->set(xOldPart, yOldPart, &p);
+                        // Normalement, getSM() renvoie une matrice existante (sinon, il n'y aurait pas de collision)
+                        Conteneur* sm = this->getSM(xNouvPart,yNouvPart,m_coucheCol);
+                        int sx = xNouvPart/m_dimCol;
+                        int sy = yNouvPart/m_dimCol;
+                        p.collision(*sm, sx*m_dimCol, sy*m_dimCol, m_dimCol);
+                    }
+                    else
+                    {
+                        // Collision au niveau des particules
+                        Particule* p2 = this->get(xNouvPart,yNouvPart);
+                        if (p2 != NULL)
+                            p.collision(*p2,xNouvPart,yNouvPart,1);
+                        else
+                        {
+                            // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
+                            lier(p, -2);
+                            p.setInt(xNouvPart, yNouvPart);
+                            lier(p, 2);
+                            this->set(xNouvPart, yNouvPart, &p);
+                        }
+                    }
                 }
                 else
                     this->set(xOldPart, yOldPart, &p);
+            }
+        }
+    }
+
+    // Pour l'instant, les matrices de collision sont toujours adjacentes
+    bool collisionSM(int x1, int y1, int x2, int y2)
+    {
+        if (this->m_tab == NULL)
+            return false;
+
+        // Coordonnées des SM
+        int sx1 = x1 / m_dimCol;
+        int sy1 = y1 / m_dimCol;
+        int sx2 = x2 / m_dimCol;
+        int sy2 = y2 / m_dimCol;
+
+        if (sx1 == sx2)
+        {
+            if (sy1 == sy2) // Même sous-matrice
+                return false;
+            else if (sy1 < sy2) // En bas
+                return (this->liaisonSMBas(x1, y1, m_coucheCol) <= 0 );
+            else // En haut
+                return (this->liaisonSMBas(x2, y2, m_coucheCol) <= 0 );
+        }
+        else if (sx1 < sx2)
+        {
+            if (sy1 == sy2) // A droite
+                return this->liaisonSMDroite(x1, y1, m_coucheCol) <= 0;
+            else if (sy1 < sy2) // En bas à droite
+                return (this->liaisonSMDroite(x1, y1, m_coucheCol) <= 0 || this->liaisonSMBas(x2, y1, m_coucheCol) <= 0)
+                       && (this->liaisonSMBas(x1, y1, m_coucheCol) <= 0 || this->liaisonSMDroite(x1, y2, m_coucheCol) <= 0);
+            else // En haut à droite
+                return (this->liaisonSMDroite(x1, y1, m_coucheCol) <= 0 || this->liaisonSMBas(x2, y2, m_coucheCol) <= 0)
+                       && (this->liaisonSMBas(x1, y2, m_coucheCol) <= 0 || this->liaisonSMDroite(x1, y2, m_coucheCol) <= 0);
+        }
+        else // sx1 > sx2
+        {
+            if (sy1 == sy2) // A gauche
+                return this->liaisonSMDroite(x2, y2, m_coucheCol) <= 0;
+            else if (sy1 < sy2) // En bas à gauche
+                return (this->liaisonSMDroite(x2, y1, m_coucheCol) <= 0 || this->liaisonSMBas(x2, y1, m_coucheCol) <= 0)
+                       && (this->liaisonSMBas(x1, y1, m_coucheCol) <= 0 || this->liaisonSMDroite(x1, y2, m_coucheCol) <= 0);
+            else // En haut à gauche
+                return (this->liaisonSMDroite(x2, y1, m_coucheCol) <= 0 || this->liaisonSMBas(x2, y2, m_coucheCol) <= 0)
+                       && (this->liaisonSMBas(x1, y2, m_coucheCol) <= 0 || this->liaisonSMDroite(x2, y2, m_coucheCol) <= 0);
+        }
+    }
+
+    // Pour l'instant, les matrices de collision sont toujours adjacentes
+    void lier(int x1, int y1, int x2, int y2, int nb)
+    {
+        if (this->m_tab == NULL)
+            return;
+
+        // Coordonnées des SM
+        int sx1 = x1/m_dimCol;
+        int sy1 = y1/m_dimCol;
+        int sx2 = x2/m_dimCol;
+        int sy2 = y2/m_dimCol;
+
+        if (sx1 == sx2)
+        {
+            if (sy1 == sy2) // Même sous-matrice
+                return;
+            else if (sy1 < sy2) // En bas
+                this->lierSMBas(x1,y1,nb,m_coucheCol);
+            else // En haut
+                this->lierSMBas(x2,y2,nb,m_coucheCol);
+        }
+        else if (sx1 < sx2)
+        {
+            if (sy1 == sy2) // A droite
+                this->lierSMDroite(x1,y1,nb,m_coucheCol);
+            else if (sy1 < sy2) // En bas à droite
+            {
+                this->lierSMDroite(x1,y1,nb,m_coucheCol); this->lierSMBas(x2,y1,nb,m_coucheCol);
+                this->lierSMBas(x1,y1,nb,m_coucheCol); this->lierSMDroite(x1,y2,nb,m_coucheCol);
+            }
+            else // En haut à droite
+            {
+                this->lierSMDroite(x1,y1,nb,m_coucheCol); this->lierSMBas(x2,y2,nb,m_coucheCol);
+                this->lierSMBas(x1,y2,nb,m_coucheCol); this->lierSMDroite(x1,y2,nb,m_coucheCol);
+            }
+        }
+        else // sx1 > sx2
+        {
+            if (sy1 == sy2) // A gauche
+                this->lierSMDroite(x2,y2,nb,m_coucheCol);
+            else if (sy1 < sy2) // En bas à gauche
+            {
+                this->lierSMDroite(x2,y1,nb,m_coucheCol); this->lierSMBas(x2,y1,nb,m_coucheCol);
+                this->lierSMBas(x1,y1,nb,m_coucheCol); this->lierSMDroite(x1,y2,nb,m_coucheCol);
+            }
+            else // En haut à gauche
+            {
+                this->lierSMDroite(x2,y1,nb,m_coucheCol); this->lierSMBas(x2,y2,nb,m_coucheCol);
+                this->lierSMBas(x1,y2,nb,m_coucheCol); this->lierSMDroite(x2,y2,nb,m_coucheCol);
             }
         }
     }
@@ -161,7 +273,8 @@ public:
 private:
     Particule* m_part; // Tableau des particules à gérer
     int m_nbPart; // Nombre de particules dans le tableau
-    int m_coucheCollision;
+    int m_coucheCol;
+    int m_dimCol;
 };
 
 #endif //PROTOTYPE_1_MATRICEP_H
