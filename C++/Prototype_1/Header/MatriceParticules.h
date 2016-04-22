@@ -116,25 +116,46 @@ public:
                         p.supprimerLiaisons();
                     }
                     // Sinon, on cherche une collision au niveau des SM
-                    else if (collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
-                    {
-                        // Si collision, la particule ne bouge pas
-                        this->set(xOldPart, yOldPart, &p);
-                        // Normalement, getSM() renvoie une matrice existante (sinon, il n'y aurait pas de collision)
-                        Conteneur* sm = this->getSM(xNouvPart,yNouvPart,m_coucheCol);
-                        int sx = xNouvPart/m_dimCol;
-                        int sy = yNouvPart/m_dimCol;
-                        p.collision(*sm, sx*m_dimCol, sy*m_dimCol, m_dimCol);
-                    }
                     else
                     {
-                        // Collision au niveau des particules
-                        Particule* p2 = this->get(xNouvPart,yNouvPart);
-                        if (p2 != NULL)
-                            p.collision(*p2,xNouvPart,yNouvPart,1);
-                        else
+                        // TODO revoir les tests à effectuer
+                        Conteneur* sm = this->getSM(xNouvPart,yNouvPart,m_coucheCol);
+                        if (sm != NULL && !sm->estVide() && collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
                         {
-                            // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
+                            // Si collision, la particule ne bouge pas
+                            this->set(xOldPart, yOldPart, &p);
+                            // Normalement, getSM() renvoie une matrice existante (sinon, il n'y aurait pas de collision)
+
+                            int sx = xNouvPart/m_dimCol;
+                            int sy = yNouvPart/m_dimCol;
+                            p.collision(*sm, sx*m_dimCol, sy*m_dimCol, m_dimCol);
+                        }
+                        else if (sm != NULL)
+                        {
+                            // Collision au niveau des particules
+                            Particule* p2 = this->get(xNouvPart,yNouvPart);
+                            if (p2 != NULL)
+                                p.collision(*p2,xNouvPart,yNouvPart,1);
+                            else
+                            {
+                                // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
+
+                                // On ne redéfinit les liaisons entre sous-matrices que si les positions diffèrent de sous-matrice
+                                // à la couche de collision
+                                bool redefLiaisons =
+                                        xOldPart/m_dimCol != xNouvPart/m_dimCol ||
+                                        yOldPart/m_dimCol != yNouvPart/m_dimCol;
+
+                                if (redefLiaisons)
+                                    lier(p, -2);
+                                p.setInt(xNouvPart, yNouvPart);
+                                if (redefLiaisons)
+                                    lier(p, 2);
+                                this->set(xNouvPart, yNouvPart, &p);
+                            }
+                        }
+                        else // sm == NULL
+                        {
                             lier(p, -2);
                             p.setInt(xNouvPart, yNouvPart);
                             lier(p, 2);
@@ -160,36 +181,25 @@ public:
         int sx2 = x2 / m_dimCol;
         int sy2 = y2 / m_dimCol;
 
+        int xMin = (x1 <= x2) ? x1 : x2;
+        int xMax = (x1 <= x2) ? x2 : x1;
+        int yMin = (y1 <= y2) ? y1 : y2;
+        int yMax = (y1 <= y2) ? y2 : y1;
+
         if (sx1 == sx2)
         {
             if (sy1 == sy2) // Même sous-matrice
                 return false;
-            else if (sy1 < sy2) // En bas
-                return (this->liaisonSMBas(x1, y1, m_coucheCol) <= 0 );
-            else // En haut
-                return (this->liaisonSMBas(x2, y2, m_coucheCol) <= 0 );
+            else // En bas
+                return this->liaisonSMBas(xMin,yMin,m_coucheCol) <= 0;
         }
-        else if (sx1 < sx2)
+        else
         {
             if (sy1 == sy2) // A droite
-                return this->liaisonSMDroite(x1, y1, m_coucheCol) <= 0;
-            else if (sy1 < sy2) // En bas à droite
-                return (this->liaisonSMDroite(x1, y1, m_coucheCol) <= 0 || this->liaisonSMBas(x2, y1, m_coucheCol) <= 0)
-                       && (this->liaisonSMBas(x1, y1, m_coucheCol) <= 0 || this->liaisonSMDroite(x1, y2, m_coucheCol) <= 0);
-            else // En haut à droite
-                return (this->liaisonSMDroite(x1, y1, m_coucheCol) <= 0 || this->liaisonSMBas(x2, y2, m_coucheCol) <= 0)
-                       && (this->liaisonSMBas(x1, y2, m_coucheCol) <= 0 || this->liaisonSMDroite(x1, y2, m_coucheCol) <= 0);
-        }
-        else // sx1 > sx2
-        {
-            if (sy1 == sy2) // A gauche
-                return this->liaisonSMDroite(x2, y2, m_coucheCol) <= 0;
-            else if (sy1 < sy2) // En bas à gauche
-                return (this->liaisonSMDroite(x2, y1, m_coucheCol) <= 0 || this->liaisonSMBas(x2, y1, m_coucheCol) <= 0)
-                       && (this->liaisonSMBas(x1, y1, m_coucheCol) <= 0 || this->liaisonSMDroite(x1, y2, m_coucheCol) <= 0);
-            else // En haut à gauche
-                return (this->liaisonSMDroite(x2, y1, m_coucheCol) <= 0 || this->liaisonSMBas(x2, y2, m_coucheCol) <= 0)
-                       && (this->liaisonSMBas(x1, y2, m_coucheCol) <= 0 || this->liaisonSMDroite(x2, y2, m_coucheCol) <= 0);
+                return this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0;
+            else // En bas à droite
+                return ( this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMBas(xMax, yMin, m_coucheCol) )
+                    || ( this->liaisonSMBas(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMDroite(xMin, yMax, m_coucheCol) );
         }
     }
 
@@ -205,43 +215,29 @@ public:
         int sx2 = x2/m_dimCol;
         int sy2 = y2/m_dimCol;
 
+        int xMin = (x1 <= x2) ? x1 : x2;
+        int xMax = (x1 <= x2) ? x2 : x1;
+        int yMin = (y1 <= y2) ? y1 : y2;
+        int yMax = (y1 <= y2) ? y2 : y1;
+
         if (sx1 == sx2)
         {
             if (sy1 == sy2) // Même sous-matrice
                 return;
-            else if (sy1 < sy2) // En bas
-                this->lierSMBas(x1,y1,nb,m_coucheCol);
-            else // En haut
-                this->lierSMBas(x2,y2,nb,m_coucheCol);
+            else // En bas
+                this->lierSMBas(xMin,yMin,nb,m_coucheCol);
         }
-        else if (sx1 < sx2)
+        else
         {
             if (sy1 == sy2) // A droite
-                this->lierSMDroite(x1,y1,nb,m_coucheCol);
-            else if (sy1 < sy2) // En bas à droite
+                this->lierSMDroite(xMin, yMin, nb, m_coucheCol);
+            else // En bas à droite
             {
-                this->lierSMDroite(x1,y1,nb,m_coucheCol); this->lierSMBas(x2,y1,nb,m_coucheCol);
-                this->lierSMBas(x1,y1,nb,m_coucheCol); this->lierSMDroite(x1,y2,nb,m_coucheCol);
-            }
-            else // En haut à droite
-            {
-                this->lierSMDroite(x1,y1,nb,m_coucheCol); this->lierSMBas(x2,y2,nb,m_coucheCol);
-                this->lierSMBas(x1,y2,nb,m_coucheCol); this->lierSMDroite(x1,y2,nb,m_coucheCol);
-            }
-        }
-        else // sx1 > sx2
-        {
-            if (sy1 == sy2) // A gauche
-                this->lierSMDroite(x2,y2,nb,m_coucheCol);
-            else if (sy1 < sy2) // En bas à gauche
-            {
-                this->lierSMDroite(x2,y1,nb,m_coucheCol); this->lierSMBas(x2,y1,nb,m_coucheCol);
-                this->lierSMBas(x1,y1,nb,m_coucheCol); this->lierSMDroite(x1,y2,nb,m_coucheCol);
-            }
-            else // En haut à gauche
-            {
-                this->lierSMDroite(x2,y1,nb,m_coucheCol); this->lierSMBas(x2,y2,nb,m_coucheCol);
-                this->lierSMBas(x1,y2,nb,m_coucheCol); this->lierSMDroite(x2,y2,nb,m_coucheCol);
+                this->lierSMDroite(xMin, yMin, nb, m_coucheCol);
+                this->lierSMBas(xMax, yMin, nb, m_coucheCol);
+
+                this->lierSMBas(xMin, yMin, nb, m_coucheCol);
+                this->lierSMDroite(xMin, yMax, nb, m_coucheCol);
             }
         }
     }

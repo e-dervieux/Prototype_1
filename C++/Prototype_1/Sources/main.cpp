@@ -7,24 +7,12 @@
 #include "../Header/demoLiaison.h"
 #include "../Header/demoCohesion.h"
 #include "../Header/demoCollision1.h"
+#include "../Header/demoLiaisonsMatrices.h"
 #include "../Header/demoMatricesRecursives.h"
 
 int main(int argv, char** argc)
 {
-    demoMatricesRecursives();
-    return 0;
-
-    Matiere matiere;
-    Particule* part = new Particule[2];
-    part[0] = Particule(2,2,2.5,2.5,&matiere);
-    part[1] = Particule(2,6,2.5,6.5,&matiere);
-    part[0].lier(&part[1]);
-    MatriceParticules<4,2> m(8,8,1,part,2);
-    m.afficherLiaisonsSM();
-    m.getSM(0,0).afficherLiaisonsSM();
-    m.getSM(0,1).afficherLiaisonsSM();
-
-    delete[] part;
+    demoLiaisonsMatrices();
     return 0;
 
     bool continuer = true;

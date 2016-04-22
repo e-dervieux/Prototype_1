@@ -353,16 +353,34 @@ public:
                 std::cout << "-" << m_tab[i*m_smY+j].getNbLTot() << "-" << m_tab[i*m_smY+j].getNbLDroite();
             std::cout << std::endl;
             for(int i = 0 ; i < m_smX ; i++)
-                std::cout << " |  ";
-            std::cout << std::endl;
-            for(int i = 0 ; i < m_smX ; i++)
                 std::cout << " " << m_tab[i*m_smY+j].getNbLBas() << "  ";
             std::cout << std::endl;
-            for(int i = 0 ; i < m_smX ; i++)
-                std::cout << " |  ";
+        }
+    }
+
+    void afficherLiaisonsSM(int dimSSM, int couche)
+    {
+        if (m_tab == NULL)
+        {
+            std::cout << "Matrice vide..." << std::endl;
+            return;
+        }
+        std::cout << "Liaisons des sous-matrices : " << std::endl;
+        for(int j = 0 ; j < m_h ; j += dimSSM)
+        {
+            for(int i = 0 ; i < m_w ; i += dimSSM)
+            {
+                Conteneur* sm = getSM(i,j, couche);
+                std::cout << "-" << ( (sm==NULL) ? 0 : sm->getNbLTot() ) << "-" << ( (sm==NULL) ? 0 : sm->getNbLDroite() );
+            }
+            std::cout << std::endl;
+            for(int i = 0 ; i < m_w ; i += dimSSM)
+            {
+                Conteneur* sm = getSM(i,j, couche);
+                std::cout << " " << ( (sm==NULL) ? 0 : sm->getNbLBas() ) << "  ";
+            }
             std::cout << std::endl;
         }
-        std::cout << std::endl << std::endl;
     }
 
     // DEBUG
@@ -479,9 +497,9 @@ public:
         }
     }
 
-    inline int getNbLDroite() { return m_nbLDroite; }
-    inline int getNbLBas() { return m_nbLBas; }
-    inline int getNbLTot() { return m_nbLBas+m_nbLDroite; }
+    inline int getNbLDroite() const { return m_nbLDroite; }
+    inline int getNbLBas() const { return m_nbLBas; }
+    inline int getNbLTot() const { return m_nbLBas+m_nbLDroite; }
 
     inline void lierDroite(int nb = 1) { m_nbLDroite += nb; }
     inline void lierBas(int nb = 1) { m_nbLBas += nb; }
@@ -642,6 +660,5 @@ void afficher(MatriceCreuse<dims...>& m, int w, int h)
         std::cout << std::endl;
     }
 }
-
 
 #endif //PROTOTYPE_1_MATRICECREUSE_H

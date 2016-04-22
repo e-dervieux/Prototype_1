@@ -18,6 +18,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Header/Conteneur.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceCreuse.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Particule.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoLiaisonsMatrices.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/MatriceCreuse.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/MatriceParticules.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceParticules.h" isTestSource="false" />

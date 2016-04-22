@@ -14,6 +14,9 @@ public:
     virtual void actualiserBarycentre() = 0;
     bool estVide() { return m_nbP==0; };
     inline int getNbP() const { return m_nbP; }
+    virtual int getNbLDroite() const = 0;
+    virtual int getNbLBas() const = 0;
+    virtual int getNbLTot() const = 0;
 
     // Vide le conteneur et le re-remplit s'il est attaché à d'autres données (cf MatriceParticulesOld)
     virtual void reinit()
