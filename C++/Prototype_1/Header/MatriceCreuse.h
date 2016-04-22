@@ -118,8 +118,7 @@ public:
         {
             int sx = x/dimSM;
             int sy = y/dimSM;
-            if (m_tab == NULL)
-                m_tab = new SM[m_smX*m_smY];
+            creerTab();
             m_tab[sx*m_smY+sy].lierSMDroite(x-sx*dimSM, y-sy*dimSM, nb, couche);
         }
     }
@@ -134,9 +133,8 @@ public:
         {
             int sx = x/dimSM;
             int sy = y/dimSM;
-            if (m_tab == NULL)
-                m_tab = new SM[m_smX*m_smY];
-            m_tab[sx*m_smY+sy].lierSMBas(x-sx*dimSM, y-sy*dimSM, nb, couche);
+            creerTab();
+            m_tab[sx*m_smY+sy].lierSMBas(x%dimSM, y%dimSM, nb, couche);
         }
     }
 
@@ -153,7 +151,7 @@ public:
             {
                 int sx = x/dimSM;
                 int sy = y/dimSM;
-                return m_tab[sx*m_smY+sy].liaisonSMDroite(x-sx*dimSM,y-sy*dimSM, couche);
+                return m_tab[sx*m_smY+sy].liaisonSMDroite(x%dimSM,y%dimSM, couche);
             }
         }
     }
@@ -195,19 +193,24 @@ public:
     inline void lierDroite(int nb = 1) { m_nbLDroite += nb; m_nbLTot += nb; }
     inline void lierBas(int nb = 1) { m_nbLBas += nb; m_nbLTot += nb; }
 
-    // Retourne true si la matrice se remplit
-    bool set(int x, int y, Particule* p)
+    // Création du tableaux des sous-matrices, s'il n'existait pas encore
+    void creerTab()
     {
-        if (x < 0 || x >= m_w || y < 0 || y >= m_h)
-            return false;
-
-        // Création du tableaux des sous-matrices, s'il n'existait pas encore
         if (m_tab == NULL)
         {
             m_tab = new SM[m_smX*m_smY];
             for(int i = 0 ; i < m_smX*m_smY ; i++)
                 m_tab[i].setDim(dimSM);
         }
+    }
+
+    // Retourne true si la matrice se remplit
+    bool set(int x, int y, Particule* p)
+    {
+        if (x < 0 || x >= m_w || y < 0 || y >= m_h)
+            return false;
+
+        creerTab();
 
         // Coordonnées de la sous-matrice concernée
         int sx = x/dimSM;
@@ -260,6 +263,9 @@ public:
             m_tab = NULL;
             Conteneur::reinit();
         }
+        m_nbLBas=0;
+        m_nbLDroite=0;
+        m_nbLTot=0;
     }
 
     // Retourne la particule contenue aux coordonnées (x,y)
@@ -549,6 +555,8 @@ public:
             m_tab = NULL;
             Conteneur::reinit();
         }
+        m_nbLBas=0;
+        m_nbLDroite=0;
     }
 
     // Retourne la particule aux coordonnées (x,y)

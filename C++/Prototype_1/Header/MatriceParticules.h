@@ -116,7 +116,7 @@ public:
                         p.supprimerLiaisons();
                     }
                     // Sinon, on cherche une collision au niveau des SM
-                    else if (!collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
+                    else if (collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
                     {
                         // Si collision, la particule ne bouge pas
                         this->set(xOldPart, yOldPart, &p);
