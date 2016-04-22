@@ -11,6 +11,9 @@
 
 int main(int argv, char** argc)
 {
+    demoMatricesRecursives();
+    return 0;
+
     Matiere matiere;
     Particule* part = new Particule[2];
     part[0] = Particule(2,2,2.5,2.5,&matiere);

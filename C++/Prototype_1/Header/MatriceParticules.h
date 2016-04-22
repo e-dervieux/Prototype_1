@@ -193,7 +193,7 @@ public:
         }
     }
 
-    // Pour l'instant, les matrices de collision sont toujours adjacentes
+    // Pour l'instant, les matrices de collision sont toujours adjacentes !!
     void lier(int x1, int y1, int x2, int y2, int nb)
     {
         if (this->m_tab == NULL)

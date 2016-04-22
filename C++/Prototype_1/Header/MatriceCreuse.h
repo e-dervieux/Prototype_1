@@ -190,6 +190,7 @@ public:
 
     inline int getNbLDroite() const { return m_nbLDroite; }
     inline int getNbLBas() const { return m_nbLBas; }
+    inline int getNbLTot() const { return m_nbLTot; }
 
     inline void lierDroite(int nb = 1) { m_nbLDroite += nb; m_nbLTot += nb; }
     inline void lierBas(int nb = 1) { m_nbLBas += nb; m_nbLTot += nb; }
@@ -343,10 +344,16 @@ public:
         for(int j = 0 ; j < m_smY ; j++)
         {
             for(int i = 0 ; i < m_smX ; i++)
-                std::cout << "." << m_tab[i*m_smY+j].getNbLDroite();
+                std::cout << "-" << m_tab[i*m_smY+j].getNbLTot() << "-" << m_tab[i*m_smY+j].getNbLDroite();
             std::cout << std::endl;
             for(int i = 0 ; i < m_smX ; i++)
-                std::cout << m_tab[i*m_smY+j].getNbLBas() << " ";
+                std::cout << " |  ";
+            std::cout << std::endl;
+            for(int i = 0 ; i < m_smX ; i++)
+                std::cout << " " << m_tab[i*m_smY+j].getNbLBas() << "  ";
+            std::cout << std::endl;
+            for(int i = 0 ; i < m_smX ; i++)
+                std::cout << " |  ";
             std::cout << std::endl;
         }
         std::cout << std::endl << std::endl;
@@ -468,6 +475,7 @@ public:
 
     inline int getNbLDroite() { return m_nbLDroite; }
     inline int getNbLBas() { return m_nbLBas; }
+    inline int getNbLTot() { return m_nbLBas+m_nbLDroite; }
 
     inline void lierDroite(int nb = 1) { m_nbLDroite += nb; }
     inline void lierBas(int nb = 1) { m_nbLBas += nb; }
