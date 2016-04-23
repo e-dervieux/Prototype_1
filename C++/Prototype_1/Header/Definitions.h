@@ -1,7 +1,6 @@
 #ifndef DEFINITIONS_H_INCLUDED
 #define DEFINITIONS_H_INCLUDED
 
-#include "MatriceCreuseDemo.h"
 #include "Particule.h"
 
 // Offset utilisé lors des collisions, pour que la particule ne soit jamais sur l'extreme bord d'une case

@@ -1,57 +1,48 @@
-#include <iostream>
-#include "../Header/SceneSDL.h"
-
-/*#include "../Header/demoMatriceCreuse.h"
 #include "../Header/demoMatriceParticules.h"
-#include "../Header/demoGraphique1.h"
 #include "../Header/demoLiaison.h"
 #include "../Header/demoCohesion.h"
 #include "../Header/demoCollision1.h"
 #include "../Header/demoLiaisonsMatrices.h"
-#include "../Header/demoMatricesRecursives.h"*/
 #include "../Header/demoCollisionMatrices.h"
 
 int main(int argv, char** argc)
 {
-    demoCollisionMatrices();
-    return 0;
-/*
     bool continuer = true;
     while(continuer)
     {
         int situation;
         std::cout << "Quelle demo realiser ? (0 = stop)" << std::endl
-        << " 1 : Entiers dans une matrice creuse" << std::endl
-        << " 2 : Matrice de particules" << std::endl
-        << " 3 : Premier rendu graphique de la situation 1" << std::endl
-        << " 4 : Test de liaison physique entre 2 particules" << std::endl
-        << " 5 : Test de cohesion a petite echelle" << std::endl
-        << " 6 : Test de collision entre quelques particules" << std::endl;
+        << " 1 : Matrice de particules" << std::endl
+        << " 2 : Rendu graphique d'une liaison entre 2 particules" << std::endl
+        << " 3 : Test de cohesion interne de 2 formes" << std::endl
+        << " 4 : Premier test de collision entre particules" << std::endl
+        << " 5 : Test de liaisons entre sous-matrices" << std::endl
+        << " 6 : Collision avec des sous-matrices" << std::endl;
         std::cin >> situation;
         switch(situation)
         {
-        case 1:
-            demoMatriceCreuse();
-            break;
-        case 2:
-            demoMatriceParticules();
-            break;
-        case 3:
-            demoGraphique1();
-            break;
-        case 4:
-            demoLiaison();
-            break;
-        case 5:
-            demoCohesion();
-            break;
-        case 6:
-            demoCollision1();
-            break;
-        default:
-            continuer=false;
+            case 1:
+                demoMatriceParticules();
+                break;
+            case 2:
+                demoLiaison();
+                break;
+            case 3:
+                demoCohesion();
+                break;
+            case 4:
+                demoCollision1();
+                break;
+            case 5:
+                demoLiaisonsMatrices();
+                break;
+            case 6:
+                demoCollisionMatrices();
+                break;
+            default:
+                continuer=false;
         }
     }
 
-    return 0;*/
+    return 0;
 }

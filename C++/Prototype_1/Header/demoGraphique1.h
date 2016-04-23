@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
-#include "MatriceParticulesOld.h"
+#include "MatriceParticules.h"
 
 void afficherGrille(SDL_Renderer* rendu, int w, int h, int echelle, int pasGrille, int divisionGrille) {
     // Lignes verticales
@@ -35,7 +35,7 @@ void afficherGrille(SDL_Renderer* rendu, int w, int h, int echelle, int pasGrill
 
 void demoGraphique1()
 {
-    def::redefGrille(16,16,10,1,true,true,4,4);
+    def::redefGrille(16,16, 10.0, 0, 0, 4, true, true, 4, 8);
 
     // Initiation de la fenetre
     SDL_Init(SDL_INIT_VIDEO);
@@ -53,15 +53,14 @@ void demoGraphique1()
     particules[1] = Particule(3,3,&matiere); // P1
 
     // Création de la matrice
-    MatriceParticulesOld m(16,16,4,4, particules, 2);
+    MatriceParticules<8,4,2> m(16,16, 0, particules, 2);
 
     // Application d'une force
     particules[1].appliquerForce(Vecteur(1.0,0.5));
 
     for(int i = 0 ; i < 15 ; i++)
     {
-        m.calculerDeplacement(1.0);
-        m.deplacer(0.5);
+        m.actualiser(0.5);
 
         // Affichage
         SDL_SetRenderDrawColor(rendu,255,255,255,255);

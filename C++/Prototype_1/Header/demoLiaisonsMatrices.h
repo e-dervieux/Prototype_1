@@ -26,7 +26,6 @@ void demoLiaisonsMatrices()
     m.afficherLiaisonsSM(4,1);
 
     delete[] part;
-    system("PAUSE");
 }
 
 #endif //PROTOTYPE_1_DEMOLIAISONSMATRICES_H

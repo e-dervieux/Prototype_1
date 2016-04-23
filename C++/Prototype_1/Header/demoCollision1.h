@@ -3,13 +3,14 @@
 
 #include <sstream>
 #include "SceneSDL.h"
+#include "MatriceParticules.h"
 
 #define NB_PART 10
 
 class SceneDemoCollision1 : public SceneSDL
 {
 public:
-    SceneDemoCollision1(MatriceParticulesOld& mat, int config, Particule* part, Matiere* matieres)
+    SceneDemoCollision1(Element& mat, int config, Particule* part, Matiere* matieres)
      : SceneSDL(mat), m_part(part), m_matieres(matieres)
     {}
 
@@ -107,7 +108,7 @@ private:
 
 void demoCollision1(int config = 1)
 {
-    def::redefGrille(32,32,10,0,false,true,4,4);
+    def::redefGrille(32,32,10,0,false,true,4,16);
     def::redefTemp(true, 0.05, 0);
 
     // Création de la matière
@@ -117,7 +118,7 @@ void demoCollision1(int config = 1)
     Particule* particules = new Particule[NB_PART];
 
     // Création de la matrice
-    MatriceParticulesOld m(32,32,4,4, particules, NB_PART);
+    MatriceParticules<16,4> m(32,32, 0, particules, NB_PART);
 
     // On fait tourner la scène
     SceneDemoCollision1 scene(m, config, particules, matieres);

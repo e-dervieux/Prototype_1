@@ -250,9 +250,6 @@ public:
     {
         if (m_tab != NULL)
         {
-            for(int i = 0 ; i < m_smX*m_smY ; i++)
-                m_tab[i].reinit();
-
             delete[] m_tab;
             m_tab = NULL;
             Conteneur::reinit();
@@ -353,6 +350,7 @@ public:
         }
     }
 
+    // DEBUG : idem, mais on peut choisir le niveau de couche à afficher
     void afficherLiaisonsSM(int dimSSM, int couche)
     {
         if (m_tab == NULL)
@@ -378,7 +376,36 @@ public:
         }
     }
 
-    // DEBUG
+    // DEBUG : sert à avoir un apperçu du conteneur de particules
+    void afficher(std::ostream& flux = std::cout)
+    {
+        flux << "Nombre de particules : " << m_nbP << std::endl;
+        flux << "Profondeur : " << getProfondeur() << std::endl;
+        for(int j = 0 ; j < m_h ; j++)
+        {
+            for(int i = 0 ; i < m_w ; i++)
+                flux << (get(i,j) != NULL) << " ";
+            flux << std::endl;
+        }
+    }
+
+    // DEBUG : sert à avoir un apperçu du conteneur de particules
+    void afficherP(std::ostream& flux = std::cout)
+    {
+        flux << "Nombre de particules au total : " << m_nbP << std::endl;
+
+        if (m_tab == NULL)
+            return;
+
+        for(int j = 0 ; j < m_smY ; j++)
+        {
+            for(int i = 0 ; i < m_smX ; i++)
+                flux << m_tab[i*m_smY+j].getNbP() << " ";
+            flux << std::endl;
+        }
+    }
+
+    // DEBUG : sous-matrices directes, aux coordonnées (sx,sy) dans m_tab
     SM& getSM(int sx, int sy) const { return m_tab[sx*m_smY+sy]; }
 
 protected:
@@ -624,6 +651,34 @@ public:
         }
     }
 
+    // DEBUG : sert à avoir un apperçu du conteneur de particules
+    void afficher(std::ostream& flux = std::cout)
+    {
+        flux << "Nombre de particules : " << m_nbP << std::endl;
+        flux << "Profondeur : " << getProfondeur() << std::endl;
+        for(int j = 0 ; j < m_h ; j++)
+        {
+            for(int i = 0 ; i < m_w ; i++)
+                flux << (get(i,j) != NULL) << " ";
+            flux << std::endl;
+        }
+    }
+
+    void afficherP(std::ostream& flux = std::cout)
+    {
+        flux << "Nombre de particules au total : " << m_nbP << std::endl;
+
+        if (m_tab == NULL)
+            return;
+
+        for(int j = 0 ; j < m_h ; j++)
+        {
+            for(int i = 0 ; i < m_w ; i++)
+                flux << (get(i,j) != NULL) << " ";
+            flux << std::endl;
+        }
+    }
+
 protected:
     Particule** m_tab; // Tableaux des particules
 
@@ -634,20 +689,5 @@ protected:
 template<>
 class MatriceCreuse<1> : public MatriceCreuse<>
 {};
-
-// DEBUG : sert à avoir un apperçu du conteneur de particules
-// TODO La mettre en fonction interne
-template<size_t ...dims>
-void afficher(MatriceCreuse<dims...>& m, int w, int h)
-{
-    std::cout << "Nombre de particules : " << m.getNbP() << std::endl;
-    std::cout << "Profondeur : " << m.getProfondeur() << std::endl;
-    for(int j = 0 ; j < h ; j++)
-    {
-        for(int i = 0 ; i < w ; i++)
-            std::cout << (m.get(i,j)!=NULL) << " ";
-        std::cout << std::endl;
-    }
-}
 
 #endif //PROTOTYPE_1_MATRICECREUSE_H

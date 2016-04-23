@@ -8,7 +8,6 @@
 
 #include "Definitions.h"
 #include "Erreur.h"
-#include "MatriceParticulesOld.h"
 
 class SceneSDL
 {

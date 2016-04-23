@@ -68,7 +68,7 @@ public:
         for(int i = 0 ; i < def::nbLiaisons ; i++)
         {
             Particule* p2 = l[i];
-            if (p2 != NULL)
+            if (p2 != NULL && estValide(*p2))
                 lier(p.getXInt(), p.getYInt(), p2->getXInt(), p2->getYInt(), nb);
         }
     }
@@ -120,10 +120,11 @@ public:
                     {
                         // TODO revoir les tests à effectuer
                         Conteneur* sm = this->getSM(xNouvPart,yNouvPart,m_coucheCol);
-                        if (sm != NULL && !sm->estVide() && collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
+                        if (m_coucheCol > 0 && sm != NULL && !sm->estVide() && collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
                         {
                             // Si collision, la particule ne bouge pas
                             this->set(xOldPart, yOldPart, &p);
+
                             // Normalement, getSM() renvoie une matrice existante (sinon, il n'y aurait pas de collision)
 
                             int sx = xNouvPart/m_dimCol;
