@@ -138,9 +138,7 @@ class SceneDemoCohesion : public SceneSDL
 public:
     SceneDemoCohesion(Element& mat, Jambon & j1, Jambon & j2, Matiere& m)
      : SceneSDL(mat), m_j1(j1), m_j2(j2), m_m(m)
-    {
-        init(1);
-    }
+    {}
 
     virtual void actionClavier(bool& continuer, bool& recommencer)
     {

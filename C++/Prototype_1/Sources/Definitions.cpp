@@ -11,7 +11,7 @@ namespace def
     bool grilleAffichee = false;
     bool divisionsAffichees = false;
     int pasGrille = 4;
-    int divisionGrille = 4;
+    int divisionGrille = 16;
 
     bool liaisonsAffichees = false;
 

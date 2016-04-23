@@ -20,22 +20,19 @@ public:
     inline void setPos(Vecteur pos) { m_pos = pos; }
     inline Vecteur getV() const { return m_v; }
     inline void setV(Vecteur v) { m_v = v; }
-    virtual SDL_Color getCouleur() const { return m_couleur; }
+    virtual SDL_Color getCouleur() const = 0;
     virtual double getMasse() const { return m_masse; }
     virtual void appliquerDV(Vecteur dv) { m_v += dv; }
 
     virtual void reinit()
     {
         m_masse = 0.0;
-        m_couleur = {255,255,255,0};
     }
 
 protected:
     Vecteur m_pos;
     Vecteur m_v;
     double m_masse;
-
-    SDL_Color m_couleur;
 };
 
 #endif //PROTOTYPE_1_ELEMENT_H

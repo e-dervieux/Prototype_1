@@ -23,7 +23,7 @@ class MatriceCreuse<dimSM, autres...> : public Conteneur
 public:
     MatriceCreuse<dimSM, autres...>(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
-       m_w(w), m_h(h), m_smX((int)ceil((double)w/(double)dimSM)), m_smY((int)ceil((double)h/(double)dimSM)),
+       m_w(w), m_h(h), m_smX( (w-1)/dimSM + 1), m_smY( (h-1)/dimSM + 1),
        m_nbLDroite(0), m_nbLBas(0), m_nbLTot(0)
     {}
 
@@ -84,11 +84,6 @@ public:
                 b += (double)c.b;
                 a += (double)c.a;
             }
-            m_couleur = {
-                    (Uint8)(r/(double)m_nbP),
-                    (Uint8)(g/(double)m_nbP),
-                    (Uint8)(b/(double)m_nbP),
-                    (Uint8)(a/(double)m_nbP) };
         }
     }
 
@@ -245,7 +240,6 @@ public:
 
         // On vide le niveau inférieur
         if (p != NULL)
-            // Si cela vide la sous-matrice, on la supprime
             supprimerParticule(p);
 
         return p;
@@ -318,7 +312,8 @@ public:
             int taillePixelY = (int)(tailleParticule*(double)m_h);
             int coordX = (int)(tailleParticule*(double)x);
             int coordY = (int)(tailleParticule*(double)y);
-            SDL_SetRenderDrawColor(rendu, m_couleur.r, m_couleur.g, m_couleur.b, m_couleur.a);
+            SDL_Color c = getCouleur();
+            SDL_SetRenderDrawColor(rendu, c.r, c.g, c.b, c.a);
             SDL_Rect rect = {coordX, coordY, taillePixelX, taillePixelY};
             SDL_RenderFillRect(rendu, &rect);
         }
@@ -455,18 +450,8 @@ public:
                     m_v += m_tab[i]->getV();
 
                     m_nbP++;
-                    SDL_Color c = m_tab[i]->getCouleur();
-                    r += (double)c.r;
-                    g += (double)c.g;
-                    b += (double)c.b;
-                    a += (double)c.a;
                 }
             }
-            m_couleur = {
-                    (Uint8)(r/(double)m_nbP),
-                    (Uint8)(g/(double)m_nbP),
-                    (Uint8)(b/(double)m_nbP),
-                    (Uint8)(a/(double)m_nbP) };
         }
     }
 
@@ -556,6 +541,9 @@ public:
         Particule*& p2 = m_tab[indSM];
         Particule* res = p2;
 
+        if (p2 != NULL)
+            supprimerParticule(p2);
+
         // On supprime la particule de la matrice
         p2 = NULL;
 
@@ -616,7 +604,8 @@ public:
             int taillePixelY = (int)(tailleParticule*(double)m_h);
             int coordX = (int)(tailleParticule*(double)x);
             int coordY = (int)(tailleParticule*(double)y);
-            SDL_SetRenderDrawColor(rendu, m_couleur.r, m_couleur.g, m_couleur.b, m_couleur.a);
+            SDL_Color c = getCouleur();
+            SDL_SetRenderDrawColor(rendu, c.r, c.g, c.b, c.a);
             SDL_Rect rect = {coordX, coordY, taillePixelX, taillePixelY};
             SDL_RenderFillRect(rendu, &rect);
         }

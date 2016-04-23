@@ -1,20 +1,21 @@
 #include <iostream>
 #include "../Header/SceneSDL.h"
 
-#include "../Header/demoMatriceCreuse.h"
+/*#include "../Header/demoMatriceCreuse.h"
 #include "../Header/demoMatriceParticules.h"
 #include "../Header/demoGraphique1.h"
 #include "../Header/demoLiaison.h"
 #include "../Header/demoCohesion.h"
 #include "../Header/demoCollision1.h"
 #include "../Header/demoLiaisonsMatrices.h"
-#include "../Header/demoMatricesRecursives.h"
+#include "../Header/demoMatricesRecursives.h"*/
+#include "../Header/demoCollisionMatrices.h"
 
 int main(int argv, char** argc)
 {
-    demoLiaisonsMatrices();
+    demoCollisionMatrices();
     return 0;
-
+/*
     bool continuer = true;
     while(continuer)
     {
@@ -52,5 +53,5 @@ int main(int argv, char** argc)
         }
     }
 
-    return 0;
+    return 0;*/
 }

@@ -135,7 +135,10 @@ public:
                             // Collision au niveau des particules
                             Particule* p2 = this->get(xNouvPart,yNouvPart);
                             if (p2 != NULL)
+                            {
                                 p.collision(*p2,xNouvPart,yNouvPart,1);
+                                this->set(xOldPart, yOldPart, &p);
+                            }
                             else
                             {
                                 // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)

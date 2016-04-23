@@ -21,7 +21,7 @@ namespace def
     extern bool grilleAffichee; // Pour afficher eune grille par-dessus la rendu (utile pour le debug)
     extern bool divisionsAffichees; // Pour afficher des divisions plus grosses sur cette grille
     extern int pasGrille; // Nombre de pixels par côté de carreau de la grille
-    extern int divisionGrille; // Nombre carreaux entre 2 divisions épaisses
+    extern int divisionGrille; // Nombre de pixels entre 2 divisions épaisses
 
     // Autres paramètres d'affichage
     extern bool liaisonsAffichees;
@@ -39,7 +39,7 @@ namespace def
 
     // Redéfinir un ensemble de paramètres
     void redefGrille(int width, int height, double tailleParticule, int coucheAffichee = 0, int coucheCollision = 0, int coucheMax = 1,
-                     bool grilleAffichee = false, bool divisionsAffichees = false, int pasGrille = 4, int divisionGrille = 4);
+                     bool grilleAffichee = false, bool divisionsAffichees = false, int pasGrille = 4, int divisionGrille = 16);
     void redefTemp(bool pasFixe, double dtMax = 0.1, Uint32 delaiEntreFrames = 0);
 
     void echellePlus();

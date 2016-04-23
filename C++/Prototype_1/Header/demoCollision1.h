@@ -11,9 +11,7 @@ class SceneDemoCollision1 : public SceneSDL
 public:
     SceneDemoCollision1(MatriceParticulesOld& mat, int config, Particule* part, Matiere* matieres)
      : SceneSDL(mat), m_part(part), m_matieres(matieres)
-    {
-        init(config);
-    }
+    {}
 
     virtual void actionClavier(bool& continuer, bool& recommencer)
     {

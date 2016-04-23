@@ -8,8 +8,7 @@ SceneSDL::SceneSDL(Element& e)
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
         throw Erreur(4, "Echec du chargement de la SDL");
 
-    m_config = -1;
-    // Dans les classes dérivées, il faudra utiliser la méthode init() à la fin
+    m_config = 0;
 }
 
 SceneSDL::~SceneSDL()
@@ -56,6 +55,9 @@ void SceneSDL::reinit(int config)
 
 void SceneSDL::bouclePrincipale()
 {
+    // Première initialisation de la scène
+    init(-1);
+
     bool continuer = true, recommencer = false;
     time_t t1, t2;
     double dt;
@@ -280,7 +282,7 @@ void SceneSDL::afficherGrille()
     SDL_SetRenderDrawColor(m_rendu, 0, 0, 0, 128);
     if (def::divisionsAffichees)
     {
-        for(int i = 0 ; i <= def::width ; i += def::divisionGrille*def::pasGrille)
+        for(int i = 0 ; i <= def::width ; i += def::divisionGrille)
         {
             SDL_RenderDrawLine(m_rendu, i*def::tailleParticule+1, 0, i*def::tailleParticule+1, def::height*def::tailleParticule);
             SDL_RenderDrawLine(m_rendu, i*def::tailleParticule-1, 0, i*def::tailleParticule-1, def::height*def::tailleParticule);
@@ -294,7 +296,7 @@ void SceneSDL::afficherGrille()
     SDL_SetRenderDrawColor(m_rendu, 0, 0, 0, 128);
     if (def::divisionsAffichees)
     {
-        for(int j = 0 ; j <= def::height ; j += def::divisionGrille*def::pasGrille)
+        for(int j = 0 ; j <= def::height ; j += def::divisionGrille)
         {
             SDL_RenderDrawLine(m_rendu, 0, j*def::tailleParticule+1, def::width*def::tailleParticule, j*def::tailleParticule+1);
             SDL_RenderDrawLine(m_rendu, 0, j*def::tailleParticule-1, def::width*def::tailleParticule, j*def::tailleParticule-1);
