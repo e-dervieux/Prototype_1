@@ -2,7 +2,6 @@
 #define PROTOTYPE_1_DEMOLIAISON_H
 
 #include <sstream>
-#include "demoGraphique1.h"
 #include "SceneSDL.h"
 
 class SceneDemoLiaison : public SceneSDL

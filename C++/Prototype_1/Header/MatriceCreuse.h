@@ -4,11 +4,12 @@
 #include "Conteneur.h"
 #include "Definitions.h"
 
-// TODO utiliser un namespace ! (voire un namespace dans un namespace)
-
 // TODO Pouvoir utiliser le rendu de def pour afficher les collisions, etc...
 
 // TODO Utiliser un test de préprocesseur pour les fonctions de déboggage (#ifdef DEBUG)
+
+namespace mcprive
+{
 
 template<size_t ...dims>
 class MatriceCreuse;
@@ -690,4 +691,5 @@ template<>
 class MatriceCreuse<1> : public MatriceCreuse<>
 {};
 
+} // namespace mc
 #endif //PROTOTYPE_1_MATRICECREUSE_H

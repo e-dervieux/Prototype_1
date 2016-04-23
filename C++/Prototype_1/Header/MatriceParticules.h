@@ -7,9 +7,9 @@
 // Les méthodes de gestion des particules sont hybrides : soit à partir du tableau de particules,
 // soit en parcours en profondeur
 template<size_t ...dims>
-class MatriceParticules : public MatriceCreuse<dims...>
+class MatriceParticules : public mcprive::MatriceCreuse<dims...>
 {
-    using Parent = MatriceCreuse<dims...>;
+    using Parent = mcprive::MatriceCreuse<dims...>;
 
 public:
     MatriceParticules(size_t w, size_t h, int coucheCol, Particule* particules, int nbParticules)

@@ -197,7 +197,7 @@ void demoCohesion()
     double L = 5.0;
     double L0, K, CC; // Initialisés par la scène
 
-    def::redefGrille(200,120,5.0,0,0,3,false,false,8,16);
+    def::redefGrille(180,100,5.0,0,0,2,false,false,8,16);
     def::redefTemp(true, 0.03, 0);
 
     // Création de la matière
@@ -217,7 +217,7 @@ void demoCohesion()
     j2.init();
 
     // Création de la grille
-    MatriceParticules<8> mat(200, 120, 0, particules, nbPart);
+    MatriceParticules<8> mat(180, 100, 0, particules, nbPart);
 
     // Lancement de la scène SDL
     SceneDemoCohesion scene(mat, j1, j2, m);
