@@ -11,8 +11,9 @@ class Matiere
 public:
     Matiere(SDL_Color couleur = {255,255,255,0}, double masse = 1.0, double l0 = 0.0, double raideur = 0.0, double amortissement = 0.0);
 
-    double getMasse(const Particule& p) const;
+    double getMasse() const { return m_masse; }
     SDL_Color getCouleur() const { return m_couleur; }
+
     // Renvoie la force de liaison appliquee a p1
     virtual Vecteur forceLiaison(const Particule* p1, const Particule* p2) const;
 

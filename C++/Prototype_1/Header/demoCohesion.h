@@ -8,6 +8,7 @@
 #include <sstream>
 #include "demoLiaison.h"
 #include "SceneSDL.h"
+#include "MatriceParticules.h"
 
 #define C 10 // Nombre de particules sur un côté
 
@@ -15,6 +16,7 @@ class Jambon
 {
 public:
     virtual void init() = 0;
+    virtual void appliquerDV(Vecteur&& v) = 0;
 };
 
 // Test de génération d'objets
@@ -27,8 +29,8 @@ public:
 
     void init()
     {
-        Vecteur v1(m_l * sqrt(3.0)/2.0,0.5 * m_l);
-        Vecteur v2(m_l * sqrt(3.0),0.0 * m_l);
+        Vecteur v1((double)m_l * sqrt(3.0)/2.0,0.5 * m_l);
+        Vecteur v2((double)m_l * sqrt(3.0),0.0 * m_l);
         Vecteur v3(0.0, m_l);
         for(int i = 0 ; i < C ; i++)
         {
@@ -69,6 +71,12 @@ public:
         m_part[C*(C-1)].setPosInt(Vecteur(-1.0,-1.0));
         m_part[C*C-1].supprimerLiaisons();
         m_part[C*C-1].setPosInt(Vecteur(-1.0,-1.0));
+    }
+
+    virtual void appliquerDV(Vecteur&& v)
+    {
+        for(int i = 0 ; i < nbPart() ; i++)
+            m_part[i].appliquerDV(v);
     }
 
     static int nbPart() { return C*C + (C-1)*(C-1); }
@@ -112,6 +120,12 @@ public:
             m_part[i].setV(Vecteur());
     }
 
+    virtual void appliquerDV(Vecteur&& v)
+    {
+        for(int i = 0 ; i < nbPart() ; i++)
+            m_part[i].appliquerDV(v);
+    }
+
     static int nbPart() { return C*C; }
 
 private:
@@ -123,11 +137,9 @@ private:
 class SceneDemoCohesion : public SceneSDL
 {
 public:
-    SceneDemoCohesion(MatriceParticules& mat, Jambon & j1, Jambon & j2, Matiere& m)
+    SceneDemoCohesion(Element& mat, Jambon & j1, Jambon & j2, Matiere& m)
      : SceneSDL(mat), m_j1(j1), m_j2(j2), m_m(m)
-    {
-        init(1);
-    }
+    {}
 
     virtual void actionClavier(bool& continuer, bool& recommencer)
     {
@@ -139,41 +151,45 @@ public:
             def::delaiEntreFrames = 0;
     }
 
-    void charger(int config)
+    virtual void charger(int config)
     {
         m_j1.init();
         m_j2.init();
-        m_mat.reinit();
+        m_element.reinit();
+
+        double k, cc, l0;
 
         SDL_Color rouge = {255,0,0,255};
         switch(config)
         {
             case 2:
-                m_k = 800.0;
-                m_cc = 85.0;
+                l0 = 2.5;
+                k = 13.0;
+                cc = 6.0;
                 break;
 
             case 3:
-                m_k = 1000.0;
-                m_cc = 100.0;
+                l0 = 3.0;
+                k = 25.0;
+                cc = 6.0;
                 break;
 
             default:
-                m_k = 500.0;
-                m_cc = 60.0;
+                l0 = 3.0;
+                k = 5.0;
+                cc = 6.0;
         }
-        m_m = Matiere(rouge,1.0,3.0,m_k,m_cc);
+        m_m = Matiere(rouge,1.0,l0,k,cc);
         std::stringstream tmp;
-        tmp << "Test de cohésion : k = " << m_k << ", c = " << m_cc;
+        tmp << "Test de cohésion : l0 = " << l0 << ", k = " << k << ", c = " << cc;
         m_titre = tmp.str();
     }
 
-private:
+protected:
     Jambon & m_j1;
     Jambon & m_j2;
 
     Matiere& m_m;
-    double m_k, m_cc;
 };
 
 void demoCohesion()
@@ -181,8 +197,8 @@ void demoCohesion()
     double L = 5.0;
     double L0, K, CC; // Initialisés par la scène
 
-    def::redefGrille(200,120,5,1,false);
-    def::redefTemp(true, 0.003, 0);
+    def::redefGrille(180,100,5.0,0,0,2,false,false,8,16);
+    def::redefTemp(true, 0.03, 0);
 
     // Création de la matière
     SDL_Color c = {255, 0, 0, 255};
@@ -201,7 +217,7 @@ void demoCohesion()
     j2.init();
 
     // Création de la grille
-    MatriceParticules mat(200, 120, 16, 16, particules, nbPart);
+    MatriceParticules<8> mat(180, 100, 0, particules, nbPart);
 
     // Lancement de la scène SDL
     SceneDemoCohesion scene(mat, j1, j2, m);

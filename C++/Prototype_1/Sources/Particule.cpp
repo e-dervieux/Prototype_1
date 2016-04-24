@@ -1,8 +1,16 @@
 #include "../Header/Particule.h"
 #include "../Header/Definitions.h"
 
+Particule::Particule()
+ : Element(), m_matiere(NULL)
+{
+    m_liaisons = new Particule*[def::nbLiaisons];
+    for(int i = 0 ; i < def::nbLiaisons ; i++)
+        m_liaisons[i] = NULL;
+}
+
 Particule::Particule(int x, int y, Matiere* matiere)
- : m_x(x), m_y(y), m_pos(x+0.5, y+0.5), m_v(), m_resf(), m_matiere(matiere)
+ : Element(Vecteur(x+0.5, y+0.5)), m_x(x), m_y(y), m_resf(), m_matiere(matiere)
 {
     m_liaisons = new Particule*[def::nbLiaisons];
     for(int i = 0 ; i < def::nbLiaisons ; i++)
@@ -10,7 +18,7 @@ Particule::Particule(int x, int y, Matiere* matiere)
 }
 
 Particule::Particule(int x, int y, double xd, double yd, Matiere* matiere)
- : m_x(x), m_y(y), m_pos(xd,yd), m_v(), m_resf(), m_matiere(matiere)
+ : Element(Vecteur(xd,yd)), m_x(x), m_y(y), m_resf(), m_matiere(matiere)
 {
     m_liaisons = new Particule*[def::nbLiaisons];
     for(int i = 0 ; i < def::nbLiaisons ; i++)
@@ -38,7 +46,6 @@ Particule& Particule::operator=(const Particule& p)
 
 void Particule::creerLiaisons(Particule** liaisons)
 {
-    m_liaisons=new Particule*[def::nbLiaisons];
     for(int i=0;i<def::nbLiaisons;i++)
     {
         m_liaisons[i]=liaisons[i];
@@ -73,17 +80,11 @@ void Particule::setInt(int x, int y)
     m_y = y;
 }
 
-void Particule::setPos(Vecteur pos)
-{
-    m_pos = pos;
-}
-
-
 double Particule::getMasse() const
 {
     if (m_matiere == NULL)
         return 0.0;
-    return m_matiere->getMasse(*this);
+    return m_matiere->getMasse();
 }
 
 void Particule::appliquerForce(Vecteur f)
@@ -92,7 +93,7 @@ void Particule::appliquerForce(Vecteur f)
 }
 
 // EULER
-void Particule::calculerDeplacement(double dt)
+void Particule::actualiser(double dt)
 {
     if (m_matiere != NULL)
     {
@@ -149,26 +150,47 @@ void Particule::surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint
     SDL_RenderFillRect(rendu, &rect);
 }
 
-void Particule::afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel)
+void Particule::afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
 {
-    double echelle = taillePixel/partPP;
-
     for(int i = 0 ; i < def::nbLiaisons ; i++)
     {
         Particule* p = m_liaisons[i];
         if (p != NULL)
             SDL_RenderDrawLine(rendu,
-                               (int)(echelle*m_pos.getX()),(int)(echelle*m_pos.getY()),
-                               (int)(echelle*p->m_pos.getX()),(int)(echelle*p->m_pos.getY()));
+                               (int)(tailleParticule*m_pos.getX()),(int)(tailleParticule*m_pos.getY()),
+                               (int)(tailleParticule*p->m_pos.getX()),(int)(tailleParticule*p->m_pos.getY()));
     }
 }
 
-void Particule::collision(Particule& p, double dt)
+bool Particule::detecterCollisionSM(int x, int y, int tailleSM)
+{
+    // Suppose que la SM est non vide
+
+    // Si on ne change pas de SM
+    if (m_x/tailleSM == x/tailleSM && m_y/tailleSM == y/tailleSM)
+        return false;
+
+    // res = collision (il n'y a pas de particule liée à celle-ci dans la nouvelle SM)
+    bool res = true;
+    for(int i = 0 ; res && i < def::nbLiaisons ; i++)
+    {
+        Particule* p = m_liaisons[i];
+        if (p != NULL)
+        {
+            res = !(p->m_x/tailleSM == x/tailleSM &&
+                    p->m_y/tailleSM == y/tailleSM);
+        }
+    }
+
+    return res;
+}
+
+void Particule::collision(Element& e, int x, int y, int taille)
 {
     // A ce stade, p et cette particule sont dans la même "boîte"
     // d'après les coordonnées en double, les coordonnées entières ne sont pas les mêmes
 
-    double xCol, yCol; // Coordonnées double de la collision (au bord de la "boîte" de p)
+    double xCol=0.0, yCol=0.0; // Coordonnées double de la collision (au bord de la "boîte" de p)
     double vx = m_v.getX();
     double vy = m_v.getY();
     bool deplacementX = false; // Détecte si cette particule s'est déplacé selon m_x (int)
@@ -177,45 +199,45 @@ void Particule::collision(Particule& p, double dt)
     double newX = m_pos.getX();
     double newY = m_pos.getY();
 
-    if (p.m_x < m_x)
+    if (x+taille-1 < m_x)
     {
-        newX = (double)m_x;
+        newX = (double)m_x + OFFSET_COLLISION;
 
         // Logiquement, vx != 0.0
-        xCol = (double)(p.m_x+1);
-        yCol = m_pos.getY() + vy/vx*((double)(p.m_x+1)-m_pos.getX());
+        xCol = (double)(x+taille);
+        yCol = m_pos.getY() + vy/vx*(xCol-m_pos.getX());
         deplacementX = true;
     }
-    else if (p.m_x > m_x)
+    else if (x > m_x)
     {
-        newX = (double)(m_x+1);
+        newX = (double)(m_x+1) - OFFSET_COLLISION;
 
         // Logiquement, vx != 0.0
-        xCol = (double)p.m_x;
-        yCol = m_pos.getY() + vy/vx*((double)p.m_x-m_pos.getX());
+        xCol = (double)x;
+        yCol = m_pos.getY() + vy/vx*(xCol-m_pos.getX());
         deplacementX = true;
     }
 
-    if (p.m_y < m_y)
+    if (y+taille-1 < m_y)
     {
-        newY = (double)m_y;
+        newY = (double)m_y + OFFSET_COLLISION;
 
-        if (deplacementX && yCol > (double)(p.m_y+1))
+        if (!deplacementX || yCol > (double)(y+taille))
         {
             // Logiquement, vy != 0.0
-            yCol = (double)(p.m_y+1);
-            xCol = m_pos.getX() + vx/vy*((double)(p.m_y+1)-m_pos.getY());
+            yCol = (double)(y+taille);
+            xCol = m_pos.getX() + vx/vy*(yCol-m_pos.getY());
         }
     }
-    else if (p.m_x > m_x)
+    else if (y > m_y)
     {
-        newY = (double)(m_y+1);
+        newY = (double)(m_y+1) - OFFSET_COLLISION;
 
-        if (deplacementX && yCol < (double)p.m_y)
+        if (!deplacementX || yCol < (double)y)
         {
             // Logiquement, vy != 0.0
-            yCol = (double)p.m_y;
-            xCol = m_pos.getX() + vx/vy*((double)p.m_y-m_pos.getY());
+            yCol = (double)y;
+            xCol = m_pos.getX() + vx/vy*(yCol-m_pos.getY());
         }
     }
 
@@ -223,16 +245,24 @@ void Particule::collision(Particule& p, double dt)
 
     // Calcul de la force de collision (peut être optimisé ?)
     Vecteur n(
-            Point((double)p.m_x+0.5,(double)p.m_y+0.5), // Centre
+            e.getPos(), // Centre de p
             Point(xCol,yCol) ); // Point de collision
-    Vecteur vr = m_v - p.m_v; // Vitesse relative
+    Vecteur vr = m_v - e.getV(); // Vitesse relative
     double m1 = getMasse();
-    double m2 = p.getMasse();
-    Vecteur f = -2.0 * m1*m2/(m1+m2) / dt / n.normeCarre()*(vr*n)*n; // Force correspondante sur cette particule
+    double m2 = e.getMasse();
+    Vecteur dvm = -2.0 / (m1+m2) / n.normeCarre()*(vr*n)*n; // Variation de vitesse, à la masse de la particule opposée près
 
     // Application de la force de collision
-    appliquerForce(f);
-    p.appliquerForce(-f);
+    m_v += m2*dvm;
+    e.appliquerDV(-m1*dvm);
 
-    //std::cout << "Collision : f=(" << f.getX() << ", " << f.getY() << ")" << std::endl;
+    std::cout << "Collision : dvm=(" << dvm.getX() << ", " << dvm.getY() << ")" << std::endl;
+}
+
+void Particule::afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
+{
+    SDL_Color c = getCouleur();
+    SDL_SetRenderDrawColor(rendu, c.r, c.g, c.b, c.a);
+    SDL_Rect rect = {(int)(tailleParticule*(double)m_x), (int)(tailleParticule*(double)m_y),(int)tailleParticule,(int)tailleParticule};
+    SDL_RenderFillRect(rendu, &rect);
 }

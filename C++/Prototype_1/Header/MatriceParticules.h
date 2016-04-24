@@ -1,52 +1,280 @@
-#ifndef MATRICEPARTICULES_H_INCLUDED
-#define MATRICEPARTICULES_H_INCLUDED
-
-#include <iostream> // DEBUG
-#include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
+#ifndef PROTOTYPE_1_MATRICEP_H
+#define PROTOTYPE_1_MATRICEP_H
 
 #include "MatriceCreuse.h"
-#include "Particule.h"
-#include "Definitions.h"
 
-class MatriceParticules
+// Classe définie à partir de CouchesParticules(MatriceCreuse)
+// Les méthodes de gestion des particules sont hybrides : soit à partir du tableau de particules,
+// soit en parcours en profondeur
+template<size_t ...dims>
+class MatriceParticules : public mcprive::MatriceCreuse<dims...>
 {
-    friend void demoMatriceParticules();
+    using Parent = mcprive::MatriceCreuse<dims...>;
 
 public:
-    MatriceParticules(int w, int h, int smX, int smY, Particule* particules, int nbParticules);
-    ~MatriceParticules();
+    MatriceParticules(size_t w, size_t h, int coucheCol, Particule* particules, int nbParticules)
+     : Parent(w,h), m_part(particules), m_nbPart(nbParticules),
+       m_coucheCol(coucheCol), m_dimCol(Parent::getDim(coucheCol))
+    {
+        ajouterParticules();
+        this->actualiserBarycentre();
+    }
 
-    void ajouterParticules(); // Ajoute les particules de m_particules dans la matrice
-    void reinit(); // Réinitialise la matrice de particules à partir du tableau
-    // particules, afin qu'elle soit gérée de manière correcte.
+    // Ajoute les particules de m_particules dans la matrice
+    void ajouterParticules()
+    {
+        for(int i = 0 ; i < m_nbPart ; i++)
+        {
+            Particule* p = &m_part[i];
+            if (estValide(*p))
+            {
+                this->set(p->getXInt(), p->getYInt(), p);
+                lier(*p,1);
+            }
+            else
+                p->supprimerLiaisons();
+        }
+    }
 
-    bool estValide(Particule& p); // Indique si une particule est bien dans la matrice
+    // Réinitialise la matrice de particules à partir du tableau
+    // afin qu'elle soit gérée de manière correcte.
+    virtual void reinit()
+    {
+        // Suppression du contenu de la matrice Creuse
+        Parent::reinit();
 
-    void forcesLiaison(); // Calcule et applique les forces de liaison entre les particules
-    void calculerDeplacement(double dt); //  Calcule la prochaine position des particules
-    void deplacer(double dt); // Effectue le déplacement des particules dans la matrice
-    void actualiser(double dt); // Calcule la frame suivante, à partir des méothodes ci-dessus
+        // Rajout des particules dans la matrice
+        ajouterParticules();
+        this->actualiserBarycentre();
 
-    void afficher(SDL_Renderer* rendu, int partPP, int taillePixel); // Calcule les couleurs des pixels, et les affiche sur le rendu SDL
-    void afficherLiaisons(SDL_Renderer* rendu, int partPP, int taillePixel);
+        // Suppression des forces rémanentes
+        for(int i = 0 ; i < m_nbPart ; i++)
+            m_part[i].annulerForces();
+    }
 
-    Particule* get(int x, int y);
-    Particule** getSM(int i, int j) { return m_tabSM[i*m_mpY+j]; }
+    // Indique si une particule est bien dans la matrice
+    bool estValide(Particule& p)
+    {
+        int x = p.getXInt();
+        int y = p.getYInt();
+        return (x >= 0 && x < this->m_w && y >= 0 && y < this->m_h);
+    }
+
+    // Ajoute/supprime les liaisons que contient la particule p
+    void lier(Particule& p, int nb = 1)
+    {
+        Particule** l = p.getLiaisons(); // l est normalement toujours correct (non NULL, etc...)
+
+        for(int i = 0 ; i < def::nbLiaisons ; i++)
+        {
+            Particule* p2 = l[i];
+            if (p2 != NULL && estValide(*p2))
+                lier(p.getXInt(), p.getYInt(), p2->getXInt(), p2->getYInt(), nb);
+        }
+    }
+
+    // Calcule et applique les forces de liaison entre les particules
+    void forcesLiaison()
+    {
+        for(int i = 0 ; i < m_nbPart ; i++)
+        {
+            Particule& p = m_part[i];
+            if (estValide(p))
+                p.appliquerForcesLiaison();
+        }
+    }
+
+    // Effectue le déplacement des particules dans la matrice
+    void deplacer(double dt)
+    {
+        for(int i = 0 ; i < m_nbPart ; i++)
+        {
+            Particule& p = m_part[i];
+            if (estValide(p))
+            {
+                int xOldPart = p.getXInt();
+                int yOldPart = p.getYInt();
+
+                // Déplacement de la particule
+                this->suppr(xOldPart,yOldPart);
+                p.actualiser(dt);
+
+                Vecteur pos = p.getPos(); // Nouvelle position où mettre le pixel
+                int xNouvPart = (int)pos.getX();
+                int yNouvPart = (int)pos.getY();
+
+                // On tente de mettre la particule aux coordonnees (x,y)
+
+                // Seulement si la particule bouge :
+                if (xOldPart != xNouvPart || yOldPart != yNouvPart)
+                {
+                    // Si la particule sort de la grille
+                    if (xNouvPart < 0 || xNouvPart >= this->m_w || yNouvPart < 0 || yNouvPart >= this->m_h)
+                    {
+                        // On supprime les liaisons
+                        lier(p, -2);
+                        p.supprimerLiaisons();
+                    }
+                    // Sinon, on cherche une collision au niveau des SM
+                    else
+                    {
+                        // TODO revoir les tests à effectuer
+                        Conteneur* sm = this->getSM(xNouvPart,yNouvPart,m_coucheCol);
+                        if (m_coucheCol > 0 && sm != NULL && !sm->estVide() && collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
+                        {
+                            // Si collision, la particule ne bouge pas
+                            this->set(xOldPart, yOldPart, &p);
+
+                            // Normalement, getSM() renvoie une matrice existante (sinon, il n'y aurait pas de collision)
+
+                            int sx = xNouvPart/m_dimCol;
+                            int sy = yNouvPart/m_dimCol;
+                            p.collision(*sm, sx*m_dimCol, sy*m_dimCol, m_dimCol);
+                        }
+                        else if (sm != NULL)
+                        {
+                            // Collision au niveau des particules
+                            Particule* p2 = this->get(xNouvPart,yNouvPart);
+                            if (p2 != NULL)
+                            {
+                                p.collision(*p2,xNouvPart,yNouvPart,1);
+                                this->set(xOldPart, yOldPart, &p);
+                            }
+                            else
+                            {
+                                // S'il n'y a pas eu de collision, on bouge la particule dans la grille (pourrait être fait dans gererCollision() ?)
+
+                                // On ne redéfinit les liaisons entre sous-matrices que si les positions diffèrent de sous-matrice
+                                // à la couche de collision
+                                bool redefLiaisons =
+                                        xOldPart/m_dimCol != xNouvPart/m_dimCol ||
+                                        yOldPart/m_dimCol != yNouvPart/m_dimCol;
+
+                                if (redefLiaisons)
+                                    lier(p, -2);
+                                p.setInt(xNouvPart, yNouvPart);
+                                if (redefLiaisons)
+                                    lier(p, 2);
+                                this->set(xNouvPart, yNouvPart, &p);
+                            }
+                        }
+                        else // sm == NULL
+                        {
+                            lier(p, -2);
+                            p.setInt(xNouvPart, yNouvPart);
+                            lier(p, 2);
+                            this->set(xNouvPart, yNouvPart, &p);
+                        }
+                    }
+                }
+                else
+                    this->set(xOldPart, yOldPart, &p);
+            }
+        }
+    }
+
+    // Pour l'instant, les matrices de collision sont toujours adjacentes
+    bool collisionSM(int x1, int y1, int x2, int y2)
+    {
+        if (this->m_tab == NULL)
+            return false;
+
+        // Coordonnées des SM
+        int sx1 = x1 / m_dimCol;
+        int sy1 = y1 / m_dimCol;
+        int sx2 = x2 / m_dimCol;
+        int sy2 = y2 / m_dimCol;
+
+        int xMin = (x1 <= x2) ? x1 : x2;
+        int xMax = (x1 <= x2) ? x2 : x1;
+        int yMin = (y1 <= y2) ? y1 : y2;
+        int yMax = (y1 <= y2) ? y2 : y1;
+
+        if (sx1 == sx2)
+        {
+            if (sy1 == sy2) // Même sous-matrice
+                return false;
+            else // En bas
+                return this->liaisonSMBas(xMin,yMin,m_coucheCol) <= 0;
+        }
+        else
+        {
+            if (sy1 == sy2) // A droite
+                return this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0;
+            else // En bas à droite
+                return ( this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMBas(xMax, yMin, m_coucheCol) )
+                    || ( this->liaisonSMBas(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMDroite(xMin, yMax, m_coucheCol) );
+        }
+    }
+
+    // Pour l'instant, les matrices de collision sont toujours adjacentes !!
+    void lier(int x1, int y1, int x2, int y2, int nb)
+    {
+        if (this->m_tab == NULL)
+            return;
+
+        // Coordonnées des SM
+        int sx1 = x1/m_dimCol;
+        int sy1 = y1/m_dimCol;
+        int sx2 = x2/m_dimCol;
+        int sy2 = y2/m_dimCol;
+
+        int xMin = (x1 <= x2) ? x1 : x2;
+        int xMax = (x1 <= x2) ? x2 : x1;
+        int yMin = (y1 <= y2) ? y1 : y2;
+        int yMax = (y1 <= y2) ? y2 : y1;
+
+        if (sx1 == sx2)
+        {
+            if (sy1 == sy2) // Même sous-matrice
+                return;
+            else // En bas
+                this->lierSMBas(xMin,yMin,nb,m_coucheCol);
+        }
+        else
+        {
+            if (sy1 == sy2) // A droite
+                this->lierSMDroite(xMin, yMin, nb, m_coucheCol);
+            else // En bas à droite
+            {
+                this->lierSMDroite(xMin, yMin, nb, m_coucheCol);
+                this->lierSMBas(xMax, yMin, nb, m_coucheCol);
+
+                this->lierSMBas(xMin, yMin, nb, m_coucheCol);
+                this->lierSMDroite(xMin, yMax, nb, m_coucheCol);
+            }
+        }
+    }
+
+    // Calcule la frame suivante, à partir des méthodes ci-dessus
+    void actualiser(double dt)
+    {
+        // Calculer la force à appliquer et l'appliquer à chaque particule
+        forcesLiaison();
+
+        // Modifier les coordonnées de ces particules
+        deplacer(dt);
+
+        // Actualisation des barycentres (plus besoin !)
+        //this->actualiserBarycentre();
+
+        // Actualisation des allocations mémoire
+        this->actualiserAlloc();
+    }
+
+    void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
+    {
+        SDL_SetRenderDrawColor(rendu, 0,255,0,60);
+
+        for(int i = 0 ; i < m_nbPart ; i++)
+            m_part[i].afficherLiaisons(rendu, coucheAffichage, tailleParticule);
+    }
 
 private:
-    int m_w, m_h;
-    int m_mpX, m_mpY;
-    int m_smX, m_smY;
     Particule* m_part; // Tableau des particules à gérer
     int m_nbPart; // Nombre de particules dans le tableau
-
-    Particule*** m_tabSM;
-    int* m_tabCnt;
-
-    void set(int x, int y, Particule* p);
-    void suppr(int x, int y);
-    bool estVide(int x, int y);
+    int m_coucheCol;
+    int m_dimCol;
 };
 
-#endif // MATRICEPARTICULES_H_INCLUDED
+#endif //PROTOTYPE_1_MATRICEP_H

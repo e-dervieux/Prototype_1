@@ -8,18 +8,17 @@
 
 #include "Definitions.h"
 #include "Erreur.h"
-#include "MatriceParticules.h"
 
 class SceneSDL
 {
 public:
-    SceneSDL(MatriceParticules& mat, int config = 1);
+    SceneSDL(Element& e);
     ~SceneSDL();
 
     virtual void charger(int config) = 0; // Charge la configuration config
     virtual void init(int config); // Initialise la scène après avoir chargé la configuration
     virtual void reinit(int config); // Réinitialise la scène : reset, puis init()
-    void bouclePrincipale(); // BOUCLE A APPELER POUR FAIRE TOURNER A SCNENE
+    void bouclePrincipale(); // BOUCLE A APPELER POUR FAIRE TOURNER LA SCENE
     void affichage(bool& continuer); // Fonction d'affichage
     void afficherGrille(); // Affichage de la grille de debug
     void gererEvent(bool& continuer, bool& recommencer); // Gère les évènements SDL : actions de base, actualisation du clavier
@@ -27,7 +26,7 @@ public:
 
 protected:
     std::string m_titre;
-    MatriceParticules& m_mat;
+    Element& m_element;
     int m_config;
 
     SDL_Window* m_fenetre;

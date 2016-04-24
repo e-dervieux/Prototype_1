@@ -4,12 +4,14 @@ namespace def
 {
     int width;
     int height;
-    int taillePixel;
-    int partPP = 1;
+    double tailleParticule;
+    int coucheAffichage = 0;
+    int coucheCollision = 0;
+    int coucheMax = 1;
     bool grilleAffichee = false;
     bool divisionsAffichees = false;
-    int pasGrille = 5;
-    int divisionGrille = 5;
+    int pasGrille = 4;
+    int divisionGrille = 16;
 
     bool liaisonsAffichees = false;
 
@@ -19,13 +21,17 @@ namespace def
 
     int nbLiaisons = 6;
 
-    void redefGrille(int width, int height, int taillePixel, int partPP,
+    SDL_Renderer* rendu;
+
+    void redefGrille(int width, int height, double tailleParticule, int coucheAffichage, int coucheCollision, int coucheMax,
                      bool grilleAffichee, bool divisionsAffichees, int pasGrille, int divisionGrille)
     {
         def::width = width;
         def::height = height;
-        def::taillePixel = taillePixel;
-        def::partPP = partPP;
+        def::tailleParticule = tailleParticule;
+        def::coucheAffichage = coucheAffichage;
+        def::coucheCollision = coucheCollision;
+        def::coucheMax = coucheMax;
         def::grilleAffichee = grilleAffichee;
         def::divisionsAffichees = divisionsAffichees;
         def::pasGrille = pasGrille;
@@ -42,25 +48,13 @@ namespace def
 
     void echellePlus()
     {
-        if (taillePixel > 1)
-        {
-            partPP *= 2;
-            pasGrille /= 2;
-            taillePixel *= 2;
-            width /= 2;
-            height /= 2;
-        }
+        if (coucheAffichage < coucheMax)
+            coucheAffichage++;
     }
 
     void echelleMoins()
     {
-        if (partPP > 1)
-        {
-            partPP /= 2;
-            pasGrille *= 2;
-            taillePixel /= 2;
-            width *= 2;
-            height *= 2;
-        }
+        if (coucheAffichage > 0)
+            coucheAffichage--;
     }
 }
