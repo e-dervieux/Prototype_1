@@ -19,6 +19,7 @@ namespace def
     double dtMax = 0.1;
     Uint32 delaiEntreFrames = 0;
 
+    int nbIterationsEuler = 1;
     int nbLiaisons = 6;
 
     SDL_Renderer* rendu;

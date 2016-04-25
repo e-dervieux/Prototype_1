@@ -246,11 +246,23 @@ public:
         }
     }
 
+    void calculerDeplacement(double dt)
+    {
+        for(int i = 0 ; i < m_nbPart ; i++)
+            m_part[i].calculerDeplacement(dt);
+    }
+
     // Calcule la frame suivante, à partir des méthodes ci-dessus
     void actualiser(double dt)
     {
-        // Calculer la force à appliquer et l'appliquer à chaque particule
-        forcesLiaison();
+        for(int i = 0 ; i < def::nbIterationsEuler ; i++)
+        {
+            // Calculer la force à appliquer et l'appliquer à chaque particule
+            forcesLiaison();
+
+            // Calculer les positions à partir de ces nouvelles positions
+            calculerDeplacement(dt/def::nbIterationsEuler);
+        }
 
         // Modifier les coordonnées de ces particules
         deplacer(dt);

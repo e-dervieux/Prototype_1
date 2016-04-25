@@ -17,9 +17,9 @@ public:
     virtual void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule) {} // Utilisé par SceneSDL
 
     inline Vecteur getPos() const { return m_pos; }
-    inline void setPos(Vecteur pos) { m_pos = pos; }
+    virtual inline void setPos(Vecteur pos) { m_pos = pos; }
     inline Vecteur getV() const { return m_v; }
-    inline void setV(Vecteur v) { m_v = v; }
+    virtual inline void setV(Vecteur v) { m_v = v; }
     virtual SDL_Color getCouleur() const = 0;
     virtual double getMasse() const { return m_masse; }
     virtual void appliquerDV(Vecteur dv) { m_v += dv; }
