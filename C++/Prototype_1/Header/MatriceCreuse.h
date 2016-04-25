@@ -1,6 +1,7 @@
 #ifndef PROTOTYPE_1_MATRICECREUSE_H
 #define PROTOTYPE_1_MATRICECREUSE_H
 
+#include <sstream> // DEBUG
 #include "Conteneur.h"
 #include "Definitions.h"
 
@@ -10,6 +11,18 @@
 
 namespace mcprive
 {
+
+std::string nb(int x)
+{
+    x /= 2;
+    std::stringstream s;
+    if (x <= 9)
+        s << x;
+    else
+        s << "X";
+
+    return s.str();
+}
 
 template<size_t ...dims>
 class MatriceCreuse;
@@ -343,10 +356,10 @@ public:
         for(int j = 0 ; j < m_smY ; j++)
         {
             for(int i = 0 ; i < m_smX ; i++)
-                std::cout << "-" << m_tab[i*m_smY+j].getNbLTot() << "-" << m_tab[i*m_smY+j].getNbLDroite();
+                std::cout << "-" << nb(m_tab[i*m_smY+j].getNbLTot()) << "-" << nb(m_tab[i*m_smY+j].getNbLDroite());
             std::cout << std::endl;
             for(int i = 0 ; i < m_smX ; i++)
-                std::cout << " " << m_tab[i*m_smY+j].getNbLBas() << "  ";
+                std::cout << " " << nb(m_tab[i*m_smY+j].getNbLBas()) << "  ";
             std::cout << std::endl;
         }
     }
@@ -365,13 +378,13 @@ public:
             for(int i = 0 ; i < m_w ; i += dimSSM)
             {
                 Conteneur* sm = getSM(i,j, couche);
-                std::cout << "-" << ( (sm==NULL) ? 0 : sm->getNbLTot() ) << "-" << ( (sm==NULL) ? 0 : sm->getNbLDroite() );
+                std::cout << "-" << nb( (sm==NULL) ? 0 : sm->getNbLTot() ) << "-" << nb( (sm==NULL) ? 0 : sm->getNbLDroite() );
             }
             std::cout << std::endl;
             for(int i = 0 ; i < m_w ; i += dimSSM)
             {
                 Conteneur* sm = getSM(i,j, couche);
-                std::cout << " " << ( (sm==NULL) ? 0 : sm->getNbLBas() ) << "  ";
+                std::cout << " " << nb( (sm==NULL) ? 0 : sm->getNbLBas() ) << "  ";
             }
             std::cout << std::endl;
         }

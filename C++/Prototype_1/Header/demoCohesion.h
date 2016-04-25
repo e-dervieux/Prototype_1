@@ -1,7 +1,3 @@
-//
-// Created by Marc on 11/02/2016.
-//
-
 #ifndef PROTOTYPE_1_DEMOCOHESION_H
 #define PROTOTYPE_1_DEMOCOHESION_H
 
@@ -195,14 +191,13 @@ protected:
 void demoCohesion()
 {
     double L = 5.0;
-    double L0, K, CC; // Initialisés par la scène
 
-    def::redefGrille(180,100,5.0,0,0,2,false,false,8,16);
+    def::redefGrille(180,100,5.0,0,0,2,false,true,8,16);
     def::redefTemp(true, 0.03, 0);
 
     // Création de la matière
     SDL_Color c = {255, 0, 0, 255};
-    Matiere m(c, 1.0, L0, K, CC);
+    Matiere m(c, 1.0);
 
     // Création des particules
     int nbPart = JambonHexa::nbPart() + JambonCarre::nbPart();

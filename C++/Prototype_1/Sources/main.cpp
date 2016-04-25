@@ -4,9 +4,13 @@
 #include "../Header/demoCollision1.h"
 #include "../Header/demoLiaisonsMatrices.h"
 #include "../Header/demoCollisionMatrices.h"
+#include "../Header/demoCollision2.h"
 
 int main(int argv, char** argc)
 {
+    demoCollision2();
+    return 0;
+
     bool continuer = true;
     while(continuer)
     {

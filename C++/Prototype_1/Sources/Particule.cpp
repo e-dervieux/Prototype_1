@@ -256,7 +256,7 @@ void Particule::collision(Element& e, int x, int y, int taille)
     m_v += m2*dvm;
     e.appliquerDV(-m1*dvm);
 
-    std::cout << "Collision : dvm=(" << dvm.getX() << ", " << dvm.getY() << ")" << std::endl;
+    //std::cout << "Collision : dvm=(" << dvm.getX() << ", " << dvm.getY() << ")" << std::endl;
 }
 
 void Particule::afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
