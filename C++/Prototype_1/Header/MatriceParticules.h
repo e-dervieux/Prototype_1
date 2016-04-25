@@ -190,6 +190,7 @@ public:
         int yMin = (y1 <= y2) ? y1 : y2;
         int yMax = (y1 <= y2) ? y2 : y1;
 
+        // TODO LE TEST EST FAUX !!!
         if (sx1 == sx2)
         {
             if (sy1 == sy2) // Même sous-matrice

@@ -8,7 +8,7 @@
 
 int main(int argv, char** argc)
 {
-    demoCollision2();
+    demoCollisionMatrices();
     return 0;
 
     bool continuer = true;

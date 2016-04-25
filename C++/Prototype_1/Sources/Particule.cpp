@@ -2,7 +2,8 @@
 #include "../Header/Definitions.h"
 
 Particule::Particule()
- : Element(), m_matiere(NULL)
+ : Element(), m_matiere(NULL),
+   m_x(-1), m_y(-1)
 {
     m_liaisons = new Particule*[def::nbLiaisons];
     for(int i = 0 ; i < def::nbLiaisons ; i++)
@@ -11,9 +12,10 @@ Particule::Particule()
 
 Particule::Particule(int x, int y, Matiere* matiere)
  : Element(Vecteur(x+0.5, y+0.5)), m_x(x), m_y(y),
-   m_pos2(m_pos), m_v2(m_v),
    m_resf(), m_matiere(matiere)
 {
+    m_pos2 = m_pos;
+    m_v2 = m_v;
     m_liaisons = new Particule*[def::nbLiaisons];
     for(int i = 0 ; i < def::nbLiaisons ; i++)
         m_liaisons[i] = NULL;
@@ -21,9 +23,10 @@ Particule::Particule(int x, int y, Matiere* matiere)
 
 Particule::Particule(int x, int y, double xd, double yd, Matiere* matiere)
  : Element(Vecteur(xd,yd)), m_x(x), m_y(y),
-   m_pos2(m_pos), m_v2(m_v),
    m_resf(), m_matiere(matiere)
 {
+    m_pos2 = m_pos;
+    m_v2 = m_v;
     m_liaisons = new Particule*[def::nbLiaisons];
     for(int i = 0 ; i < def::nbLiaisons ; i++)
         m_liaisons[i] = NULL;
@@ -39,7 +42,9 @@ Particule& Particule::operator=(const Particule& p)
     m_x = p.m_x;
     m_y = p.m_y;
     m_pos = p.m_pos;
+    m_pos2 = p.m_pos2;
     m_v = p.m_v;
+    m_v2 = p.m_v2;
     m_resf = p.m_resf;
     m_matiere = p.m_matiere;
 

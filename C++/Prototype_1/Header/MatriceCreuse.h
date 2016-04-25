@@ -5,9 +5,14 @@
 #include "Conteneur.h"
 #include "Definitions.h"
 
+// TODO Utiliser les dimensions de la matrice dans MatriceParticules au lieu de def::width ?
+// TODO Ne pas pouvoir définir de particule avec des int ET double (ou adapter les int/double en toute circonstance...)
 // TODO Pouvoir utiliser le rendu de def pour afficher les collisions, etc...
-
 // TODO Utiliser un test de préprocesseur pour les fonctions de déboggage (#ifdef DEBUG)
+// ----------
+// TODO Ne stocker que la moitié des liaisons, appliquer une force réciproque (adapter les usages de lier())
+// TODO Rupture des liaisons (simplifiée du coup)
+// TODO Rajouter un attribut booléen "unifie" dans les matrices, pour ne pas avoir à parcourir les graphes connexes au niveau le plus bas
 
 namespace mcprive
 {
