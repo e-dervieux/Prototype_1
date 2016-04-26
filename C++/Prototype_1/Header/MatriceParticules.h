@@ -122,14 +122,18 @@ public:
                         Conteneur* sm = this->getSM(xNouvPart,yNouvPart,m_coucheCol);
                         if (m_coucheCol > 0 && sm != NULL && !sm->estVide() && collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
                         {
-                            // Si collision, la particule ne bouge pas
-                            this->set(xOldPart, yOldPart, &p);
-
-                            // Normalement, getSM() renvoie une matrice existante (sinon, il n'y aurait pas de collision)
+                            Conteneur* smh = this->getSM(xNouvPart,yNouvPart-m_dimCol,m_coucheCol);
+                            bool h = (smh == NULL) ? false : (smh->getNbLBas() > 0);
+                            Conteneur* smg = this->getSM(xNouvPart-m_dimCol,yNouvPart,m_coucheCol);
+                            bool g = (smg == NULL) ? false : (smg->getNbLDroite() > 0);
 
                             int sx = xNouvPart/m_dimCol;
                             int sy = yNouvPart/m_dimCol;
-                            p.collision(*sm, sx*m_dimCol, sy*m_dimCol, m_dimCol);
+                            p.collision(*sm, sx*m_dimCol, sy*m_dimCol, m_dimCol,
+                                h, g, (sm->getNbLBas() > 0), (sm->getNbLDroite() > 0));
+
+                            // Si collision, la particule ne bouge pas
+                            this->set(xOldPart, yOldPart, &p);
                         }
                         else if (sm != NULL)
                         {
@@ -137,7 +141,7 @@ public:
                             Particule* p2 = this->get(xNouvPart,yNouvPart);
                             if (p2 != NULL)
                             {
-                                p.collision(*p2,xNouvPart,yNouvPart,1);
+                                p.collision(*p2);
                                 this->set(xOldPart, yOldPart, &p);
                             }
                             else
@@ -202,9 +206,15 @@ public:
         {
             if (sy1 == sy2) // A droite
                 return this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0;
-            else // En bas à droite
-                return ( this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMBas(xMax, yMin, m_coucheCol) )
-                    || ( this->liaisonSMBas(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMDroite(xMin, yMax, m_coucheCol) );
+            else // Diagonale
+            {
+                if ( (sx1 > sx2 && sy1 > sy2) || (sx1 < sx2 && sy1 < sy2) ) // Diagonale bas-droite
+                    return ( this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMBas(xMax, yMin, m_coucheCol) <= 0 )
+                           && ( this->liaisonSMBas(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMDroite(xMin, yMax, m_coucheCol) <= 0 );
+                else // Diagonale haut-droite
+                    return ( this->liaisonSMDroite(xMin, yMax, m_coucheCol) <= 0 || this->liaisonSMBas(xMax, yMin, m_coucheCol) <= 0 )
+                           && ( this->liaisonSMBas(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0 );
+            }
         }
     }
 

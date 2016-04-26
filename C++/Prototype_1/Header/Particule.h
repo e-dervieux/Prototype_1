@@ -36,8 +36,9 @@ public:
     void appliquerForcesLiaison();
     void annulerForces() { m_resf = Vecteur(); }
     bool detecterCollisionSM(int x, int y, int tailleSM); // (INUTILE ?) Détecte si une particule liée est dans la sous-matrice d'arrivée de cette particule
-    void collision(Element& e, int x, int y, int taille = 1); // Applique la force de collision avec e ET repositionne cette particule
-    void collision(Particule& p) { collision(p, p.m_x, p.m_y, 1); }
+    void collision(Particule& p); // Applique la force de collision avec p ET repositionne cette particule
+    // Idem avec une sous-matrice, en envoyant les liaisons de la SM
+    void collision(Element& e, int x, int y, int taille, bool haut, bool gauche, bool bas, bool droite);
     void calculerDeplacement(double dt);
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     virtual void actualiser(double dt);

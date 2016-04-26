@@ -5,12 +5,17 @@
 #include "Conteneur.h"
 #include "Definitions.h"
 
-// TODO Utiliser les dimensions de la matrice dans MatriceParticules au lieu de def::width ?
+// TODO Installer Google Test !?
+// TODO Utiliser des size_t dans cette classe (cf warnings)
+// TODO Affichage des pixels dépendant des liaisons
+// TODO Particules qu'on peut colorer
+// TODO Particules qu'on ne peut pas bouger
+// TODO Utiliser les dimensions de la matrice dans SceneSDL au lieu de def::width ?
 // TODO Ne pas pouvoir définir de particule avec des int ET double (ou adapter les int/double en toute circonstance...)
 // TODO Pouvoir utiliser le rendu de def pour afficher les collisions, etc...
 // TODO Utiliser un test de préprocesseur pour les fonctions de déboggage (#ifdef DEBUG)
 // ----------
-// TODO Ne stocker que la moitié des liaisons, appliquer une force réciproque (adapter les usages de lier())
+// TODO Finalement stocker les 2 directions des SM... (= moins d'accès mémoire, mais un pwal plus de mémoire)
 // TODO Rupture des liaisons (simplifiée du coup)
 // TODO Rajouter un attribut booléen "unifie" dans les matrices, pour ne pas avoir à parcourir les graphes connexes au niveau le plus bas
 
@@ -83,8 +88,8 @@ public:
         {
             // Valeurs physiques
             m_masse = 0.0;
-            m_pos = 0.0;
-            m_v = 0.0;
+            m_pos = Vecteur();
+            m_v = Vecteur();
 
             // Variables pour la couleur
             m_nbP = 0;
@@ -298,7 +303,7 @@ public:
     {
         if (couche == getProfondeur())
             return this;
-        else if (m_tab == NULL)
+        else if (m_tab == NULL || x < 0 || x >= m_w || y < 0 || y >= m_h)
             return NULL;
         else
         {
@@ -480,8 +485,8 @@ public:
         {
             // Valeurs physiques
             m_masse = 0.0;
-            m_pos = 0.0;
-            m_v = 0.0;
+            m_pos = Vecteur();
+            m_v = Vecteur();
 
             // Variables pour la couleur
             m_nbP = 0;

@@ -14,7 +14,8 @@ typedef class Vecteur Point;
 class Vecteur
 {
 public:
-    Vecteur(double x = 0.0, double y = 0.0);
+    Vecteur();
+    Vecteur(double x, double y);
     Vecteur(const Vecteur& p);
     Vecteur(const Point& a, const Point& b);
     bool estNul() const;

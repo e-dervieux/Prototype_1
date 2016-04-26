@@ -72,41 +72,41 @@ public:
             {
                 if (!m_d && !m_g) // Bas
                 {
-                    PART_PROJ(5,4,6, 20.0,12.0, 0.0,s)
+                    PART_PROJ(5,4,6, 20.0,8.0, 0.0,s)
                 }
                 else if (m_d && !m_g) // Bas droite
                 {
-                    PART_PROJ(4,5,7, 12.0,12.0, s,s);
+                    PART_PROJ(4,5,7, 8.0,8.0, s,s);
                 }
                 else if (!m_d && m_g) // Bas gauche
                 {
-                    PART_PROJ(6,5,8, 28.0,12.0, -s,s)
+                    PART_PROJ(6,5,8, 32.0,8.0, -s,s)
                 }
             }
             if (m_h)
             {
                 if (!m_d && !m_g) // Haut
                 {
-                    PART_PROJ(10,9,11, 20.0,28.0, 0.0,-s)
+                    PART_PROJ(10,9,11, 20.0,32.0, 0.0,-s)
                 }
                 else if (m_d && !m_g) // Haut droite
                 {
-                    PART_PROJ(9,10,7, 12.0,28.0, s,-s)
+                    PART_PROJ(9,10,7, 8.0,32.0, s,-s)
                 }
                 else if (!m_d && m_g) // Haut gauche
                 {
-                    PART_PROJ(11,8,10, 28.0,28.0, -s,-s)
+                    PART_PROJ(11,8,10, 32.0,32.0, -s,-s)
                 }
             }
             else if (!m_h && !m_b)
             {
                 if (m_d) // Droite
                 {
-                    PART_PROJ(7,4,9, 12.0,20.0, s,0.0)
+                    PART_PROJ(7,4,9, 8.0,20.0, s,0.0)
                 }
                 if (m_g) // Gauche
                 {
-                    PART_PROJ(8,6,11, 28.0,20.0, -s,0.0)
+                    PART_PROJ(8,6,11, 32.0,20.0, -s,0.0)
                 }
             }
         }
@@ -144,7 +144,7 @@ public:
                 m_part[1] = Particule(20,12,20.5,12.5,&m_m2);
 
                 m_part[2] = Particule(12,20,12.5,20.5,&m_m1);
-                m_part[2].setV(Vecteur(0.0,0.0));
+                m_part[2].setV(Vecteur(3.0,0.0));
                 m_part[3] = Particule(20,20,20.5,20.5,&m_m2);
                 m_part[2].lier(&m_part[3]);
 

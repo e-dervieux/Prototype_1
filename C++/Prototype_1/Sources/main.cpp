@@ -8,9 +8,6 @@
 
 int main(int argv, char** argc)
 {
-    demoCollisionMatrices();
-    return 0;
-
     bool continuer = true;
     while(continuer)
     {
@@ -21,7 +18,8 @@ int main(int argv, char** argc)
         << " 3 : Test de cohesion interne de 2 formes" << std::endl
         << " 4 : Premier test de collision entre particules" << std::endl
         << " 5 : Test de liaisons entre sous-matrices" << std::endl
-        << " 6 : Collision avec des sous-matrices" << std::endl;
+        << " 6 : Collision avec des sous-matrices" << std::endl
+        << " 7 : Collision entre 2 formes coherentes" << std::endl;
         std::cin >> situation;
         switch(situation)
         {
@@ -42,6 +40,9 @@ int main(int argv, char** argc)
                 break;
             case 6:
                 demoCollisionMatrices();
+                break;
+            case 7:
+                demoCollision2();
                 break;
             default:
                 continuer=false;

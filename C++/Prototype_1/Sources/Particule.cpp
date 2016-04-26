@@ -219,7 +219,7 @@ bool Particule::detecterCollisionSM(int x, int y, int tailleSM)
     return res;
 }
 
-void Particule::collision(Element& e, int x, int y, int taille)
+void Particule::collision(Particule& p)
 {
     // A ce stade, p et cette particule sont dans la même "boîte"
     // d'après les coordonnées en double, les coordonnées entières ne sont pas les mêmes
@@ -233,44 +233,44 @@ void Particule::collision(Element& e, int x, int y, int taille)
     double newX = m_pos.getX();
     double newY = m_pos.getY();
 
-    if (x+taille-1 < m_x)
+    if (p.m_x < m_x)
     {
         newX = (double)m_x + OFFSET_COLLISION;
 
         // Logiquement, vx != 0.0
-        xCol = (double)(x+taille);
+        xCol = (double)(p.m_x+1);
         yCol = m_pos.getY() + vy/vx*(xCol-m_pos.getX());
         deplacementX = true;
     }
-    else if (x > m_x)
+    else if (p.m_x > m_x)
     {
         newX = (double)(m_x+1) - OFFSET_COLLISION;
 
         // Logiquement, vx != 0.0
-        xCol = (double)x;
+        xCol = (double)p.m_x;
         yCol = m_pos.getY() + vy/vx*(xCol-m_pos.getX());
         deplacementX = true;
     }
 
-    if (y+taille-1 < m_y)
+    if (p.m_y < m_y)
     {
         newY = (double)m_y + OFFSET_COLLISION;
 
-        if (!deplacementX || yCol > (double)(y+taille))
+        if (!deplacementX || yCol > (double)(p.m_y+1))
         {
             // Logiquement, vy != 0.0
-            yCol = (double)(y+taille);
+            yCol = (double)(p.m_y+1);
             xCol = m_pos.getX() + vx/vy*(yCol-m_pos.getY());
         }
     }
-    else if (y > m_y)
+    else if (p.m_y > m_y)
     {
         newY = (double)(m_y+1) - OFFSET_COLLISION;
 
-        if (!deplacementX || yCol < (double)y)
+        if (!deplacementX || yCol < (double)p.m_y)
         {
             // Logiquement, vy != 0.0
-            yCol = (double)y;
+            yCol = (double)p.m_y;
             xCol = m_pos.getX() + vx/vy*(yCol-m_pos.getY());
         }
     }
@@ -279,8 +279,89 @@ void Particule::collision(Element& e, int x, int y, int taille)
 
     // Calcul de la force de collision (peut être optimisé ?)
     Vecteur n(
+            p.getPos(), // Centre de p
+            Point(xCol,yCol) ); // Point de collision
+    Vecteur vr = m_v - p.getV(); // Vitesse relative
+    double m1 = getMasse();
+    double m2 = p.getMasse();
+    Vecteur dvm = -2.0 / (m1+m2) / n.normeCarre()*(vr*n)*n; // Variation de vitesse, à la masse de la particule opposée près
+
+    // Application de la force de collision
+    appliquerDV(m2*dvm);
+    p.appliquerDV(-m1*dvm);
+}
+
+void Particule::collision(Element& e, int x, int y, int taille,
+                          bool haut, bool gauche, bool bas, bool droite)
+{
+    // A ce stade, p et cette particule sont dans la même "boîte"
+    // d'après les coordonnées en double, les coordonnées entières ne sont pas les mêmes
+
+    double xCol=0.0, yCol=0.0; // Coordonnées double de la collision (au bord de la "boîte" de p)
+    double vx = m_v.getX();
+    double vy = m_v.getY();
+    bool ch = false, cg  = false, cb = false, cd = false; // Direction par laquelle arrive la particule
+
+    // Réglage de la position : au bord de la "boîte"
+    double newX = m_pos.getX();
+    double newY = m_pos.getY();
+
+    if (x+taille-1 < m_x)
+    {
+        newX = (double)m_x + OFFSET_COLLISION;
+
+        // Logiquement, vx != 0.0
+        xCol = (double)(x+taille);
+        yCol = m_pos.getY() + vy/vx*(xCol-m_pos.getX());
+        cd = true;
+    }
+    else if (x > m_x)
+    {
+        newX = (double)(m_x+1) - OFFSET_COLLISION;
+
+        // Logiquement, vx != 0.0
+        xCol = (double)x;
+        yCol = m_pos.getY() + vy/vx*(xCol-m_pos.getX());
+        cg = true;
+    }
+
+    if (y+taille-1 < m_y)
+    {
+        newY = (double)m_y + OFFSET_COLLISION;
+
+        if (!(cg||cd) || yCol > (double)(y+taille))
+        {
+            // Logiquement, vy != 0.0
+            yCol = (double)(y+taille);
+            xCol = m_pos.getX() + vx/vy*(yCol-m_pos.getY());
+        }
+        cb = true;
+    }
+    else if (y > m_y)
+    {
+        newY = (double)(m_y+1) - OFFSET_COLLISION;
+
+        if (!(cg||cd) || yCol < (double)y)
+        {
+            // Logiquement, vy != 0.0
+            yCol = (double)y;
+            xCol = m_pos.getX() + vx/vy*(yCol-m_pos.getY());
+        }
+        ch = true;
+    }
+
+    setPos(Vecteur(newX,newY));
+
+    // Modèle sphérique
+    Vecteur n(
             e.getPos(), // Centre de p
             Point(xCol,yCol) ); // Point de collision
+
+    // Gestion des liaisons, rebond sur une surface plane
+    if (haut && m_y-y < taille/2 || bas && m_y-y >= taille/2)
+        n = Vecteur(cd ? 1.0 : -1.0, 0.0);
+    else if (gauche && m_x-x < taille/2 || droite && m_x-x >= taille/2)
+        n = Vecteur(0.0, cb ? 1.0 : -1.0);
     Vecteur vr = m_v - e.getV(); // Vitesse relative
     double m1 = getMasse();
     double m2 = e.getMasse();
