@@ -8,6 +8,9 @@
 
 int main(int argv, char** argc)
 {
+    demoCollision2();
+    return 0;
+
     bool continuer = true;
     while(continuer)
     {
