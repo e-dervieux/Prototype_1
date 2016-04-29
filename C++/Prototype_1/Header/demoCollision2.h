@@ -74,7 +74,7 @@ public:
      : SceneSDL(mat), m_mur(mur), m_part(part)
     {
         m_j1 = new JambonCarre(&m_m1, part, 2.0);
-        m_j2 = new JambonCarre(&m_m2, part+JambonCarre::nbPart(), 2.0);
+        m_j2 = new JambonHexa(&m_m2, part+JambonCarre::nbPart(), 2.0);
     }
 
     ~SceneDemoCol2()
@@ -98,26 +98,68 @@ public:
         double k = 100.0;
         double cc = 5.0;
         double v = 10.0;
-        Matiere m1,m2;
 
-        switch(config)
-        {
-            default:
-                break;
-        }
-
-        m_m1 = Matiere({255,0,0,255}, 1.0, 2.0, k, cc);
-        m_m2 = Matiere({0,0,255,255}, 1.0, 2.0, k, cc);
-
+        // Réinitialisation des particules
         for(int i = 0 ; i < 2*JambonHexa::nbPart() + Mur(80,40).nbPart() ; i++)
             m_part[i].setPosInt(Vecteur(-1.0,-1.0));
 
-        //m_part[0] = Particule(50,50,&m_m1);
-        //m_part[0].appliquerDV(Vecteur(25.0,0.0));
-        m_j1->init(Vecteur(30.0, 30.0));
-        m_j1->appliquerDV(Vecteur(v, 0.0));
-        m_j2->init(Vecteur(80.0,30.0));
-        m_j2->appliquerDV(Vecteur(-v, 0.0));
+        // Initialisation
+        switch(config)
+        {
+            case 5:
+                m_m1 = Matiere({255,0,0,255}, 1.0, 2.0, k, cc);
+                m_m2 = Matiere({0,0,255,255}, 1.0, 2.0, k, cc);
+
+                m_j1->init(Vecteur(30.0, 30.0));
+                m_j1->appliquerDV(Vecteur(v, 0.0));
+
+                m_j2->init(Vecteur(80.0,30.0));
+                m_j2->appliquerDV(Vecteur(-v, 0.0));
+
+                m_titre = "2 formes entrant en collision... ;_;";
+                break;
+
+            case 4:
+                m_m2 = Matiere({255,0,0,255}, 1.0, 2.0, k, cc);
+
+                m_j2->init(Vecteur(35.0,40.0));
+                m_j2->appliquerDV(Vecteur(-15.0,0.0));
+
+                m_titre = "Maille hexagonale contre un mur...";
+                break;
+
+            case 3:
+                m_m1 = Matiere({255,0,0,255}, 1.0, 2.0, k, cc);
+
+                m_j1->init(Vecteur(35.0,40.0));
+                m_j1->appliquerDV(Vecteur(-v,0.0));
+
+                m_titre = "Maille carree contre un mur";
+                break;
+
+            case 2:
+                m_m1 = Matiere({255,0,0,255}, 1.0, 2.0, k, cc);
+                m_m2 = Matiere({0,0,255,255}, 1.0, 2.0, k, cc);
+
+                m_part[0] = Particule(50,50,&m_m1);
+                m_part[0].appliquerDV(Vecteur(35.0,15.0));
+
+                m_part[1] = Particule(150,60,&m_m2);
+                m_part[1].appliquerDV(Vecteur(-20.0,20.0));
+
+                m_titre = "Rebond entre particules";
+                break;
+
+            default:
+                m_m1 = Matiere({255,0,0,255}, 1.0, 2.0, k, cc);
+
+                m_part[0] = Particule(50,50,&m_m1);
+                m_part[0].appliquerDV(Vecteur(25.0,15.0));
+
+                m_titre = "Rebond contre des bords plats";
+                break;
+        }
+
         m_mur.init();
         m_element.reinit();
     }

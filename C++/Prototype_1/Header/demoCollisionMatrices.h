@@ -136,15 +136,17 @@ public:
                 // Autres particules qui rentrent en collision
                 for(int i = 4 ; i < 12 ; i++)
                     m_part[i] = Particule(-1,-1,-1.0,-1.0,&m_m1);
+
+                m_titre = "Collision selon une direction";
                 break;
 
             default:
-                m_part[0] = Particule(12,12,12.5,12.5,&m_m1);
-                m_part[0].setV(Vecteur(3.0,0.0));
+                m_part[0] = Particule(9,12,9.5,12.5,&m_m1);
+                m_part[0].setV(Vecteur(5.0,0.0));
                 m_part[1] = Particule(20,12,20.5,12.5,&m_m2);
 
-                m_part[2] = Particule(12,20,12.5,20.5,&m_m1);
-                m_part[2].setV(Vecteur(3.0,0.0));
+                m_part[2] = Particule(9,20,9.5,20.5,&m_m1);
+                m_part[2].setV(Vecteur(5.0,0.0));
                 m_part[3] = Particule(20,20,20.5,20.5,&m_m2);
                 m_part[2].lier(&m_part[3]);
 
