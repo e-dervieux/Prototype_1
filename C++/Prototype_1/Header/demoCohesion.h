@@ -26,7 +26,7 @@ public:
     void init(Vecteur&& o)
     {
         Vecteur v1((double)m_l * sqrt(3.0)/2.0,0.5 * m_l);
-        Vecteur v2((double)m_l * sqrt(3.0),0.0 * m_l);
+        Vecteur v2((double)m_l * sqrt(3.0), 0.0);
         Vecteur v3(0.0, m_l);
         for(int i = 0 ; i < C ; i++)
         {
@@ -47,6 +47,8 @@ public:
                 m_part[(i+1)*C + (j+1)].lier(&m_part[C*C + i*(C-1) + j]);
                 m_part[(i+1)*C + j].lier(&m_part[C*C + i*(C-1) + j]);
                 m_part[i*C + (j+1)].lier(&m_part[C*C + i*(C-1) + j]);
+                if (j != C-2)
+                    m_part[C*C + i*(C-1) + j].lier(&m_part[C*C + i*(C-1) + (j+1)]);
             }
         }
         for(int i = 0 ; i < C ; i++)
