@@ -3,6 +3,45 @@
 
 #include "MatriceCreuse.h"
 
+// Macro utilisée dans collisionSM, pour déterminer si une collision a lieu de diagonale
+#define COLLISION_SM_DIAGONALE(dir1,dir2,dir3,dir4) \
+    if (liaisons.get(dir1|dir2)) \
+        return false; \
+    else if (!sm2Vide) \
+    { \
+        if (liaisons.get(dir1)) \
+        { \
+            mcprive::Conteneur* sm3 = this->getSM(x1,y2, m_coucheCol); \
+            if (sm3->getL().get(dir2)) \
+                return false; \
+        } \
+        if (liaisons.get(dir2)) \
+        { \
+            mcprive::Conteneur* sm3 = this->getSM(x2,y1, m_coucheCol); \
+            if (sm3->getL().get(dir1)) \
+                return false; \
+        } \
+        return true; \
+    } \
+    else if (liaisons.get(dir1) || liaisons.get(dir2)) \
+        return false; \
+    else \
+    { \
+        mcprive::Conteneur* sm3 = this->getSM(x1,y2, m_coucheCol); \
+        bool sm3Vide = (sm3==NULL) ? true : sm3->estVide(); \
+        if (sm3Vide) \
+            return false; \
+        else \
+        { \
+            sm3 = this->getSM(x2,y1, m_coucheCol); \
+            sm3Vide = (sm3==NULL) ? true : sm3->estVide(); \
+            if (sm3Vide) \
+                return false; \
+            else \
+                return sm3->getL().get(dir3|dir4); \
+        } \
+    }
+
 // Classe définie à partir de CouchesParticules(MatriceCreuse)
 // Les méthodes de gestion des particules sont hybrides : soit à partir du tableau de particules,
 // soit en parcours en profondeur
@@ -119,18 +158,18 @@ public:
                     else
                     {
                         // TODO revoir les tests à effectuer
-                        Conteneur* sm = this->getSM(xNouvPart,yNouvPart,m_coucheCol);
+                        mcprive::Conteneur* sm = this->getSM(xNouvPart,yNouvPart,m_coucheCol);
                         if (m_coucheCol > 0 && sm != NULL && !sm->estVide() && collisionSM(xOldPart,yOldPart,xNouvPart,yNouvPart))
                         {
-                            Conteneur* smh = this->getSM(xNouvPart,yNouvPart-m_dimCol,m_coucheCol);
-                            bool h = (smh == NULL) ? false : (smh->getNbLBas() > 0);
-                            Conteneur* smg = this->getSM(xNouvPart-m_dimCol,yNouvPart,m_coucheCol);
-                            bool g = (smg == NULL) ? false : (smg->getNbLDroite() > 0);
+                            const mcprive::LiaisonsMC& l = sm->getL();
 
                             int sx = xNouvPart/m_dimCol;
                             int sy = yNouvPart/m_dimCol;
                             p.collision(*sm, sx*m_dimCol, sy*m_dimCol, m_dimCol,
-                                h, g, (sm->getNbLBas() > 0), (sm->getNbLDroite() > 0));
+                                        l.get(mcprive::dir::haut) > 0,
+                                        l.get(mcprive::dir::gauche) > 0,
+                                        l.get(mcprive::dir::bas) > 0,
+                                        l.get(mcprive::dir::droite) > 0);
 
                             // Si collision, la particule ne bouge pas
                             this->set(xOldPart, yOldPart, &p);
@@ -177,7 +216,7 @@ public:
         }
     }
 
-    // Pour l'instant, les matrices de collision sont toujours adjacentes
+    // Pour l'instant, les matrices de collision sont toujours adjacentes (ou en diagonale)
     bool collisionSM(int x1, int y1, int x2, int y2)
     {
         if (this->m_tab == NULL)
@@ -194,26 +233,46 @@ public:
         int yMin = (y1 <= y2) ? y1 : y2;
         int yMax = (y1 <= y2) ? y2 : y1;
 
-        // TODO LE TEST EST FAUX !!!
         if (sx1 == sx2)
         {
             if (sy1 == sy2) // Même sous-matrice
                 return false;
             else // En bas
-                return this->liaisonSMBas(xMin,yMin,m_coucheCol) <= 0;
+            {
+                mcprive::Conteneur* sm = this->getSM(xMin, yMin,m_coucheCol);
+                return (sm == NULL) ? false : (sm->getL().get(mcprive::dir::bas) <= 0);
+            }
         }
         else
         {
             if (sy1 == sy2) // A droite
-                return this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0;
+            {
+                mcprive::Conteneur* sm = this->getSM(xMin, yMin,m_coucheCol);
+                return (sm == NULL) ? false : (sm->getL().get(mcprive::dir::droite) <= 0);
+            }
             else // Diagonale
             {
-                if ( (sx1 > sx2 && sy1 > sy2) || (sx1 < sx2 && sy1 < sy2) ) // Diagonale bas-droite
-                    return ( this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMBas(xMax, yMin, m_coucheCol) <= 0 )
-                           && ( this->liaisonSMBas(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMDroite(xMin, yMax, m_coucheCol) <= 0 );
-                else // Diagonale haut-droite
-                    return ( this->liaisonSMDroite(xMin, yMax, m_coucheCol) <= 0 || this->liaisonSMBas(xMax, yMin, m_coucheCol) <= 0 )
-                           && ( this->liaisonSMBas(xMin, yMin, m_coucheCol) <= 0 || this->liaisonSMDroite(xMin, yMin, m_coucheCol) <= 0 );
+                mcprive::Conteneur* sm1 = this->getSM(x1,y1, m_coucheCol); // Normalement sm1 != NULL
+                mcprive::Conteneur* sm2 = this->getSM(x2,y2, m_coucheCol); // Là on ne sait pas
+                bool sm2Vide = (sm2==NULL) ? true : sm2->estVide();
+                const mcprive::LiaisonsMC& liaisons = sm1->getL();
+
+                if (sx1 < sx2 && sy1 < sy2) // Diagonale bas-droite
+                {
+                    COLLISION_SM_DIAGONALE(mcprive::dir::bas, mcprive::dir::droite, mcprive::dir::haut, mcprive::dir::gauche)
+                }
+                else if (sx1 < sx2) // Diagonale haut-droite
+                {
+                    COLLISION_SM_DIAGONALE(mcprive::dir::haut, mcprive::dir::droite, mcprive::dir::bas, mcprive::dir::gauche)
+                }
+                else if (sy1 < sy2) // Bas-gauche
+                {
+                    COLLISION_SM_DIAGONALE(mcprive::dir::bas, mcprive::dir::gauche, mcprive::dir::haut, mcprive::dir::droite)
+                }
+                else // Haut-gauche
+                {
+                    COLLISION_SM_DIAGONALE(mcprive::dir::haut, mcprive::dir::gauche, mcprive::dir::bas, mcprive::dir::droite)
+                }
             }
         }
     }
@@ -240,19 +299,27 @@ public:
             if (sy1 == sy2) // Même sous-matrice
                 return;
             else // En bas
-                this->lierSMBas(xMin,yMin,nb,m_coucheCol);
+            {
+                this->lierSM(xMin,yMin,mcprive::dir::bas,nb,m_coucheCol);
+                this->lierSM(xMax,yMax,mcprive::dir::haut,nb,m_coucheCol);
+            }
         }
         else
         {
             if (sy1 == sy2) // A droite
-                this->lierSMDroite(xMin, yMin, nb, m_coucheCol);
-            else // En bas à droite
             {
-                this->lierSMDroite(xMin, yMin, nb, m_coucheCol);
-                this->lierSMBas(xMax, yMin, nb, m_coucheCol);
-
-                this->lierSMBas(xMin, yMin, nb, m_coucheCol);
-                this->lierSMDroite(xMin, yMax, nb, m_coucheCol);
+                this->lierSM(xMin, yMin, mcprive::dir::droite, nb, m_coucheCol);
+                this->lierSM(xMax, yMax, mcprive::dir::gauche, nb, m_coucheCol);
+            }
+            else if ( (x1 < x2 && y1 < y2) || (x1 > x2 && y1 > y2) ) // Bas-droite
+            {
+                this->lierSM(xMin,yMin, mcprive::dir::bas|mcprive::dir::droite, nb, m_coucheCol);
+                this->lierSM(xMax,yMax, mcprive::dir::haut|mcprive::dir::gauche, nb, m_coucheCol);
+            }
+            else // Bas-gauche
+            {
+                this->lierSM(xMin,yMax, mcprive::dir::haut|mcprive::dir::droite, nb, m_coucheCol);
+                this->lierSM(xMax,yMin, mcprive::dir::bas|mcprive::dir::gauche, nb, m_coucheCol);
             }
         }
     }

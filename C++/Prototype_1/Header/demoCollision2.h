@@ -70,9 +70,18 @@ private:
 class SceneDemoCol2 : public SceneSDL
 {
 public:
-    SceneDemoCol2(MatriceDemoCollision& mat, JambonHexa& j1, JambonCarre& j2, Mur& mur, Particule* part)
-     : SceneSDL(mat), m_j1(j1), m_j2(j2), m_mur(mur), m_part(part)
-    {}
+    SceneDemoCol2(MatriceDemoCollision& mat, Mur& mur, Particule* part)
+     : SceneSDL(mat), m_mur(mur), m_part(part)
+    {
+        m_j1 = new JambonCarre(&m_m1, part, 2.0);
+        m_j2 = new JambonCarre(&m_m2, part+JambonCarre::nbPart(), 2.0);
+    }
+
+    ~SceneDemoCol2()
+    {
+        delete m_j1;
+        delete m_j2;
+    }
 
     virtual void actionClavier(bool& continuer, bool& recommencer)
     {
@@ -100,25 +109,22 @@ public:
         m_m1 = Matiere({255,0,0,255}, 1.0, 2.0, k, cc);
         m_m2 = Matiere({0,0,255,255}, 1.0, 2.0, k, cc);
 
-        for(int i = 0 ; i < JambonHexa::nbPart() ; i++)
-            m_part[i] = Particule(-1,-1,&m_m1);
-
-        for(int i = 0 ; i < JambonCarre::nbPart() ; i++)
-            m_part[JambonHexa::nbPart()+i] = Particule(-1,-1,&m_m2);
+        for(int i = 0 ; i < 2*JambonHexa::nbPart() + Mur(80,40).nbPart() ; i++)
+            m_part[i].setPosInt(Vecteur(-1.0,-1.0));
 
         //m_part[0] = Particule(50,50,&m_m1);
         //m_part[0].appliquerDV(Vecteur(25.0,0.0));
-        m_j1.init();
-        m_j1.appliquerDV(Vecteur(-v, 0.0));
-        m_j2.init();
-        m_j2.appliquerDV(Vecteur(v, 0.0));
+        m_j1->init(Vecteur(30.0, 30.0));
+        m_j1->appliquerDV(Vecteur(v, 0.0));
+        m_j2->init(Vecteur(80.0,30.0));
+        m_j2->appliquerDV(Vecteur(-v, 0.0));
         m_mur.init();
         m_element.reinit();
     }
 
 private:
-    JambonHexa& m_j1;
-    JambonCarre& m_j2;
+    Jambon* m_j1;
+    Jambon* m_j2;
     Mur& m_mur;
 
     Particule* m_part;
@@ -134,18 +140,16 @@ void demoCollision2()
     def::nbIterationsEuler = 4;
 
     // Création des particules
-    int nbPart = JambonHexa::nbPart() + JambonCarre::nbPart() + Mur(80,40).nbPart();
+    int nbPart = 2*JambonHexa::nbPart() + Mur(80,40).nbPart();
     Particule* particules = new Particule[nbPart];
 
-    JambonHexa j1(Vecteur(80.5, 25.5), particules, L);
-    JambonCarre j2(Vecteur(20.5, 25.5), particules+JambonHexa::nbPart(), L);
     Mur mur(80, 40, 12.0, 12.0, 2.0, particules+JambonHexa::nbPart()+JambonCarre::nbPart());
 
     // Création de la grille
     MatriceDemoCollision mat(180, 100, 2, particules, nbPart);
 
     // Lancement de la scène SDL
-    SceneDemoCol2 scene(mat, j1, j2, mur, particules);
+    SceneDemoCol2 scene(mat, mur, particules);
     try { scene.bouclePrincipale(); }
     catch(Erreur& e) { std::cout << "Erreur !!" << std::endl << e.what() << std::endl; }
 

@@ -32,6 +32,17 @@ Particule::Particule(int x, int y, double xd, double yd, Matiere* matiere)
         m_liaisons[i] = NULL;
 }
 
+Particule::Particule(Vecteur&& pos, Matiere* matiere)
+: Element(std::move(pos)), m_x((int)pos.getX()), m_y((int)pos.getY()),
+  m_resf(), m_matiere(matiere)
+{
+    m_pos2 = m_pos;
+    m_v2 = m_v;
+    m_liaisons = new Particule*[def::nbLiaisons];
+    for(int i = 0 ; i < def::nbLiaisons ; i++)
+        m_liaisons[i] = NULL;
+}
+
 Particule::~Particule()
 {
     delete[] m_liaisons;
@@ -140,7 +151,10 @@ void Particule::supprimerLiaisons() {
 
 void Particule::appliquerForcesLiaison()
 {
-    if (m_liaisons == NULL)
+    if (m_liaisons == NULL) // Utile ?
+        return;
+
+    if (m_matiere == NULL)
         return;
 
     for(int i = 0 ; i < def::nbLiaisons ; i++)

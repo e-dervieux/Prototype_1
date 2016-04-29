@@ -13,6 +13,7 @@ public:
     Particule();
     Particule(int x, int y, Matiere* matiere = NULL);
     Particule(int x, int y, double xd, double yd, Matiere* matiere = NULL);
+    Particule(Vecteur&& pos, Matiere* matiere = NULL);
     ~Particule();
 
     Particule& operator=(const Particule& p);
@@ -29,7 +30,7 @@ public:
     virtual void appliquerDV(Vecteur dv);
     void setInt(int x, int y); // Donne les nouvelles coordonnées entières de la particule
     void setPosInt(Vecteur pos); // Donne les nouvelles coordonnées double, et actualise les int correspondants
-    virtual SDL_Color getCouleur() const { return m_matiere->getCouleur(); }
+    virtual SDL_Color getCouleur() const { return (m_matiere == NULL) ? (SDL_Color {0,0,0,0}) : m_matiere->getCouleur(); }
     virtual double getMasse() const;
 
     void appliquerForce(Vecteur f);

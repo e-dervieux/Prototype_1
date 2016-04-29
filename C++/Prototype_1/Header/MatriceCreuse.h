@@ -5,7 +5,7 @@
 #include "Conteneur.h"
 #include "Definitions.h"
 
-// TODO Installer Google Test !?
+// TODO URGENT Utiliser LiaisonsMC et déboguer les collisions !
 // TODO Utiliser des size_t dans cette classe (cf warnings)
 // TODO Affichage des pixels dépendant des liaisons
 // TODO Particules qu'on peut colorer
@@ -48,13 +48,13 @@ public:
     MatriceCreuse<dimSM, autres...>(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
        m_w(w), m_h(h), m_smX( (w-1)/dimSM + 1), m_smY( (h-1)/dimSM + 1),
-       m_nbLDroite(0), m_nbLBas(0), m_nbLTot(0)
+       m_nbLTot(0)
     {}
 
     // Constructeur par défaut (utlisé uniquement par le conteneur !!!)
     MatriceCreuse<dimSM, autres...>()
      : Conteneur(), m_tab(NULL),
-       m_nbLDroite(0), m_nbLBas(0), m_nbLTot(0)
+       m_nbLTot(0)
     {}
 
     // Utilisé après pour définir les dimensions
@@ -66,7 +66,7 @@ public:
         m_smY = m_smX;
     }
 
-    ~MatriceCreuse()
+    virtual ~MatriceCreuse()
     {
         if (m_tab != NULL)
             delete [] m_tab;
@@ -127,41 +127,26 @@ public:
             m_tab[i].actualiserAlloc();
     }
 
-    void lierSMDroite(int x, int y, int nb, int couche)
+    void lierSM(int x, int y, Direction dir, int nb, int couche)
     {
         m_nbLTot += nb;
 
         if (getProfondeur() == couche)
-            lierDroite(nb);
+            m_liaisons.lier(dir,nb);
         else
         {
             int sx = x/dimSM;
             int sy = y/dimSM;
             creerTab();
-            m_tab[sx*m_smY+sy].lierSMDroite(x-sx*dimSM, y-sy*dimSM, nb, couche);
+            m_tab[sx*m_smY+sy].lierSM(x-sx*dimSM, y-sy*dimSM, dir, nb, couche);
         }
     }
 
-    void lierSMBas(int x, int y, int nb, int couche)
-    {
-        m_nbLTot += nb;
-
-        if (getProfondeur() == couche)
-            lierBas(nb);
-        else
-        {
-            int sx = x/dimSM;
-            int sy = y/dimSM;
-            creerTab();
-            m_tab[sx*m_smY+sy].lierSMBas(x%dimSM, y%dimSM, nb, couche);
-        }
-    }
-
-    // Nombre de liaisons à droite de la SM concernée par les coordonnées (x,y), à un niveau de couche donné
-    int liaisonSMDroite(int x, int y, int couche)
+    // Nombre de liaisons de la SM concernée par les coordonnées (x,y), à un niveau de couche donné
+    int liaisonSM(int x, int y, int couche, Direction dir)
     {
         if (getProfondeur() == couche)
-            return m_nbLDroite;
+            return m_liaisons.get(dir);
         else
         {
             if (m_tab == NULL)
@@ -170,25 +155,7 @@ public:
             {
                 int sx = x/dimSM;
                 int sy = y/dimSM;
-                return m_tab[sx*m_smY+sy].liaisonSMDroite(x%dimSM,y%dimSM, couche);
-            }
-        }
-    }
-
-    // Nombre de liaisons en bas de la SM concernée par les coordonnées (x,y), à un niveau de couche donné
-    int liaisonSMBas(int x, int y, int couche)
-    {
-        if (getProfondeur() == couche)
-            return m_nbLBas;
-        else
-        {
-            if (m_tab == NULL)
-                return 0;
-            else
-            {
-                int sx = x/dimSM;
-                int sy = y/dimSM;
-                return m_tab[sx*m_smY+sy].liaisonSMBas(x-sx*dimSM,y-sy*dimSM, couche);
+                return m_tab[sx*m_smY+sy].liaisonSM(x%dimSM,y%dimSM, couche, dir);
             }
         }
     }
@@ -205,12 +172,7 @@ public:
         }
     }
 
-    inline int getNbLDroite() const { return m_nbLDroite; }
-    inline int getNbLBas() const { return m_nbLBas; }
-    inline int getNbLTot() const { return m_nbLTot; }
-
-    inline void lierDroite(int nb = 1) { m_nbLDroite += nb; m_nbLTot += nb; }
-    inline void lierBas(int nb = 1) { m_nbLBas += nb; m_nbLTot += nb; }
+    inline void lier(int nb, Direction dir) { m_liaisons.lier(dir, nb); }
 
     // Création du tableaux des sous-matrices, s'il n'existait pas encore
     void creerTab()
@@ -278,9 +240,8 @@ public:
             m_tab = NULL;
             Conteneur::reinit();
         }
-        m_nbLBas=0;
-        m_nbLDroite=0;
         m_nbLTot=0;
+        m_liaisons.reset();
     }
 
     // Retourne la particule contenue aux coordonnées (x,y)
@@ -366,10 +327,10 @@ public:
         for(int j = 0 ; j < m_smY ; j++)
         {
             for(int i = 0 ; i < m_smX ; i++)
-                std::cout << "-" << nb(m_tab[i*m_smY+j].getNbLTot()) << "-" << nb(m_tab[i*m_smY+j].getNbLDroite());
+                std::cout << "-" << nb(m_tab[i*m_smY+j].getL().getTot()) << "-" << nb(m_tab[i*m_smY+j].getL().get(mcprive::dir::droite));
             std::cout << std::endl;
             for(int i = 0 ; i < m_smX ; i++)
-                std::cout << " " << nb(m_tab[i*m_smY+j].getNbLBas()) << "  ";
+                std::cout << " " << nb(m_tab[i*m_smY+j].getL().get(mcprive::dir::bas)) << "  ";
             std::cout << std::endl;
         }
     }
@@ -388,13 +349,13 @@ public:
             for(int i = 0 ; i < m_w ; i += dimSSM)
             {
                 Conteneur* sm = getSM(i,j, couche);
-                std::cout << "-" << nb( (sm==NULL) ? 0 : sm->getNbLTot() ) << "-" << nb( (sm==NULL) ? 0 : sm->getNbLDroite() );
+                std::cout << "-" << nb( (sm==NULL) ? 0 : sm->getL().getTot() ) << "-" << nb( (sm==NULL) ? 0 : sm->getL().get(mcprive::dir::droite) );
             }
             std::cout << std::endl;
             for(int i = 0 ; i < m_w ; i += dimSSM)
             {
                 Conteneur* sm = getSM(i,j, couche);
-                std::cout << " " << nb( (sm==NULL) ? 0 : sm->getNbLBas() ) << "  ";
+                std::cout << " " << nb( (sm==NULL) ? 0 : sm->getL().get(mcprive::dir::bas) ) << "  ";
             }
             std::cout << std::endl;
         }
@@ -437,8 +398,7 @@ protected:
 
     size_t m_w, m_h; // Dimensions
     int m_smX, m_smY; // Nombre de sous-matrices selon X et Y
-    int m_nbLDroite, m_nbLBas; // Nombre de liaisons avec les autres sous-matrices
-    int m_nbLTot; // Nombre de liaisons internes total
+    int m_nbLTot; // Nombre de liaisons internes total (dans les sous-matrices aussi)
 };
 
 // Spécialisation : Cas de base = matrice simple de particules, n'allouant pas forcément son tableau
@@ -448,14 +408,12 @@ class MatriceCreuse<> : public Conteneur
 public:
     MatriceCreuse(size_t w, size_t h)
      : Conteneur(), m_tab(NULL),
-       m_w(w), m_h(h),
-       m_nbLDroite(0), m_nbLBas(0)
+       m_w(w), m_h(h)
     {}
 
     // Constructeur par défaut (utlisé uniquement par le conteneur !!!)
     MatriceCreuse()
-     : Conteneur(), m_tab(NULL),
-       m_nbLDroite(0), m_nbLBas(0)
+     : Conteneur(), m_tab(NULL)
     {}
 
     // Utilisé après pour définir les dimensions
@@ -465,7 +423,7 @@ public:
         m_h = dim;
     }
 
-    ~MatriceCreuse()
+    virtual ~MatriceCreuse()
     {
         if (m_tab != NULL)
             delete [] m_tab;
@@ -533,21 +491,11 @@ public:
         }
     }
 
-    inline int getNbLDroite() const { return m_nbLDroite; }
-    inline int getNbLBas() const { return m_nbLBas; }
-    inline int getNbLTot() const { return m_nbLBas+m_nbLDroite; }
-
-    inline void lierDroite(int nb = 1) { m_nbLDroite += nb; }
-    inline void lierBas(int nb = 1) { m_nbLBas += nb; }
-
-    inline void lierSMDroite(int x, int y, int nb, int couche) { lierDroite(nb); }
-    inline void lierSMBas(int x, int y, int nb, int couche) { lierBas(nb); }
-
-    // Nombre de liaisons à droite de la SM concernée par les coordonnées (x,y), à un niveau de couche donné
-    inline int liaisonSMDroite(int x, int y, int couche) { return m_nbLDroite; }
-
-    // Nombre de liaisons en bas de la SM concernée par les coordonnées (x,y), à un niveau de couche donné
-    inline int liaisonSMBas(int x, int y, int couche) { return m_nbLBas; }
+    void lierSM(int x, int y, Direction dir, int nb, int couche)
+    {
+        if (getProfondeur() == couche)
+            m_liaisons.lier(dir, nb);
+    }
 
     inline void ajouterLiaison(int x1, int y1, int x2, int y2, int nb, int couche) {}
 
@@ -612,8 +560,7 @@ public:
             m_tab = NULL;
             Conteneur::reinit();
         }
-        m_nbLBas=0;
-        m_nbLDroite=0;
+        m_liaisons.reset();
     }
 
     // Retourne la particule aux coordonnées (x,y)
@@ -707,7 +654,6 @@ protected:
     Particule** m_tab; // Tableaux des particules
 
     size_t m_w, m_h; // Dimensions
-    int m_nbLDroite, m_nbLBas; // Liaisons avec les autres sous-matrices
 };
 
 template<>

@@ -17,6 +17,7 @@ public:
     Vecteur();
     Vecteur(double x, double y);
     Vecteur(const Vecteur& p);
+    Vecteur(const Vecteur&& p);
     Vecteur(const Point& a, const Point& b);
     bool estNul() const;
     SDL_Rect toRect() const;

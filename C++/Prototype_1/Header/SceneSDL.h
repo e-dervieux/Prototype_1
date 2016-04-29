@@ -13,7 +13,7 @@ class SceneSDL
 {
 public:
     SceneSDL(Element& e);
-    ~SceneSDL();
+    virtual ~SceneSDL();
 
     virtual void charger(int config) = 0; // Charge la configuration config
     virtual void init(int config); // Initialise la scène après avoir chargé la configuration

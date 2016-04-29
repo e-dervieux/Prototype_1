@@ -11,7 +11,7 @@
 class Jambon
 {
 public:
-    virtual void init() = 0;
+    virtual void init(Vecteur&& o) = 0;
     virtual void appliquerDV(Vecteur&& v) = 0;
 };
 
@@ -19,11 +19,11 @@ public:
 class JambonHexa : public Jambon
 {
 public:
-    JambonHexa(Vecteur(origine), Particule* particules, double L)
-     : m_o(origine), m_part(particules), m_l(L)
+    JambonHexa(Matiere* m, Particule* particules, double L)
+     : m_m(m), m_part(particules), m_l(L)
     {}
 
-    void init()
+    void init(Vecteur&& o)
     {
         Vecteur v1((double)m_l * sqrt(3.0)/2.0,0.5 * m_l);
         Vecteur v2((double)m_l * sqrt(3.0),0.0 * m_l);
@@ -31,12 +31,12 @@ public:
         for(int i = 0 ; i < C ; i++)
         {
             for(int j = 0 ; j < C ; j++)
-                m_part[i*C+j].setPosInt(m_o + i*v2 + j*v3);
+                m_part[i*C+j] = Particule(o + i*v2 + j*v3, m_m);
         }
         for(int i = 0 ; i < C-1 ; i++)
         {
             for(int j = 0 ; j < C-1 ; j++)
-                m_part[C*C + i*(C-1) + j].setPosInt(m_o + v1 + i*v2 + j*v3);
+                m_part[C*C + i*(C-1) + j] = Particule(o + v1 + i*v2 + j*v3, m_m);
         }
 
         for(int i = 0 ; i < C-1 ; i++)
@@ -78,7 +78,7 @@ public:
     static int nbPart() { return C*C + (C-1)*(C-1); }
 
 private:
-    Vecteur m_o;
+    Matiere* m_m;
     Particule* m_part;
     double m_l;
 };
@@ -86,18 +86,18 @@ private:
 class JambonCarre : public Jambon
 {
 public:
-    JambonCarre(Vecteur(origine), Particule* particules, double L)
-     : m_o(origine), m_part(particules), m_l(L)
+    JambonCarre(Matiere* m, Particule* particules, double L)
+     : m_m(m), m_part(particules), m_l(L)
     {}
 
-    void init()
+    void init(Vecteur&& o)
     {
         Vecteur v1(m_l, 0.0);
         Vecteur v2(0.0, m_l);
         for(int i = 0 ; i < C ; i++)
         {
             for(int j = 0 ; j < C ; j++)
-                m_part[i*C+j].setPosInt(m_o + i*v1 + j*v2);
+                m_part[i*C+j] = Particule(o + i*v1 + j*v2, m_m);
         }
 
         for(int i = 0 ; i < C ; i++)
@@ -125,7 +125,7 @@ public:
     static int nbPart() { return C*C; }
 
 private:
-    Vecteur m_o;
+    Matiere* m_m;
     Particule* m_part;
     double m_l;
 };
@@ -149,8 +149,8 @@ public:
 
     virtual void charger(int config)
     {
-        m_j1.init();
-        m_j2.init();
+        m_j1.init(Vecteur(80.5, 25.5));
+        m_j2.init(Vecteur(10.5, 25.5));
         m_element.reinit();
 
         double k, cc, l0;
@@ -206,10 +206,8 @@ void demoCohesion()
     for(int i = 0 ; i < nbPart ; i++)
         particules[i] = refP;
 
-    JambonHexa j1(Vecteur(80.5, 25.5), particules, L);
-    j1.init();
-    JambonCarre j2(Vecteur(10.5, 25.5), particules+JambonHexa::nbPart(), L);
-    j2.init();
+    JambonHexa j1(&m, particules, L);
+    JambonCarre j2(&m, particules+JambonHexa::nbPart(), L);
 
     // Création de la grille
     MatriceParticules<8> mat(180, 100, 0, particules, nbPart);

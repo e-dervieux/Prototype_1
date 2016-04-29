@@ -12,6 +12,10 @@ Vecteur::Vecteur(const Vecteur& p)
  : m_x(p.m_x), m_y(p.m_y)
 {}
 
+Vecteur::Vecteur(const Vecteur&& p)
+ : m_x(p.m_x), m_y(p.m_y)
+{}
+
 Vecteur::Vecteur(const Point& a, const Point& b)
  : m_x(b.m_x - a.m_x),  m_y(b.m_y - a.m_y)
 {}
