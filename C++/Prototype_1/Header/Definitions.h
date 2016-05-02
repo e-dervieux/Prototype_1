@@ -31,6 +31,7 @@ namespace def
     extern Uint32 delaiEntreFrames; // En ms
 
     // Calculs physiques
+    extern int nbIterationsEuler; // Nombre d'itérations du calcul d'Euler entre 2 frames
     extern int nbLiaisons; // Nombre de liaisons que peut avoir une particule
 
     // Pour le debug

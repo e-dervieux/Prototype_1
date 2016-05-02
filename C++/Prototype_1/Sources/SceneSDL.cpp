@@ -249,6 +249,14 @@ void SceneSDL::actionClavier(bool& continuer, bool& recommencer)
                 reinit(3);
                 recommencer = true;
                 break;
+            case SDLK_KP_4:
+                reinit(4);
+                recommencer = true;
+                break;
+            case SDLK_KP_5:
+                reinit(5);
+                recommencer = true;
+                break;
         }
     }
 }

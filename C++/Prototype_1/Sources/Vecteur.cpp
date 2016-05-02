@@ -1,10 +1,18 @@
 #include "../Header/Vecteur.h"
 
+Vecteur::Vecteur()
+ : m_x(0.0), m_y(0.0)
+{}
+
 Vecteur::Vecteur(double x, double y)
  : m_x(x), m_y(y)
 {}
 
 Vecteur::Vecteur(const Vecteur& p)
+ : m_x(p.m_x), m_y(p.m_y)
+{}
+
+Vecteur::Vecteur(const Vecteur&& p)
  : m_x(p.m_x), m_y(p.m_y)
 {}
 

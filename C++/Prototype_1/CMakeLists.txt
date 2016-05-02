@@ -5,6 +5,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lmingw32 -lSDL2main -lSDL2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lshell32 -lversion -luuid -static-libgcc")
 
+add_subdirectory(tests)
+
 #On Ajoute les différentes sources au Projet
 
 #Cette commande peut être remplacée par :
@@ -28,7 +30,7 @@ set(SOURCE_FILES    Sources/main.cpp
         Header/demoCohesion.h
         Header/demoCollision1.h
         Header/demoLiaisonsMatrices.h
-        Header/demoCollisionMatrices.h)
+        Header/demoCollisionMatrices.h Header/demoCollision2.h Header/LiaisonsMC.h Sources/LiaisonsMC.cpp Sources/Conteneur.cpp)
 
 add_executable(Prototype_1 ${SOURCE_FILES})
 
