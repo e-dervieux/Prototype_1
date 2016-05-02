@@ -179,7 +179,7 @@ void demoCollision2()
 
     def::redefGrille(180,100,5.0,0,2,3,true,true,8,16);
     def::redefTemp(true, 0.03, 0);
-    def::nbIterationsEuler = 4;
+    def::nbIterationsEuler = 1;
 
     // Création des particules
     int nbPart = 2*JambonHexa::nbPart() + Mur(80,40).nbPart();
