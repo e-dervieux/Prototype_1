@@ -3,45 +3,6 @@
 
 #include "MatriceCreuse.h"
 
-// Macro utilisée dans collisionSM, pour déterminer si une collision a lieu de diagonale
-#define COLLISION_SM_DIAGONALE(dir1,dir2,dir3,dir4) \
-    if (liaisons.get(dir1|dir2)) \
-        return false; \
-    else if (!sm2Vide) \
-    { \
-        if (liaisons.get(dir1)) \
-        { \
-            mcprive::Conteneur* sm3 = this->getSM(x1,y2, m_coucheCol); \
-            if (sm3->getL().get(dir2)) \
-                return false; \
-        } \
-        if (liaisons.get(dir2)) \
-        { \
-            mcprive::Conteneur* sm3 = this->getSM(x2,y1, m_coucheCol); \
-            if (sm3->getL().get(dir1)) \
-                return false; \
-        } \
-        return true; \
-    } \
-    else if (liaisons.get(dir1) || liaisons.get(dir2)) \
-        return false; \
-    else \
-    { \
-        mcprive::Conteneur* sm3 = this->getSM(x1,y2, m_coucheCol); \
-        bool sm3Vide = (sm3==NULL) ? true : sm3->estVide(); \
-        if (sm3Vide) \
-            return false; \
-        else \
-        { \
-            sm3 = this->getSM(x2,y1, m_coucheCol); \
-            sm3Vide = (sm3==NULL) ? true : sm3->estVide(); \
-            if (sm3Vide) \
-                return false; \
-            else \
-                return sm3->getL().get(dir3|dir4); \
-        } \
-    }
-
 // Classe définie à partir de CouchesParticules(MatriceCreuse)
 // Les méthodes de gestion des particules sont hybrides : soit à partir du tableau de particules,
 // soit en parcours en profondeur
@@ -258,21 +219,17 @@ public:
                 const mcprive::LiaisonsMC& liaisons = sm1->getL();
 
                 if (sx1 < sx2 && sy1 < sy2) // Diagonale bas-droite
-                {
-                    COLLISION_SM_DIAGONALE(mcprive::dir::bas, mcprive::dir::droite, mcprive::dir::haut, mcprive::dir::gauche)
-                }
+                    return collisionSMDiag(liaisons, sm2, sm2Vide, x1, y1, x2, y2,
+                                    mcprive::dir::bas, mcprive::dir::droite, mcprive::dir::haut, mcprive::dir::gauche);
                 else if (sx1 < sx2) // Diagonale haut-droite
-                {
-                    COLLISION_SM_DIAGONALE(mcprive::dir::haut, mcprive::dir::droite, mcprive::dir::bas, mcprive::dir::gauche)
-                }
+                    return collisionSMDiag(liaisons, sm2, sm2Vide, x1, y1, x2, y2,
+                                    mcprive::dir::haut, mcprive::dir::droite, mcprive::dir::bas, mcprive::dir::gauche);
                 else if (sy1 < sy2) // Bas-gauche
-                {
-                    COLLISION_SM_DIAGONALE(mcprive::dir::bas, mcprive::dir::gauche, mcprive::dir::haut, mcprive::dir::droite)
-                }
+                    return collisionSMDiag(liaisons, sm2, sm2Vide, x1, y1, x2, y2,
+                                    mcprive::dir::bas, mcprive::dir::gauche, mcprive::dir::haut, mcprive::dir::droite);
                 else // Haut-gauche
-                {
-                    COLLISION_SM_DIAGONALE(mcprive::dir::haut, mcprive::dir::gauche, mcprive::dir::bas, mcprive::dir::droite)
-                }
+                    return collisionSMDiag(liaisons, sm2, sm2Vide, x1, y1, x2, y2,
+                                    mcprive::dir::haut, mcprive::dir::gauche, mcprive::dir::bas, mcprive::dir::droite);
             }
         }
     }
@@ -361,6 +318,50 @@ public:
     }
 
 private:
+    bool collisionSMDiag(mcprive::LiaisonsMC const& liaisons, mcprive::Conteneur* sm2, bool sm2Vide,
+                         int x1, int y1, int x2, int y2,
+                         mcprive::Direction dir1, mcprive::Direction dir2, mcprive::Direction dir3, mcprive::Direction dir4)
+    {
+        if (liaisons.get(dir1 | dir2)) // Liaison déjà existante
+            return false;
+        else if (!sm2Vide)
+        {
+            // Passage par une matrice intermédiaire
+            if (liaisons.get(dir1))
+            {
+                mcprive::Conteneur *sm3 = this->getSM(x1, y2, m_coucheCol); // Normalement non vide
+                if (sm3->getL().get(dir2))
+                    return false;
+            }
+            if (liaisons.get(dir2))
+            {
+                mcprive::Conteneur *sm3 = this->getSM(x2, y1, m_coucheCol);
+                if (sm3->getL().get(dir1))
+                    return false;
+            }
+            return true;
+        }
+        else if (liaisons.get(dir1) || liaisons.get(dir2)) // Idem, mais lorsque sm2 est vide
+            return false;
+        else
+        {
+            // Teste s'il y a une liaison sur la diagonale transversale
+            mcprive::Conteneur *sm3 = this->getSM(x1, y2, m_coucheCol);
+            bool sm3Vide = (sm3 == NULL) ? true : sm3->estVide();
+            if (sm3Vide)
+                return false;
+            else
+            {
+                sm3 = this->getSM(x2, y1, m_coucheCol);
+                sm3Vide = (sm3 == NULL) ? true : sm3->estVide();
+                if (sm3Vide)
+                    return false;
+                else
+                    return (sm3->getL().get(dir3 | dir4) > 0);
+            }
+        }
+    }
+
     Particule* m_part; // Tableau des particules à gérer
     int m_nbPart; // Nombre de particules dans le tableau
     int m_coucheCol;
