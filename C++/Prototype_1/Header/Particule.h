@@ -25,6 +25,7 @@ public:
 
     int getXInt() const { return m_x; }
     int getYInt() const { return m_y; }
+    Vecteur getV2() const { return m_v2; }
     virtual void setPos(Vecteur pos);
     virtual void setV(Vecteur v);
     virtual void appliquerDV(Vecteur dv);

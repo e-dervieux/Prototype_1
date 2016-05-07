@@ -295,14 +295,19 @@ void Particule::collision(Particule& p)
     Vecteur n(
             p.getPos(), // Centre de p
             Point(xCol,yCol) ); // Point de collision
-    Vecteur vr = m_v - p.getV(); // Vitesse relative
-    double m1 = getMasse();
-    double m2 = p.getMasse();
-    Vecteur dvm = -2.0 / (m1+m2) / n.normeCarre()*(vr*n)*n; // Variation de vitesse, à la masse de la particule opposée près
+    Vecteur vr = m_v2 - p.getV2(); // Vitesse relative
 
-    // Application de la force de collision
-    appliquerDV(m2*dvm);
-    p.appliquerDV(-m1*dvm);
+    if(vr*n<0)
+    {
+        double m1 = getMasse();
+        double m2 = p.getMasse();
+        Vecteur dvm = -2.0 / (m1+m2) / n.normeCarre()*(vr*n)*n; // Variation de vitesse, à la masse de la particule opposée près
+
+        // Application de la force de collision
+        appliquerDV(m2*dvm);
+        //TODO ça marchera peut-être ! :O
+        p.appliquerDV(-m1*dvm);
+    }
 }
 
 void Particule::collision(Element& e, int x, int y, int taille,
@@ -368,7 +373,7 @@ void Particule::collision(Element& e, int x, int y, int taille,
 
     // Modèle sphérique
     Vecteur n(
-            e.getPos(), // Centre de p
+            e.getPos(), // Barycentre de la sous-matrice
             Point(xCol,yCol) ); // Point de collision
 
     // Gestion des liaisons, rebond sur une surface plane
@@ -376,14 +381,19 @@ void Particule::collision(Element& e, int x, int y, int taille,
         n = Vecteur(cd ? 1.0 : -1.0, 0.0);
     else if (gauche && m_x-x < taille/2 || droite && m_x-x >= taille/2)
         n = Vecteur(0.0, cb ? 1.0 : -1.0);
-    Vecteur vr = m_v - e.getV(); // Vitesse relative
-    double m1 = getMasse();
-    double m2 = e.getMasse();
-    Vecteur dvm = -2.0 / (m1+m2) / n.normeCarre()*(vr*n)*n; // Variation de vitesse, à la masse de la particule opposée près
+    //TODO pas de V2 pour les éléments
+    Vecteur vr = m_v2 - e.getV(); // Vitesse relative
 
-    // Application de la force de collision
-    appliquerDV(m2*dvm);
-    e.appliquerDV(-m1*dvm);
+    if(vr*n<0)
+    {
+        double m1 = getMasse();
+        double m2 = e.getMasse();
+        Vecteur dvm = -2.0 / (m1+m2) / n.normeCarre()*(vr*n)*n; // Variation de vitesse, à la masse de la particule opposée près
+
+        // Application de la force de collision
+        appliquerDV(m2*dvm);
+        e.appliquerDV(-m1*dvm);
+    }
 }
 
 void Particule::afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)

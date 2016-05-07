@@ -11,9 +11,10 @@ Vecteur Matiere::forceLiaison(const Particule* p1, const Particule* p2) const
     Vecteur ab(p1->getPos(),p2->getPos());
     Vecteur vr(p1->getV(), p2->getV());
 
+    //TODO regarder les formules
     double l = ab.norme();
 
-    double d1 = 0.0, d0 = 1.5;
+    double d1 = 0.0, d0 = - 1.0;
 
     if (l >= d1)
         return  m_raideur*(l-m_l0)*(ab.unitaire()) + m_amor*vr;
@@ -24,7 +25,7 @@ Vecteur Matiere::forceLiaison(const Particule* p1, const Particule* p2) const
     }
     else
     {
-        std::cout << "A" << std::endl;
+        std::cout << "Particules trop proches !" << std::endl;
         return 1.0*(ab.unitaire());
     }
 }

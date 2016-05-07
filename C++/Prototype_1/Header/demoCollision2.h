@@ -97,7 +97,7 @@ public:
     {
         double k = 100.0;
         double cc = 5.0;
-        double v = 10.0;
+        double v = 5.0;
 
         // Réinitialisation des particules
         for(int i = 0 ; i < 2*JambonHexa::nbPart() + Mur(80,40).nbPart() ; i++)
@@ -178,7 +178,7 @@ void demoCollision2()
     double L = 2.0;
 
     def::redefGrille(180,100,5.0,0,2,3,true,true,8,16);
-    def::redefTemp(true, 0.03, 0);
+    def::redefTemp(true, 0.01, 0);
     def::nbIterationsEuler = 1;
 
     // Création des particules
