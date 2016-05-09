@@ -16,19 +16,24 @@ Matiere::Matiere(SDL_Color couleur, double masse, double l0, double raideur, dou
     m_c=k*(d*d*k*p-2*d*k*l0*p+k*l0*l0*p-d*f*p+f*l0*p-d*f)/(d*k*p-k*l0*p-d*k-f*p);
 }
 
-// TODO briser liaison si force trop intente
+// TODO briser liaison si force trop intense
 
-Vecteur Matiere::forceLiaison(const Particule* p1, const Particule* p2) const
+Vecteur Matiere::forceLiaison(Particule* p1, Particule* p2) const
 {
     Vecteur ab(p1->getPos(),p2->getPos());
     Vecteur vr(p1->getV(), p2->getV());
 
     double l = ab.norme();
 
-    if (l >= m_dLiaisonInv)
-        return  m_raideur*(l-m_l0)*(ab.unitaire()) + m_amor*vr;
-    else
+    if (l >= m_lLiaisonMax)
     {
-        return (m_a/(m_b+pow(l,m_exposantLiaison))+m_c)*(ab.unitaire()) + m_amor*vr;
+        // Brisure des liaisons
+        p1->delier(p2);
+        p2->delier(p1);
+        return Vecteur();
     }
+    else if (l >= m_dLiaisonInv) // Force proportionnelle + amortissement
+        return  m_raideur*(l-m_l0)*(ab.unitaire()) + m_amor*vr;
+    else // Force en 1/r^exposant
+        return (m_a/(m_b+pow(l,m_exposantLiaison))+m_c)*(ab.unitaire()) + m_amor*vr;
 }

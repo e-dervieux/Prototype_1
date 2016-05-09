@@ -73,7 +73,7 @@ public:
     SceneDemoCol2(MatriceDemoCollision& mat, Mur& mur, Particule* part)
      : SceneSDL(mat), m_mur(mur), m_part(part)
     {
-        m_j1 = new JambonHexa(&m_m1, part, 2.0);
+        m_j1 = new JambonCarre(&m_m1, part, 2.0);
         m_j2 = new JambonHexa(&m_m2, part+JambonHexa::nbPart(), 2.0);
     }
 

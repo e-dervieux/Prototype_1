@@ -16,7 +16,7 @@ public:
     SDL_Color getCouleur() const { return m_couleur; }
 
     // Renvoie la force de liaison appliquee a p1
-    virtual Vecteur forceLiaison(const Particule* p1, const Particule* p2) const;
+    virtual Vecteur forceLiaison(Particule* p1, Particule* p2) const;
 
 //private:
     SDL_Color m_couleur;

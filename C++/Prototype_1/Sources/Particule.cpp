@@ -108,6 +108,18 @@ bool Particule::lier(Particule* p)
     return true;
 }
 
+void Particule::delier(Particule* p)
+{
+    for(int i = 0 ; i < m_nbL ; i++)
+    {
+        if (m_liaisons[i] == p)
+        {
+            m_liaisons[i] = NULL;
+            return;
+        }
+    }
+}
+
 void Particule::reorganiserLiaisons(int k)
 {
     bool changement;
