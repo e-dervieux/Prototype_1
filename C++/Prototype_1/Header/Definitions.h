@@ -22,6 +22,9 @@ namespace def
     extern int pasGrille; // Nombre de pixels par côté de carreau de la grille
     extern int divisionGrille; // Nombre de pixels entre 2 divisions épaisses
 
+    // Elements liés à la matière
+    extern double fLiaisonMax; //La force de liaison maxi à appliquer (cf Matiere.cpp)
+
     // Autres paramètres d'affichage
     extern bool liaisonsAffichees;
 

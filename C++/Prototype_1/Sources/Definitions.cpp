@@ -17,6 +17,7 @@ namespace def
 
     bool pasFixe = false;
     double dtMax = 0.1;
+    double fLiaisonMax=100.0;
     Uint32 delaiEntreFrames = 0;
 
     int nbIterationsEuler = 1;
