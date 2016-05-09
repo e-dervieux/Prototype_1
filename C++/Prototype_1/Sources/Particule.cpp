@@ -50,7 +50,8 @@ Particule::Particule(Vecteur&& pos, Matiere* matiere, size_t nbLiaisons)
 
 Particule::~Particule()
 {
-    delete[] m_liaisons;
+    if (m_liaisons != NULL)
+        delete[] m_liaisons;
 }
 
 Particule& Particule::operator=(const Particule& p)
@@ -101,9 +102,52 @@ bool Particule::lier(Particule* p)
     p->m_liaisons[j] = this;
 
     // Réorganise les liaisons pour qu'elles soient toujours dans le sens trigo
-    // TODO
+    reorganiserLiaisons(i);
+    p->reorganiserLiaisons(j);
 
     return true;
+}
+
+void Particule::reorganiserLiaisons(int k)
+{
+    bool changement;
+    do
+    {
+        changement = false;
+        for(int i = k ; i > 0 ; i--)
+        {
+            // Normalement m_liaisons[i] != NULL (cf supprimer liaisons)
+            Vecteur v1(m_pos, m_liaisons[i-1]->m_pos);
+            Vecteur v2(m_pos, m_liaisons[i]->m_pos);
+
+            // Inversion des 2 liaisons
+            if (v1.mixte(v2) < 0)
+            {
+                Particule* tmp = m_liaisons[i-1];
+                m_liaisons[i-1] = m_liaisons[i];
+                m_liaisons[i] = tmp;
+                changement = true;
+            }
+        }
+
+        // Si les liaisons forment un cycle
+        if (k == m_nbL-1)
+        {
+
+
+            Vecteur v1(m_pos, m_liaisons[k]->m_pos);
+            Vecteur v2(m_pos, m_liaisons[0]->m_pos);
+
+            // Inversion des 2 liaisons
+            if (v1.mixte(v2) < 0)
+            {
+                Particule* tmp = m_liaisons[k];
+                m_liaisons[k] = m_liaisons[0];
+                m_liaisons[0] = tmp;
+                changement = true;
+            }
+        }
+    } while(changement);
 }
 
 void Particule::setInt(int x, int y)
@@ -133,6 +177,36 @@ void Particule::calculerDeplacement(double dt)
         m_pos2 += dt*(m_v + 0.5*dt*a);
         m_v2 += dt*a;
         m_resf = Vecteur();
+    }
+}
+
+// Gourmand, mais utile
+void Particule::croisementLiaisons()
+{
+    // On utilise les pos2 pour gérer ça
+    for(int i = 0 ; i < m_nbL ; i++)
+    {
+        Particule* p1 = m_liaisons[i];
+        Particule* p2 = m_liaisons[(i+1)%m_nbL];
+        if (p1 != NULL && p2 != NULL)
+        {
+            Vecteur v1(m_pos2,p1->m_pos2);
+            Vecteur v2(m_pos2,p2->m_pos2);
+
+            // Si croisement
+            if ((v1.mixte(v2) < 0) && (v1*v2 >= 0))
+            {
+                // On redresse les 2 particules (projection sur l'axe milieu)
+                Vecteur v3 = v1+v2;
+
+                // Positions relatives corrigées
+                Vecteur v1c = (v1*v3)/v3.normeCarre() * v3;
+                Vecteur v2c = (v2*v3)/v3.normeCarre() * v3;
+
+                p1->m_pos2 = m_pos2 + v1c;
+                p2->m_pos2 = m_pos2 + v2c;
+            }
+        }
     }
 }
 

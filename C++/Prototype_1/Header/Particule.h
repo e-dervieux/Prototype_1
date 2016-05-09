@@ -41,6 +41,7 @@ public:
     // Idem avec une sous-matrice, en envoyant les liaisons de la SM
     void collision(Element& e, int x, int y, int taille, bool haut, bool gauche, bool bas, bool droite);
     void calculerDeplacement(double dt);
+    void croisementLiaisons(); // Evite que les liaisons entre particules ne se croisent
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     virtual void actualiser(double dt);
     virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule);
@@ -48,6 +49,8 @@ public:
     virtual void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule);
 
 private:
+    void reorganiserLiaisons(int k);
+
     size_t m_nbL;
     int m_x, m_y;
     Vecteur m_pos2, m_v2; // Positions préparées pour la prochaine frame

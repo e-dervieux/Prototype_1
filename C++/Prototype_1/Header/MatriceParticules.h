@@ -287,6 +287,12 @@ public:
             m_part[i].calculerDeplacement(dt);
     }
 
+    void croisementLiaisons()
+    {
+        for(int i = 0 ; i < m_nbPart ; i++)
+            m_part[i].croisementLiaisons();
+    }
+
     // Calcule la frame suivante, à partir des méthodes ci-dessus
     void actualiser(double dt)
     {
@@ -297,6 +303,9 @@ public:
 
             // Calculer les positions à partir de ces nouvelles positions
             calculerDeplacement(dt/def::nbIterationsEuler);
+
+            // Eviter que les liaisons entre particules ne se croisent
+            croisementLiaisons();
         }
 
         // Modifier les coordonnées de ces particules

@@ -73,8 +73,8 @@ public:
     SceneDemoCol2(MatriceDemoCollision& mat, Mur& mur, Particule* part)
      : SceneSDL(mat), m_mur(mur), m_part(part)
     {
-        m_j1 = new JambonCarre(&m_m1, part, 2.0);
-        m_j2 = new JambonHexa(&m_m2, part+JambonCarre::nbPart(), 2.0);
+        m_j1 = new JambonHexa(&m_m1, part, 2.0);
+        m_j2 = new JambonHexa(&m_m2, part+JambonHexa::nbPart(), 2.0);
     }
 
     ~SceneDemoCol2()
@@ -95,7 +95,7 @@ public:
 
     virtual void charger(int config)
     {
-        double k = 250.0;
+        double k = 400.0;
         double cc = 5.0;
         double v = 15.0;
 
@@ -113,7 +113,7 @@ public:
                 m_j1->init(Vecteur(30.0, 30.0));
                 m_j1->appliquerDV(Vecteur(v, 0.0));
 
-                m_j2->init(Vecteur(80.0,30.0));
+                m_j2->init(Vecteur(100.0,40.0));
                 m_j2->appliquerDV(Vecteur(-v, 0.0));
 
                 m_titre = "2 formes entrant en collision... ;_;";
@@ -183,7 +183,7 @@ void demoCollision2()
     int nbPart = 2*JambonHexa::nbPart() + Mur(80,40).nbPart();
     Particule* particules = new Particule[nbPart];
 
-    Mur mur(80, 40, 12.5, 12.5, 2.0, particules+JambonHexa::nbPart()+JambonCarre::nbPart());
+    Mur mur(80, 40, 12.5, 12.5, 2.0, particules+2*JambonHexa::nbPart());
 
     // Création de la grille
     MatriceDemoCollision mat(180, 100, 1, particules, nbPart);
