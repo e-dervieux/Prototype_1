@@ -124,10 +124,10 @@ public:
         {
             case 2:
                 // Carré central
-                m_part[0] = Particule(18,18,18.5,18.5,&m_m2);
-                m_part[1] = Particule(21,18,21.5,18.5,&m_m2);
-                m_part[2] = Particule(18,21,18.5,21.5,&m_m2);
-                m_part[3] = Particule(21,21,21.5,21.5,&m_m2);
+                m_part[0] = Particule(Vecteur(18.5,18.5), &m_m2, 4);
+                m_part[1] = Particule(Vecteur(21.5,18.5), &m_m2, 4);
+                m_part[2] = Particule(Vecteur(18.5,21.5), &m_m2, 4);
+                m_part[3] = Particule(Vecteur(21.5,21.5), &m_m2, 4);
                 m_part[0].lier(&m_part[1]);
                 m_part[0].lier(&m_part[2]);
                 m_part[1].lier(&m_part[3]);
@@ -135,19 +135,19 @@ public:
 
                 // Autres particules qui rentrent en collision
                 for(int i = 4 ; i < 12 ; i++)
-                    m_part[i] = Particule(-1,-1,-1.0,-1.0,&m_m1);
+                    m_part[i] = Particule(&m_m1);
 
                 m_titre = "Collision selon une direction";
                 break;
 
             default:
-                m_part[0] = Particule(9,12,9.5,12.5,&m_m1);
+                m_part[0] = Particule(Vecteur(9.5,12.5), &m_m1, 2);
                 m_part[0].setV(Vecteur(5.0,0.0));
-                m_part[1] = Particule(20,12,20.5,12.5,&m_m2);
+                m_part[1] = Particule(Vecteur(20.5,12.5), &m_m2, 2);
 
-                m_part[2] = Particule(9,20,9.5,20.5,&m_m1);
+                m_part[2] = Particule(Vecteur(9.5,20.5), &m_m1, 2);
                 m_part[2].setV(Vecteur(5.0,0.0));
-                m_part[3] = Particule(20,20,20.5,20.5,&m_m2);
+                m_part[3] = Particule(Vecteur(20.5,20.5), &m_m2, 2);
                 m_part[2].lier(&m_part[3]);
 
                 m_titre = "Collision simple entre 2 matrices / 2 particules";

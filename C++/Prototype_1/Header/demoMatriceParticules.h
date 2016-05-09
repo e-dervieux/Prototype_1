@@ -14,7 +14,7 @@ void demoMatriceParticules()
     // Création de la matière
     SDL_Color rouge;
     rouge.r=255;rouge.g=0;rouge.b=0;rouge.a=255;
-    Matiere matiere(rouge, 1.0, 2.0, 1.0, 0.0);
+    Matiere matiere(rouge);
 
     // On crée au préalable les particules
     Particule* particules = new Particule[2];

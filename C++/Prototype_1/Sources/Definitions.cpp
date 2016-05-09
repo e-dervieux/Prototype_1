@@ -20,7 +20,6 @@ namespace def
     Uint32 delaiEntreFrames = 0;
 
     int nbIterationsEuler = 1;
-    int nbLiaisons = 6;
 
     SDL_Renderer* rendu;
 

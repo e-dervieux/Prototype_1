@@ -29,7 +29,7 @@ public:
         for(int i = 0 ; i < NB_PART ; i++)
         {
             m_matieres[i] = Matiere();
-            m_part[i] = Particule(-1,-1,&m_matieres[i]);
+            m_part[i] = Particule(-1,-1,&m_matieres[i],4);
         }
 
         double k = 300.0;

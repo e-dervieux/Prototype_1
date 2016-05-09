@@ -1,46 +1,51 @@
 #include "../Header/Particule.h"
 #include "../Header/Definitions.h"
 
-Particule::Particule()
- : Element(), m_matiere(NULL),
-   m_x(-1), m_y(-1)
+Particule::Particule(Matiere* matiere, size_t nbLiaisons)
+ : Element(), m_nbL(nbLiaisons), m_x(-1), m_y(-1),
+   m_matiere(matiere)
 {
-    m_liaisons = new Particule*[def::nbLiaisons];
-    for(int i = 0 ; i < def::nbLiaisons ; i++)
-        m_liaisons[i] = NULL;
+    if (nbLiaisons == 0)
+        m_liaisons = NULL;
+    else
+    {
+        m_liaisons = new Particule*[nbLiaisons];
+        for(int i = 0 ; i < nbLiaisons ; i++)
+            m_liaisons[i] = NULL;
+    }
 }
 
-Particule::Particule(int x, int y, Matiere* matiere)
- : Element(Vecteur(x+0.5, y+0.5)), m_x(x), m_y(y),
+Particule::Particule(int x, int y, Matiere* matiere, size_t nbLiaisons)
+ : Element(Vecteur(x+0.5, y+0.5)), m_nbL(nbLiaisons),
+   m_x(x), m_y(y),
    m_resf(), m_matiere(matiere)
 {
     m_pos2 = m_pos;
     m_v2 = m_v;
-    m_liaisons = new Particule*[def::nbLiaisons];
-    for(int i = 0 ; i < def::nbLiaisons ; i++)
-        m_liaisons[i] = NULL;
+    if (nbLiaisons == 0)
+        m_liaisons = NULL;
+    else
+    {
+        m_liaisons = new Particule*[nbLiaisons];
+        for(int i = 0 ; i < nbLiaisons ; i++)
+            m_liaisons[i] = NULL;
+    }
 }
 
-Particule::Particule(int x, int y, double xd, double yd, Matiere* matiere)
- : Element(Vecteur(xd,yd)), m_x(x), m_y(y),
-   m_resf(), m_matiere(matiere)
-{
-    m_pos2 = m_pos;
-    m_v2 = m_v;
-    m_liaisons = new Particule*[def::nbLiaisons];
-    for(int i = 0 ; i < def::nbLiaisons ; i++)
-        m_liaisons[i] = NULL;
-}
-
-Particule::Particule(Vecteur&& pos, Matiere* matiere)
-: Element(std::move(pos)), m_x((int)pos.getX()), m_y((int)pos.getY()),
+Particule::Particule(Vecteur&& pos, Matiere* matiere, size_t nbLiaisons)
+: Element(std::move(pos)), m_nbL(nbLiaisons), m_x((int)pos.getX()), m_y((int)pos.getY()),
   m_resf(), m_matiere(matiere)
 {
     m_pos2 = m_pos;
     m_v2 = m_v;
-    m_liaisons = new Particule*[def::nbLiaisons];
-    for(int i = 0 ; i < def::nbLiaisons ; i++)
-        m_liaisons[i] = NULL;
+    if (nbLiaisons == 0)
+        m_liaisons = NULL;
+    else
+    {
+        m_liaisons = new Particule*[nbLiaisons];
+        for(int i = 0 ; i < nbLiaisons ; i++)
+            m_liaisons[i] = NULL;
+    }
 }
 
 Particule::~Particule()
@@ -50,6 +55,19 @@ Particule::~Particule()
 
 Particule& Particule::operator=(const Particule& p)
 {
+    // Réattribution et copie des liaisons
+    if (m_nbL != p.m_nbL)
+    {
+        if (m_liaisons != NULL)
+            delete[] m_liaisons;
+
+        m_nbL = p.m_nbL;
+        m_liaisons = new Particule*[m_nbL];
+    }
+    for(int i = 0 ; i < m_nbL ; i++)
+        m_liaisons[i]=p.m_liaisons[i];
+
+    // Copie de tous les attributs
     m_x = p.m_x;
     m_y = p.m_y;
     m_pos = p.m_pos;
@@ -59,17 +77,7 @@ Particule& Particule::operator=(const Particule& p)
     m_resf = p.m_resf;
     m_matiere = p.m_matiere;
 
-    creerLiaisons(p.m_liaisons);
-
     return *this;
-}
-
-void Particule::creerLiaisons(Particule** liaisons)
-{
-    for(int i=0;i<def::nbLiaisons;i++)
-    {
-        m_liaisons[i]=liaisons[i];
-    }
 }
 
 bool Particule::lier(Particule* p)
@@ -80,16 +88,20 @@ bool Particule::lier(Particule* p)
 
     //Recherche des indices dans les tableaux de liaisons
     int i, j;
-    for(i = 0 ; i < def::nbLiaisons && m_liaisons[i] != NULL && m_liaisons[i] != p ; i++) ;
-    if (i == def::nbLiaisons)
+    for(i = 0 ; i < m_nbL && m_liaisons[i] != NULL && m_liaisons[i] != p ; i++) ;
+    if (i == m_nbL)
         return false;
 
-    for(j = 0 ; j < def::nbLiaisons && p->m_liaisons[j] != NULL && p->m_liaisons[j] != this ; j++) ;
-    if (j == def::nbLiaisons)
+    for(j = 0 ; j < p->m_nbL && p->m_liaisons[j] != NULL && p->m_liaisons[j] != this ; j++) ;
+    if (j == p->m_nbL)
         return false;
 
+    // Insère la liaison dans les 2 particules
     m_liaisons[i] = p;
     p->m_liaisons[j] = this;
+
+    // Réorganise les liaisons pour qu'elles soient toujours dans le sens trigo
+    // TODO
 
     return true;
 }
@@ -132,11 +144,11 @@ void Particule::actualiser(double dt)
 
 void Particule::supprimerLiaisons() {
     // Supprime les liaisons, de cette particule et des particules qui y sont liées
-    for(int i = 0 ; i < def::nbLiaisons ; i++)
+    for(int i = 0 ; i < m_nbL ; i++)
     {
         if (m_liaisons[i] != NULL)
         {
-            for(int j = 0 ; j < def::nbLiaisons ; j++)
+            for(int j = 0 ; j < m_liaisons[i]->m_nbL ; j++)
             {
                 if (m_liaisons[i]->m_liaisons[j] == this)
                 {
@@ -151,13 +163,10 @@ void Particule::supprimerLiaisons() {
 
 void Particule::appliquerForcesLiaison()
 {
-    if (m_liaisons == NULL) // Utile ?
-        return;
-
     if (m_matiere == NULL)
         return;
 
-    for(int i = 0 ; i < def::nbLiaisons ; i++)
+    for(int i = 0 ; i < m_nbL ; i++)
     {
         Particule* p = m_liaisons[i];
         if (p != NULL)
@@ -200,7 +209,7 @@ void Particule::surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint
 
 void Particule::afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
 {
-    for(int i = 0 ; i < def::nbLiaisons ; i++)
+    for(int i = 0 ; i < m_nbL ; i++)
     {
         Particule* p = m_liaisons[i];
         if (p != NULL)
@@ -220,7 +229,7 @@ bool Particule::detecterCollisionSM(int x, int y, int tailleSM)
 
     // res = collision (il n'y a pas de particule liée à celle-ci dans la nouvelle SM)
     bool res = true;
-    for(int i = 0 ; res && i < def::nbLiaisons ; i++)
+    for(int i = 0 ; res && i < m_nbL ; i++)
     {
         Particule* p = m_liaisons[i];
         if (p != NULL)

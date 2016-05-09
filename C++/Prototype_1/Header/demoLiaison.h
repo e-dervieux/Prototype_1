@@ -41,8 +41,8 @@ public:
         s << "Liaison elastique : k=" << k << ", c=" << cc;
         m_titre = s.str();
 
-        m_part[0] = Particule(6,6,&m_matiere);
-        m_part[1] = Particule(24,24,&m_matiere);
+        m_part[0] = Particule(6,6,&m_matiere, 2);
+        m_part[1] = Particule(24,24,&m_matiere, 2);
         m_part[0].lier(&m_part[1]);
 
         m_element.reinit();
@@ -61,10 +61,6 @@ void demoLiaison()
 
     // On crée au préalable les particules
     Particule* particules = new Particule[2];
-    particules[0] = Particule(-1,1);
-    particules[0] = Particule(-1,-1);
-
-    particules[0].lier(&particules[1]);
 
     // Création de la matrice
     MatriceParticules<8,4,2> m(32,32, 0, particules, 2);

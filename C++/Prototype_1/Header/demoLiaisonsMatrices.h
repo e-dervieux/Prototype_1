@@ -5,8 +5,8 @@
 
 #define PART_LIEES(n1,n2, x1,y1, x2,y2) \
     std::cout << "Liaison entre (" << x1 << "," << y1 << ") et (" << x2 << "," << y2 << ")." << std::endl;\
-    part[n1] = Particule(x1,y1,&matiere); \
-    part[n2] = Particule(x2,y2,&matiere); \
+    part[n1] = Particule(x1,y1,&matiere, 2); \
+    part[n2] = Particule(x2,y2,&matiere, 2); \
     part[n1].lier(&part[n2]);
 
 void demoLiaisonsMatrices()

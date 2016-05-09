@@ -31,12 +31,12 @@ public:
         for(int i = 0 ; i < C ; i++)
         {
             for(int j = 0 ; j < C ; j++)
-                m_part[i*C+j] = Particule(o + i*v2 + j*v3, m_m);
+                m_part[i*C+j] = Particule(o + i*v2 + j*v3, m_m, 6);
         }
         for(int i = 0 ; i < C-1 ; i++)
         {
             for(int j = 0 ; j < C-1 ; j++)
-                m_part[C*C + i*(C-1) + j] = Particule(o + v1 + i*v2 + j*v3, m_m);
+                m_part[C*C + i*(C-1) + j] = Particule(o + v1 + i*v2 + j*v3, m_m, 6);
         }
 
         for(int i = 0 ; i < C-1 ; i++)
@@ -99,7 +99,7 @@ public:
         for(int i = 0 ; i < C ; i++)
         {
             for(int j = 0 ; j < C ; j++)
-                m_part[i*C+j] = Particule(o + i*v1 + j*v2, m_m);
+                m_part[i*C+j] = Particule(o + i*v1 + j*v2, m_m, 6);
         }
 
         for(int i = 0 ; i < C ; i++)
@@ -204,9 +204,6 @@ void demoCohesion()
     // Création des particules
     int nbPart = JambonHexa::nbPart() + JambonCarre::nbPart();
     Particule* particules = new Particule[nbPart];
-    Particule refP(-1, -1, &m);
-    for(int i = 0 ; i < nbPart ; i++)
-        particules[i] = refP;
 
     JambonHexa j1(&m, particules, L);
     JambonCarre j2(&m, particules+JambonHexa::nbPart(), L);

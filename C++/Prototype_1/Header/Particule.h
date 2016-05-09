@@ -10,19 +10,18 @@
 class Particule : public Element
 {
 public:
-    Particule();
-    Particule(int x, int y, Matiere* matiere = NULL);
-    Particule(int x, int y, double xd, double yd, Matiere* matiere = NULL);
-    Particule(Vecteur&& pos, Matiere* matiere = NULL);
+    Particule(Matiere* matiere = NULL, size_t nbLiaisons = 0);
+    Particule(int x, int y, Matiere* matiere, size_t nbLiaisons = 0);
+    Particule(Vecteur&& pos, Matiere* matiere, size_t nbLiaisons = 0);
     ~Particule();
 
     Particule& operator=(const Particule& p);
 
-    void creerLiaisons(Particule** liaisons);
     Particule** getLiaisons() { return m_liaisons; }
     bool lier(Particule* p); // Lie la particule à p. Retourne false si ce n'est pas possible
     void supprimerLiaisons(); // Supprime la particule de la grille (la remettre vide, et supprimer les liaisons)
 
+    inline size_t getNbL() const { return m_nbL; }
     int getXInt() const { return m_x; }
     int getYInt() const { return m_y; }
     Vecteur getV2() const { return m_v2; }
@@ -49,6 +48,7 @@ public:
     virtual void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule);
 
 private:
+    size_t m_nbL;
     int m_x, m_y;
     Vecteur m_pos2, m_v2; // Positions préparées pour la prochaine frame
     Vecteur m_resf; // resf est la resultante des forces a l'instant considere

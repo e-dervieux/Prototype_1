@@ -65,7 +65,7 @@ public:
     {
         Particule** l = p.getLiaisons(); // l est normalement toujours correct (non NULL, etc...)
 
-        for(int i = 0 ; i < def::nbLiaisons ; i++)
+        for(int i = 0 ; i < p.getNbL() ; i++)
         {
             Particule* p2 = l[i];
             if (p2 != NULL && estValide(*p2))
