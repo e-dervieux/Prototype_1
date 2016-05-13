@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include "Vecteur.h"
+#include "Brisure.h"
 
 class Particule;
 

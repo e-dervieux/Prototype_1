@@ -247,17 +247,24 @@ void Particule::supprimerLiaisons() {
     }
 }
 
-void Particule::appliquerForcesLiaison()
+std::list<Brisure> Particule::appliquerForcesLiaison()
 {
+    std::list<Brisure> res;
+
     if (m_matiere == NULL)
-        return;
+        return res;
 
     for(int i = 0 ; i < m_nbL ; i++)
     {
         Particule* p = m_liaisons[i];
         if (p != NULL)
-            appliquerForce(m_matiere->forceLiaison(this, p));
+        {
+            try { appliquerForce(m_matiere->forceLiaison(this, p)); }
+            catch(Brisure& b) { res.push_back(b); }
+        }
     }
+
+    return res;
 }
 
 void Particule::setPos(Vecteur pos)

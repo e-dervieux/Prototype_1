@@ -28,14 +28,15 @@
       <sourceFolder url="file://$MODULE_DIR$/Header/Matiere.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Particule.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoLiaisonsMatrices.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/MatriceParticules.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/LiaisonsMC.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoCollision1.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoMatriceParticules.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/demoLiaison.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/Brisure.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoCollisionMatrices.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/demoCollision2.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/SceneSDL.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Header/LiaisonsMC.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/demoLiaison.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Header/MatriceParticules.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Header/Vecteur.h" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />

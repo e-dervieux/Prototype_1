@@ -80,7 +80,13 @@ public:
         {
             Particule& p = m_part[i];
             if (estValide(p))
-                p.appliquerForcesLiaison();
+            {
+                std::list<Brisure> l = p.appliquerForcesLiaison();
+
+                // Traitement des brisures
+                for(std::list<Brisure>::iterator it = l.begin() ; it != l.end() ; it++)
+                    lier(it->p1->getXInt(), it->p1->getYInt(), it->p2->getXInt(), it->p2->getYInt(), -1);
+            }
         }
     }
 

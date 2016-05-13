@@ -3,6 +3,7 @@
 
 #include <iostream> // DEBUG
 #include <vector>
+#include <list>
 #include "Vecteur.h"
 #include "Matiere.h"
 #include "Element.h"
@@ -35,7 +36,7 @@ public:
     virtual double getMasse() const;
 
     void appliquerForce(Vecteur f);
-    void appliquerForcesLiaison();
+    std::list<Brisure> appliquerForcesLiaison();
     void annulerForces() { m_resf = Vecteur(); }
     bool detecterCollisionSM(int x, int y, int tailleSM); // (INUTILE ?) Détecte si une particule liée est dans la sous-matrice d'arrivée de cette particule
     void collision(Particule& p); // Applique la force de collision avec p ET repositionne cette particule

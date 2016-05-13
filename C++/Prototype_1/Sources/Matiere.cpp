@@ -26,12 +26,7 @@ Vecteur Matiere::forceLiaison(Particule* p1, Particule* p2) const
     double l = ab.norme();
 
     if (l >= m_lLiaisonMax)
-    {
-        // Brisure des liaisons
-        p1->delier(p2);
-        p2->delier(p1);
-        return Vecteur();
-    }
+        throw Brisure(p1,p2);
     else if (l >= m_dLiaisonInv) // Force proportionnelle + amortissement
         return  m_raideur*(l-m_l0)*(ab.unitaire()) + m_amor*vr;
     else // Force en 1/r^exposant
