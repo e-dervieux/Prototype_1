@@ -95,7 +95,7 @@ public:
 
     virtual void charger(int config)
     {
-        double k = 400.0;
+        double k = 200.0;
         double cc = 5.0;
         double v = 15.0;
 
@@ -113,7 +113,7 @@ public:
                 m_j1->init(Vecteur(30.0, 30.0));
                 m_j1->appliquerDV(Vecteur(v, 0.0));
 
-                m_j2->init(Vecteur(100.0,40.0));
+                m_j2->init(Vecteur(100.0,30.0));
                 m_j2->appliquerDV(Vecteur(-v, 0.0));
 
                 m_titre = "2 formes entrant en collision... ;_;";

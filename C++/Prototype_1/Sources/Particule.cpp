@@ -295,13 +295,31 @@ void Particule::surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint
 
 void Particule::afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
 {
+    bool l = false;
+
     for(int i = 0 ; i < m_nbL ; i++)
     {
         Particule* p = m_liaisons[i];
         if (p != NULL)
+        {
             SDL_RenderDrawLine(rendu,
                                (int)(tailleParticule*m_pos.getX()),(int)(tailleParticule*m_pos.getY()),
                                (int)(tailleParticule*p->m_pos.getX()),(int)(tailleParticule*p->m_pos.getY()));
+            l = true;
+        }
+    }
+
+    // Affichage du centre
+    if (!l)
+    {
+        int x = (int)(tailleParticule*m_pos.getX());
+        int y = (int)(tailleParticule*m_pos.getY());
+
+        SDL_RenderDrawPoint(rendu,x,y);
+        SDL_RenderDrawPoint(rendu,x+1,y);
+        SDL_RenderDrawPoint(rendu,x-1,y);
+        SDL_RenderDrawPoint(rendu,x,y+1);
+        SDL_RenderDrawPoint(rendu,x,y-1);
     }
 }
 

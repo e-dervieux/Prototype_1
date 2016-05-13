@@ -100,7 +100,7 @@ public:
         for(int i = 0 ; i < C ; i++)
         {
             for(int j = 0 ; j < C ; j++)
-                m_part[i*C+j] = Particule(o + i*v1 + j*v2, m_m, 6);
+                m_part[i*C+j] = Particule(o + i*v1 + j*v2, m_m, 8);
         }
 
         for(int i = 0 ; i < C ; i++)
@@ -114,6 +114,17 @@ public:
                     m_part[i*C + j].lier(&m_part[i*C + (j+1)]);
             }
         }
+
+        // Diagonales
+        /*
+        for(int i = 0 ; i < C-1 ; i++)
+        {
+            for(int j = 0 ; j < C-1 ; j++)
+            {
+                m_part[i*C + j].lier(&m_part[(i+1)*C + (j+1)]);
+                m_part[(i+1)*C + j].lier(&m_part[i*C + (j+1)]);
+            }
+        }*/
 
         for(int i = 0 ; i < nbPart() ; i++)
             m_part[i].setV(Vecteur());
