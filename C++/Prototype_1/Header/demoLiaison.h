@@ -2,6 +2,7 @@
 #define PROTOTYPE_1_DEMOLIAISON_H
 
 #include <sstream>
+#include "MatriceParticules.h"
 #include "SceneSDL.h"
 
 class SceneDemoLiaison : public SceneSDL

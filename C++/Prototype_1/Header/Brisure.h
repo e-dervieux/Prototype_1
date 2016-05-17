@@ -1,15 +1,13 @@
-#include <exception>
-
 #ifndef PROTOTYPE_1_BRISURE_H
 #define PROTOTYPE_1_BRISURE_H
 
 class Particule;
 
-class Brisure : public std::exception
+class Brisure
 {
 public:
     Brisure(Particule* part1, Particule* part2)
-     : p1(p1), p2(p2) {}
+     : p1(part1), p2(part2) {}
 
     ~Brisure() throw() {}
 

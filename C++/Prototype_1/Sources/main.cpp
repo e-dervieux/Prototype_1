@@ -9,8 +9,7 @@
 int main(int argv, char** argc)
 {
     bool continuer = true;
-    while(continuer)
-    {
+    while (continuer) {
         int situation;
         std::cout << "Quelle demo realiser ? (0 = stop)" << std::endl
         << " 1 : Matrice de particules" << std::endl
@@ -21,8 +20,7 @@ int main(int argv, char** argc)
         << " 6 : Collision basique avec des sous-matrices" << std::endl
         << " 7 : Collision entre 2 formes coherentes" << std::endl;
         std::cin >> situation;
-        switch(situation)
-        {
+        switch (situation) {
             case 1:
                 demoMatriceParticules();
                 break;
@@ -45,9 +43,8 @@ int main(int argv, char** argc)
                 demoCollision2();
                 break;
             default:
-                continuer=false;
+                continuer = false;
         }
     }
-
     return 0;
 }

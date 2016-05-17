@@ -173,8 +173,7 @@ private:
     Matiere m_m1, m_m2;
 };
 
-void demoCollision2()
-{
+void demoCollision2() {
     def::redefGrille(180,100,5.0,0,2,3,true,true,8,16);
     def::redefTemp(true, 0.03, 0);
     def::nbIterationsEuler = 1;
@@ -189,10 +188,14 @@ void demoCollision2()
     MatriceDemoCollision mat(180, 100, 1, particules, nbPart);
 
     // Lancement de la scène SDL
-    SceneDemoCol2 scene(mat, mur, particules);
-    try { scene.bouclePrincipale(); }
+    try
+    {
+        SceneDemoCol2 scene(mat, mur, particules);
+        scene.bouclePrincipale();
+    }
     catch(Erreur& e) { std::cout << "Erreur !!" << std::endl << e.what() << std::endl; }
 
     delete[] particules;
 }
+
 #endif //PROTOTYPE_1_DEMOCOLLISION2_H

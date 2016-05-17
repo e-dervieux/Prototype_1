@@ -234,6 +234,7 @@ void Particule::supprimerLiaisons() {
     {
         if (m_liaisons[i] != NULL)
         {
+            // Mieux qu'une brisure, suppression de la liaison
             for(int j = 0 ; j < m_liaisons[i]->m_nbL ; j++)
             {
                 if (m_liaisons[i]->m_liaisons[j] == this)
@@ -259,8 +260,15 @@ std::list<Brisure> Particule::appliquerForcesLiaison()
         Particule* p = m_liaisons[i];
         if (p != NULL)
         {
-            try { appliquerForce(m_matiere->forceLiaison(this, p)); }
-            catch(Brisure& b) { res.push_back(b); }
+            try
+            {
+                Vecteur f = m_matiere->forceLiaison(this, p);
+                appliquerForce(f);
+            }
+            catch(const Brisure& b)
+            {
+                res.push_back(b);
+            }
         }
     }
 

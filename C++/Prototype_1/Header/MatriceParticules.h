@@ -85,7 +85,11 @@ public:
 
                 // Traitement des brisures
                 for(std::list<Brisure>::iterator it = l.begin() ; it != l.end() ; it++)
-                    lier(it->p1->getXInt(), it->p1->getYInt(), it->p2->getXInt(), it->p2->getYInt(), -1);
+                {
+                    lier(it->p1->getXInt(), it->p1->getYInt(), it->p2->getXInt(), it->p2->getYInt(), -2);
+                    it->p1->delier(it->p2);
+                    it->p2->delier(it->p1);
+                }
             }
         }
     }
@@ -345,13 +349,13 @@ private:
             if (liaisons.get(dir1))
             {
                 mcprive::Conteneur *sm3 = this->getSM(x1, y2, m_coucheCol); // Normalement non vide
-                if (sm3->getL().get(dir2))
+                if (sm3 != NULL || sm3->getL().get(dir2))
                     return false;
             }
             if (liaisons.get(dir2))
             {
                 mcprive::Conteneur *sm3 = this->getSM(x2, y1, m_coucheCol);
-                if (sm3->getL().get(dir1))
+                if (sm3 != NULL || sm3->getL().get(dir1))
                     return false;
             }
             return true;

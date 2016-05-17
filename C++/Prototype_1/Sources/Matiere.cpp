@@ -16,8 +16,6 @@ Matiere::Matiere(SDL_Color couleur, double masse, double l0, double raideur, dou
     m_c=k*(d*d*k*p-2*d*k*l0*p+k*l0*l0*p-d*f*p+f*l0*p-d*f)/(d*k*p-k*l0*p-d*k-f*p);
 }
 
-// TODO briser liaison si force trop intense
-
 Vecteur Matiere::forceLiaison(Particule* p1, Particule* p2) const
 {
     Vecteur ab(p1->getPos(),p2->getPos());
