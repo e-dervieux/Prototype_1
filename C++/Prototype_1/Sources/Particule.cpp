@@ -235,8 +235,7 @@ void Particule::supprimerLiaisons() {
             {
                 if (m_liaisons[i].part->m_liaisons[j].part == this)
                 {
-                    m_liaisons[i].part->m_liaisons[j].part = NULL;
-                    m_liaisons[i].part->m_liaisons[j].bris = false;
+                    m_liaisons[i].part->m_liaisons[j] = LiaisonPart();
                     break;
                 }
             }
@@ -261,7 +260,7 @@ std::list<Brisure> Particule::appliquerForcesLiaison()
             try { m_matiere->forceLiaison(this, lp); }
             catch(const Brisure& b)
             {
-                // Brise la liaison (ne la supprime pas)
+                // Brise la liaison
                 lp.bris = true;
                 lp.part->briser(this);
                 res.push_back(b);

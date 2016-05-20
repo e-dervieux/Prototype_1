@@ -360,16 +360,6 @@ public:
                 SDL_RenderDrawLine(rendu,x1,y1+1,x2+1,y2);
                 SDL_RenderDrawLine(rendu,x1-1,y1,x2,y2-1);
             }
-            if (m_liaisons.get(dir::haut|dir::droite)>0)
-            {
-                int x1 = (int)(tailleMatX*2.0/3.0)+coordX;
-                int x2 = (int)(tailleMatX*4.0/3.0)+coordX;
-                int y1 = (int)(tailleMatY*1.0/3.0)+coordY;
-                int y2 = -(int)(tailleMatY*1.0/3.0)+coordY;
-                SDL_RenderDrawLine(rendu,x1,y1,x2,y2);
-                SDL_RenderDrawLine(rendu,x1,y1-1,x2-1,y2);
-                SDL_RenderDrawLine(rendu,x1+1,y1,x2,y2+1);
-            }
         }
     }
 
