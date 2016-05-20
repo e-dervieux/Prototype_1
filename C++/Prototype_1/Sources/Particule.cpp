@@ -262,7 +262,8 @@ std::list<Brisure> Particule::appliquerForcesLiaison()
             {
                 // Brise la liaison
                 lp.bris = true;
-                lp.part->briser(this);
+                if (lp.part != NULL)
+                    lp.part->briser(this);
                 res.push_back(b);
             }
         }

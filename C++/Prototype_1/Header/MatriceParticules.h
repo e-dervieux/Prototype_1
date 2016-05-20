@@ -349,13 +349,13 @@ private:
             if (liaisons.get(dir1))
             {
                 mcprive::Conteneur *sm3 = this->getSM(x1, y2, m_coucheCol); // Normalement non vide
-                if (sm3 != NULL || sm3->getL().get(dir2))
+                if (sm3 != NULL && sm3->getL().get(dir2))
                     return false;
             }
             if (liaisons.get(dir2))
             {
                 mcprive::Conteneur *sm3 = this->getSM(x2, y1, m_coucheCol);
-                if (sm3 != NULL || sm3->getL().get(dir1))
+                if (sm3 != NULL && sm3->getL().get(dir1))
                     return false;
             }
             return true;

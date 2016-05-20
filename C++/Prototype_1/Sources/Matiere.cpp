@@ -28,9 +28,10 @@ void Matiere::forceLiaison(Particule* p, LiaisonPart& lp) const
     {
         // Supprime la liaison
         lp.part->delier(p);
+        Particule* tmp = lp.part;
         lp = LiaisonPart();
         if (!lp.bris)
-            throw Brisure(p,lp.part);
+            throw Brisure(p,tmp);
     }
     else if (l >= m_lLiaisonMax)
     {
