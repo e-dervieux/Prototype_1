@@ -14,6 +14,7 @@ namespace def
     int divisionGrille = 16;
 
     bool liaisonsAffichees = false;
+    bool liaisonsSMAffichees = false;
 
     bool pasFixe = false;
     double dtMax = 0.1;

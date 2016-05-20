@@ -36,6 +36,9 @@ void SceneSDL::init(int config)
         if (m_rendu == NULL)
             throw Erreur(3, "Echec du chargement du rendu");
 
+        if (SDL_SetRenderDrawBlendMode(m_rendu, SDL_BLENDMODE_BLEND))
+            throw Erreur(3, "Echec du chargement du mode de blending");
+
         m_config = config;
     }
 }
@@ -147,6 +150,10 @@ void SceneSDL::gererEvent(bool & continuer, bool& recommencer)
                     m_clavier[def::K_D] = true;
                     break;
 
+                case SDLK_m:
+                    def::liaisonsSMAffichees = !def::liaisonsSMAffichees;
+                    m_clavier[def::K_M] = true;
+                    break;
                 case SDLK_l:
                     def::liaisonsAffichees = !def::liaisonsAffichees;
                     m_clavier[def::K_L] = true;
@@ -199,6 +206,9 @@ void SceneSDL::gererEvent(bool & continuer, bool& recommencer)
                 m_clavier[def::K_D] = false;
                 break;
 
+            case SDLK_m:
+                m_clavier[def::K_M] = false;
+                break;
             case SDLK_l:
                 m_clavier[def::K_L] = false;
                 break;
@@ -274,7 +284,7 @@ void SceneSDL::affichage(bool& continuer)
     if (def::grilleAffichee)
         afficherGrille();
 
-    if (def::liaisonsAffichees)
+    //if (def::liaisonsAffichees)
         m_element.afficherLiaisons(m_rendu, def::coucheAffichage, def::tailleParticule);
 
     // Actualisation du rendu

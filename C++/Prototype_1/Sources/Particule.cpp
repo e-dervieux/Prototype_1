@@ -8,11 +8,7 @@ Particule::Particule(Matiere* matiere, size_t nbLiaisons)
     if (nbLiaisons == 0)
         m_liaisons = NULL;
     else
-    {
-        m_liaisons = new Particule*[nbLiaisons];
-        for(int i = 0 ; i < nbLiaisons ; i++)
-            m_liaisons[i] = NULL;
-    }
+        m_liaisons = new LiaisonPart[nbLiaisons];
 }
 
 Particule::Particule(int x, int y, Matiere* matiere, size_t nbLiaisons)
@@ -25,11 +21,7 @@ Particule::Particule(int x, int y, Matiere* matiere, size_t nbLiaisons)
     if (nbLiaisons == 0)
         m_liaisons = NULL;
     else
-    {
-        m_liaisons = new Particule*[nbLiaisons];
-        for(int i = 0 ; i < nbLiaisons ; i++)
-            m_liaisons[i] = NULL;
-    }
+        m_liaisons = new LiaisonPart[nbLiaisons];
 }
 
 Particule::Particule(Vecteur&& pos, Matiere* matiere, size_t nbLiaisons)
@@ -41,11 +33,7 @@ Particule::Particule(Vecteur&& pos, Matiere* matiere, size_t nbLiaisons)
     if (nbLiaisons == 0)
         m_liaisons = NULL;
     else
-    {
-        m_liaisons = new Particule*[nbLiaisons];
-        for(int i = 0 ; i < nbLiaisons ; i++)
-            m_liaisons[i] = NULL;
-    }
+        m_liaisons = new LiaisonPart[nbLiaisons];
 }
 
 Particule::~Particule()
@@ -63,7 +51,7 @@ Particule& Particule::operator=(const Particule& p)
             delete[] m_liaisons;
 
         m_nbL = p.m_nbL;
-        m_liaisons = new Particule*[m_nbL];
+        m_liaisons = new LiaisonPart[m_nbL];
     }
     for(int i = 0 ; i < m_nbL ; i++)
         m_liaisons[i]=p.m_liaisons[i];
@@ -89,17 +77,19 @@ bool Particule::lier(Particule* p)
 
     //Recherche des indices dans les tableaux de liaisons
     int i, j;
-    for(i = 0 ; i < m_nbL && m_liaisons[i] != NULL && m_liaisons[i] != p ; i++) ;
+    for(i = 0 ; i < m_nbL && m_liaisons[i].part != NULL && m_liaisons[i].part != p ; i++) ;
     if (i == m_nbL)
         return false;
 
-    for(j = 0 ; j < p->m_nbL && p->m_liaisons[j] != NULL && p->m_liaisons[j] != this ; j++) ;
+    for(j = 0 ; j < p->m_nbL && p->m_liaisons[j].part != NULL && p->m_liaisons[j].part != this ; j++) ;
     if (j == p->m_nbL)
         return false;
 
     // Insère la liaison dans les 2 particules
-    m_liaisons[i] = p;
-    p->m_liaisons[j] = this;
+    m_liaisons[i].part = p;
+    m_liaisons[i].bris = false;
+    p->m_liaisons[j].part = this;
+    p->m_liaisons[j].bris = false;
 
     // Réorganise les liaisons pour qu'elles soient toujours dans le sens trigo
     reorganiserLiaisons(i);
@@ -112,9 +102,21 @@ void Particule::delier(Particule* p)
 {
     for(int i = 0 ; i < m_nbL ; i++)
     {
-        if (m_liaisons[i] == p)
+        if (m_liaisons[i].part == p)
         {
-            m_liaisons[i] = NULL;
+            m_liaisons[i] = LiaisonPart();
+            return;
+        }
+    }
+}
+
+void Particule::briser(Particule* p)
+{
+    for(int i = 0 ; i < m_nbL ; i++)
+    {
+        if (m_liaisons[i].part == p)
+        {
+            m_liaisons[i].bris = true;
             return;
         }
     }
@@ -122,44 +124,37 @@ void Particule::delier(Particule* p)
 
 void Particule::reorganiserLiaisons(int k)
 {
-    bool changement;
-    do
+    for(int i = k ; i > 0 ; i--)
     {
-        changement = false;
-        for(int i = k ; i > 0 ; i--)
+        // Normalement m_liaisons[i] != NULL (cf supprimer liaisons)
+        Vecteur v1(m_pos, m_liaisons[i-1].part->m_pos);
+        Vecteur v2(m_pos, m_liaisons[i].part->m_pos);
+
+        // Inversion des 2 liaisons
+        if (v1.mixte(v2) < 0)
         {
-            // Normalement m_liaisons[i] != NULL (cf supprimer liaisons)
-            Vecteur v1(m_pos, m_liaisons[i-1]->m_pos);
-            Vecteur v2(m_pos, m_liaisons[i]->m_pos);
-
-            // Inversion des 2 liaisons
-            if (v1.mixte(v2) < 0)
-            {
-                Particule* tmp = m_liaisons[i-1];
-                m_liaisons[i-1] = m_liaisons[i];
-                m_liaisons[i] = tmp;
-                changement = true;
-            }
+            LiaisonPart tmp = m_liaisons[i-1];
+            m_liaisons[i-1] = m_liaisons[i];
+            m_liaisons[i] = tmp;
         }
+    }
 
-        // Si les liaisons forment un cycle
-        if (k == m_nbL-1)
+    // Si les liaisons forment un cycle
+    if (k == m_nbL-1)
+    {
+
+
+        Vecteur v1(m_pos, m_liaisons[k].part->m_pos);
+        Vecteur v2(m_pos, m_liaisons[0].part->m_pos);
+
+        // Inversion des 2 liaisons
+        if (v1.mixte(v2) < 0)
         {
-
-
-            Vecteur v1(m_pos, m_liaisons[k]->m_pos);
-            Vecteur v2(m_pos, m_liaisons[0]->m_pos);
-
-            // Inversion des 2 liaisons
-            if (v1.mixte(v2) < 0)
-            {
-                Particule* tmp = m_liaisons[k];
-                m_liaisons[k] = m_liaisons[0];
-                m_liaisons[0] = tmp;
-                changement = true;
-            }
+            LiaisonPart tmp = m_liaisons[k];
+            m_liaisons[k] = m_liaisons[0];
+            m_liaisons[0] = tmp;
         }
-    } while(changement);
+    }
 }
 
 void Particule::setInt(int x, int y)
@@ -198,8 +193,9 @@ void Particule::croisementLiaisons()
     // On utilise les pos2 pour gérer ça
     for(int i = 0 ; i < m_nbL ; i++)
     {
-        Particule* p1 = m_liaisons[i];
-        Particule* p2 = m_liaisons[(i+1)%m_nbL];
+        Particule* p1 = m_liaisons[i].part;
+        Particule* p2 = m_liaisons[(i+1)%m_nbL].part;
+        // Se fait même si la liaison est brisée (la liaison est supprimée lorsqu'elle n'est plus considérée)
         if (p1 != NULL && p2 != NULL)
         {
             Vecteur v1(m_pos2,p1->m_pos2);
@@ -232,18 +228,20 @@ void Particule::supprimerLiaisons() {
     // Supprime les liaisons, de cette particule et des particules qui y sont liées
     for(int i = 0 ; i < m_nbL ; i++)
     {
-        if (m_liaisons[i] != NULL)
+        if (m_liaisons[i].part != NULL)
         {
             // Mieux qu'une brisure, suppression de la liaison
-            for(int j = 0 ; j < m_liaisons[i]->m_nbL ; j++)
+            for(int j = 0 ; j < m_liaisons[i].part->m_nbL ; j++)
             {
-                if (m_liaisons[i]->m_liaisons[j] == this)
+                if (m_liaisons[i].part->m_liaisons[j].part == this)
                 {
-                    m_liaisons[i]->m_liaisons[j] = NULL;
+                    m_liaisons[i].part->m_liaisons[j].part = NULL;
+                    m_liaisons[i].part->m_liaisons[j].bris = false;
                     break;
                 }
             }
-            m_liaisons[i] = NULL;
+            m_liaisons[i].part = NULL;
+            m_liaisons[i].bris = false;
         }
     }
 }
@@ -257,16 +255,15 @@ std::list<Brisure> Particule::appliquerForcesLiaison()
 
     for(int i = 0 ; i < m_nbL ; i++)
     {
-        Particule* p = m_liaisons[i];
-        if (p != NULL)
+        LiaisonPart& lp = m_liaisons[i];
+        if (lp.part != NULL)
         {
-            try
-            {
-                Vecteur f = m_matiere->forceLiaison(this, p);
-                appliquerForce(f);
-            }
+            try { m_matiere->forceLiaison(this, lp); }
             catch(const Brisure& b)
             {
+                // Brise la liaison (ne la supprime pas)
+                lp.bris = true;
+                lp.part->briser(this);
                 res.push_back(b);
             }
         }
@@ -314,12 +311,16 @@ void Particule::afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, doubl
 
     for(int i = 0 ; i < m_nbL ; i++)
     {
-        Particule* p = m_liaisons[i];
-        if (p != NULL)
+        LiaisonPart& lp = m_liaisons[i];
+        if (lp.part != NULL)
         {
+            if (lp.bris)
+                SDL_SetRenderDrawColor(rendu, 128,128,128,128);
+            else
+                SDL_SetRenderDrawColor(rendu, 0,255,0,128);
             SDL_RenderDrawLine(rendu,
                                (int)(tailleParticule*m_pos.getX()),(int)(tailleParticule*m_pos.getY()),
-                               (int)(tailleParticule*p->m_pos.getX()),(int)(tailleParticule*p->m_pos.getY()));
+                               (int)(tailleParticule*lp.part->m_pos.getX()),(int)(tailleParticule*lp.part->m_pos.getY()));
             l = true;
         }
     }
@@ -327,6 +328,8 @@ void Particule::afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, doubl
     // Affichage du centre
     if (!l)
     {
+        SDL_SetRenderDrawColor(rendu, 0,255,0,196);
+
         int x = (int)(tailleParticule*m_pos.getX());
         int y = (int)(tailleParticule*m_pos.getY());
 
@@ -350,11 +353,11 @@ bool Particule::detecterCollisionSM(int x, int y, int tailleSM)
     bool res = true;
     for(int i = 0 ; res && i < m_nbL ; i++)
     {
-        Particule* p = m_liaisons[i];
-        if (p != NULL)
+        LiaisonPart& lp = m_liaisons[i];
+        if (lp.part != NULL && !lp.bris)
         {
-            res = !(p->m_x/tailleSM == x/tailleSM &&
-                    p->m_y/tailleSM == y/tailleSM);
+            res = !(lp.part->m_x/tailleSM == x/tailleSM &&
+                    lp.part->m_y/tailleSM == y/tailleSM);
         }
     }
 

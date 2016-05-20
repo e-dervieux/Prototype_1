@@ -63,12 +63,12 @@ public:
     // Ajoute/supprime les liaisons que contient la particule p
     void lier(Particule& p, int nb = 1)
     {
-        Particule** l = p.getLiaisons(); // l est normalement toujours correct (non NULL, etc...)
+        LiaisonPart* l = p.getLiaisons(); // l est normalement toujours correct (non NULL, etc...)
 
         for(int i = 0 ; i < p.getNbL() ; i++)
         {
-            Particule* p2 = l[i];
-            if (p2 != NULL && estValide(*p2))
+            Particule* p2 = l[i].part;
+            if (p2 != NULL && !l[i].bris && estValide(*p2))
                 lier(p.getXInt(), p.getYInt(), p2->getXInt(), p2->getYInt(), nb);
         }
     }
@@ -85,11 +85,7 @@ public:
 
                 // Traitement des brisures
                 for(std::list<Brisure>::iterator it = l.begin() ; it != l.end() ; it++)
-                {
                     lier(it->p1->getXInt(), it->p1->getYInt(), it->p2->getXInt(), it->p2->getYInt(), -2);
-                    it->p1->delier(it->p2);
-                    it->p2->delier(it->p1);
-                }
             }
         }
     }
@@ -330,10 +326,14 @@ public:
 
     void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
     {
-        SDL_SetRenderDrawColor(rendu, 0,255,0,60);
+        if (def::liaisonsSMAffichees)
+            this->afficherLiaisonsSM(rendu, m_coucheCol, tailleParticule,0,0);
 
-        for(int i = 0 ; i < m_nbPart ; i++)
-            m_part[i].afficherLiaisons(rendu, coucheAffichage, tailleParticule);
+        if (def::liaisonsAffichees)
+        {
+            for(int i = 0 ; i < m_nbPart ; i++)
+                m_part[i].afficherLiaisons(rendu, coucheAffichage, tailleParticule);
+        }
     }
 
 private:

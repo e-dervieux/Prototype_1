@@ -8,7 +8,7 @@
 
 namespace def
 {
-    enum TOUCHE{K_ESPACE, K_DROITE, K_HAUT, K_GAUCHE, K_BAS, K_Z, K_Q, K_S, K_D, K_L, K_G, K_SHIFT, K_KP_PLUS, K_KP_MOINS, NB_TOUCHES};
+    enum TOUCHE{K_ESPACE, K_DROITE, K_HAUT, K_GAUCHE, K_BAS, K_Z, K_Q, K_S, K_D, K_L, K_M, K_G, K_SHIFT, K_KP_PLUS, K_KP_MOINS, NB_TOUCHES};
 
     // Elements liés à la grille
     extern int width; // Taille de la scène principale
@@ -27,6 +27,7 @@ namespace def
 
     // Autres paramètres d'affichage
     extern bool liaisonsAffichees;
+    extern bool liaisonsSMAffichees;
 
     // Paramètres temporels
     extern bool pasFixe; // Affichage à pas temporel fixe, ou à pas dynamique

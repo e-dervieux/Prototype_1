@@ -24,8 +24,8 @@ class SceneDemoCM : public SceneSDL
 public:
     SceneDemoCM(MatriceDemoCM& mat, Particule* part)
     : SceneSDL(mat), m_part(part), m_mat(mat),
-      m_m1({255, 0, 0, 255}, 1.0, 3.0, 0.0, 0.0),
-      m_m2({0, 0, 255, 255}, 1.0, 3.0, 0.0, 0.0),
+      m_m1({255, 0, 0, 255}, 1.0, 3.0, 0.0, 0.0, 0.5, 32.0, 1),
+      m_m2({0, 0, 255, 255}, 1.0, 3.0, 0.0, 0.0, 0.5, 32.0, 1),
       m_appui(false), m_h(false), m_g(false), m_b(false), m_d(false)
     {}
 

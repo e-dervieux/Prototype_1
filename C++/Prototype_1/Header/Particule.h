@@ -18,9 +18,10 @@ public:
 
     Particule& operator=(const Particule& p);
 
-    Particule** getLiaisons() { return m_liaisons; }
+    LiaisonPart* getLiaisons() { return m_liaisons; }
     bool lier(Particule* p); // Lie la particule à p. Retourne false si ce n'est pas possible
     void delier(Particule* p); // Retire la liaison avec la particule p
+    void briser(Particule* p); // Note la liaison avec p comme brisée
     void supprimerLiaisons(); // Supprime la particule de la grille (la remettre vide, et supprimer les liaisons)
 
     inline size_t getNbL() const { return m_nbL; }
@@ -58,7 +59,7 @@ private:
     Vecteur m_pos2, m_v2; // Positions préparées pour la prochaine frame
     Vecteur m_resf; // resf est la resultante des forces a l'instant considere
 
-    Particule** m_liaisons;
+    LiaisonPart* m_liaisons; // Liaisons ave les autres particules
 
     Matiere* m_matiere;
 };

@@ -16,8 +16,8 @@ public:
     double getMasse() const { return m_masse; }
     SDL_Color getCouleur() const { return m_couleur; }
 
-    // Renvoie la force de liaison appliquee a p1
-    virtual Vecteur forceLiaison(Particule* p1, Particule* p2) const;
+    // Applique la force de liaison appliquee a p1, et brise les liaisons si nécessaire
+    virtual void forceLiaison(Particule* p, LiaisonPart& lp) const;
 
 //private:
     SDL_Color m_couleur;
@@ -28,6 +28,7 @@ public:
 
     double m_dLiaisonInv; //La distance à laquelle on change de profil de force.
     double m_lLiaisonMax; //La longueur de brisure de la liaison;
+    double m_lLiaisonSuppr; // Longueur à partir de laquelle une liaison brisée est supprimée
     int m_exposantLiaison; //Exposant du terme inverse de la liaison.
 
     double m_a;

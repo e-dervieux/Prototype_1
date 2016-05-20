@@ -301,6 +301,78 @@ public:
         }
     }
 
+    virtual void afficherLiaisonsSM(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule, int x, int y)
+    {
+        if (coucheAffichage < getProfondeur())
+        {
+            if (m_tab != NULL)
+            {
+                for(int i = 0 ; i < m_smX ; i++)
+                {
+                    for(int j = 0 ; j < m_smY ; j++)
+                        m_tab[i*m_smY+j].afficherLiaisonsSM(rendu, coucheAffichage, tailleParticule, x+dimSM*i, y+dimSM*j);
+                }
+            }
+        }
+        else if (coucheAffichage == getProfondeur() && !estVide())
+        {
+            int coordX = (int)(tailleParticule*(double)x);
+            int coordY = (int)(tailleParticule*(double)y);
+
+            double tailleMatX = tailleParticule*(double)m_w;
+            double tailleMatY = tailleParticule*(double)m_h;
+            SDL_SetRenderDrawColor(rendu, 150, 150, 0, 128);
+            if (m_liaisons.get(dir::bas)>0)
+            {
+                int x1 = (int)(tailleMatX/2.0)+coordX;
+                int y1 = (int)(tailleMatY*2.0/3.0)+coordY;
+                int y2 = (int)(tailleMatY*4.0/3.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x1,y2);
+                SDL_RenderDrawLine(rendu,x1+1,y1,x1+1,y2);
+                SDL_RenderDrawLine(rendu,x1-1,y1,x1-1,y2);
+            }
+            if (m_liaisons.get(dir::droite)>0)
+            {
+                int x1 = (int)(tailleMatX*2.0/3.0)+coordX;
+                int x2 = (int)(tailleMatX*4.0/3.0)+coordX;
+                int y1 = (int)(tailleMatY/2.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x2,y1);
+                SDL_RenderDrawLine(rendu,x1,y1+1,x2,y1+1);
+                SDL_RenderDrawLine(rendu,x1,y1-1,x2,y1-1);
+            }
+            if (m_liaisons.get(dir::bas|dir::droite)>0)
+            {
+                int x1 = (int)(tailleMatX*2.0/3.0)+coordX;
+                int x2 = (int)(tailleMatX*4.0/3.0)+coordX;
+                int y1 = (int)(tailleMatY*2.0/3.0)+coordY;
+                int y2 = (int)(tailleMatY*4.0/3.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x2,y2);
+                SDL_RenderDrawLine(rendu,x1,y1+1,x2-1,y2);
+                SDL_RenderDrawLine(rendu,x1+1,y1,x2,y2-1);
+            }
+            if (m_liaisons.get(dir::bas|dir::gauche)>0)
+            {
+                int x1 = (int)(tailleMatX*1.0/3.0)+coordX;
+                int x2 = -(int)(tailleMatX*1.0/3.0)+coordX;
+                int y1 = (int)(tailleMatY*2.0/3.0)+coordY;
+                int y2 = (int)(tailleMatY*4.0/3.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x2,y2);
+                SDL_RenderDrawLine(rendu,x1,y1+1,x2+1,y2);
+                SDL_RenderDrawLine(rendu,x1-1,y1,x2,y2-1);
+            }
+            if (m_liaisons.get(dir::haut|dir::droite)>0)
+            {
+                int x1 = (int)(tailleMatX*2.0/3.0)+coordX;
+                int x2 = (int)(tailleMatX*4.0/3.0)+coordX;
+                int y1 = (int)(tailleMatY*1.0/3.0)+coordY;
+                int y2 = -(int)(tailleMatY*1.0/3.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x2,y2);
+                SDL_RenderDrawLine(rendu,x1,y1-1,x2-1,y2);
+                SDL_RenderDrawLine(rendu,x1+1,y1,x2,y2+1);
+            }
+        }
+    }
+
     virtual inline void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule)
     {
         afficher(rendu, coucheAffichage, tailleParticule, 0, 0);
@@ -606,6 +678,67 @@ public:
             SDL_SetRenderDrawColor(rendu, c.r, c.g, c.b, c.a);
             SDL_Rect rect = {coordX, coordY, taillePixelX, taillePixelY};
             SDL_RenderFillRect(rendu, &rect);
+        }
+    }
+
+    virtual void afficherLiaisonsSM(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule, int x, int y)
+    {
+        if (!estVide())
+        {
+            int coordX = (int)(tailleParticule*(double)x);
+            int coordY = (int)(tailleParticule*(double)y);
+
+            double tailleMatX = tailleParticule*(double)m_w;
+            double tailleMatY = tailleParticule*(double)m_h;
+            SDL_SetRenderDrawColor(rendu, 150, 150, 0, 128);
+            if (m_liaisons.get(dir::bas)>0)
+            {
+                int x1 = (int)(tailleMatX/2.0)+coordX;
+                int y1 = (int)(tailleMatY*2.0/3.0)+coordY;
+                int y2 = (int)(tailleMatY*4.0/3.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x1,y2);
+                SDL_RenderDrawLine(rendu,x1+1,y1,x1+1,y2);
+                SDL_RenderDrawLine(rendu,x1-1,y1,x1-1,y2);
+            }
+            if (m_liaisons.get(dir::droite)>0)
+            {
+                int x1 = (int)(tailleMatX*2.0/3.0)+coordX;
+                int x2 = (int)(tailleMatX*4.0/3.0)+coordX;
+                int y1 = (int)(tailleMatY/2.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x2,y1);
+                SDL_RenderDrawLine(rendu,x1,y1+1,x2,y1+1);
+                SDL_RenderDrawLine(rendu,x1,y1-1,x2,y1-1);
+            }
+            if (m_liaisons.get(dir::bas|dir::droite)>0)
+            {
+                int x1 = (int)(tailleMatX*2.0/3.0)+coordX;
+                int x2 = (int)(tailleMatX*4.0/3.0)+coordX;
+                int y1 = (int)(tailleMatY*2.0/3.0)+coordY;
+                int y2 = (int)(tailleMatY*4.0/3.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x2,y2);
+                SDL_RenderDrawLine(rendu,x1,y1+1,x2-1,y2);
+                SDL_RenderDrawLine(rendu,x1+1,y1,x2,y2-1);
+            }
+            if (m_liaisons.get(dir::bas|dir::gauche)>0)
+            {
+                int x1 = (int)(tailleMatX*1.0/3.0)+coordX;
+                int x2 = -(int)(tailleMatX*1.0/3.0)+coordX;
+                int y1 = (int)(tailleMatY*2.0/3.0)+coordY;
+                int y2 = (int)(tailleMatY*4.0/3.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x2,y2);
+                SDL_RenderDrawLine(rendu,x1,y1+1,x2+1,y2);
+                SDL_RenderDrawLine(rendu,x1-1,y1,x2,y2-1);
+            }
+            if (m_liaisons.get(dir::haut|dir::droite)>0)
+            {
+                int x1 = (int)(tailleMatX*2.0/3.0)+coordX;
+                int x2 = (int)(tailleMatX*4.0/3.0)+coordX;
+                int y1 = (int)(tailleMatY*1.0/3.0)+coordY;
+                int y2 = -(int)(tailleMatY*1.0/3.0)+coordY;
+                SDL_RenderDrawLine(rendu,x1,y1,x2,y2);
+                SDL_RenderDrawLine(rendu,x1,y1-1,x2-1,y2);
+                SDL_RenderDrawLine(rendu,x1+1,y1,x2,y2+1);
+            }
         }
     }
 
