@@ -11,8 +11,8 @@
 class Particule : public Element
 {
 public:
+    Particule(int x, int y, Matiere* matiere = NULL, size_t nbLiaisons = 0);
     Particule(Matiere* matiere = NULL, size_t nbLiaisons = 0);
-    Particule(int x, int y, Matiere* matiere, size_t nbLiaisons = 0);
     Particule(Vecteur&& pos, Matiere* matiere, size_t nbLiaisons = 0);
     ~Particule();
 
@@ -24,6 +24,7 @@ public:
     void briser(Particule* p); // Note la liaison avec p comme brisée
     void supprimerLiaisons(); // Supprime la particule de la grille (la remettre vide, et supprimer les liaisons)
 
+    bool estValide() const;
     inline size_t getNbL() const { return m_nbL; }
     int getXInt() const { return m_x; }
     int getYInt() const { return m_y; }
@@ -33,7 +34,9 @@ public:
     virtual void appliquerDV(Vecteur dv);
     void setInt(int x, int y); // Donne les nouvelles coordonnées entières de la particule
     void setPosInt(Vecteur pos); // Donne les nouvelles coordonnées double, et actualise les int correspondants
-    virtual SDL_Color getCouleur() const { return (m_matiere == NULL) ? (SDL_Color {0,0,0,0}) : m_matiere->getCouleur(); }
+    virtual SDL_Color getCouleur() const { return m_couleur; }
+    void setCouleur(SDL_Color&& c) { m_couleur = c; }
+    void setMatiere(Matiere* m); // Change la matière de la particule (et la couleur, si celle-ci n'a pas encore été définie)
     virtual double getMasse() const;
 
     void appliquerForce(Vecteur f);
@@ -51,6 +54,9 @@ public:
     void surligner(SDL_Renderer* rendu, int partPP, int taillePixel, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
     virtual void afficherLiaisons(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule);
 
+    // Réarrange une collection de particules, pour supprimer les particules vides
+    static void rearrangerParticules(Particule* part, int nb, Particule*& newPart, int& newNb, bool allouer);
+
 private:
     void reorganiserLiaisons(int k);
 
@@ -62,6 +68,7 @@ private:
     LiaisonPart* m_liaisons; // Liaisons ave les autres particules
 
     Matiere* m_matiere;
+    SDL_Color m_couleur;
 };
 
 #endif // PARTICULE_H_INCLUDED

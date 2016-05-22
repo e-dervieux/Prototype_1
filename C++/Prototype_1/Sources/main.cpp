@@ -5,9 +5,13 @@
 #include "../Header/demoLiaisonsMatrices.h"
 #include "../Header/demoCollisionMatrices.h"
 #include "../Header/demoCollision2.h"
+#include "../Header/demoImage.h"
 
 int main(int argv, char** argc)
 {
+    demoImage();
+    return 0;
+
     bool continuer = true;
     while (continuer) {
         int situation;

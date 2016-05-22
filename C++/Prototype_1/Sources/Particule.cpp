@@ -1,9 +1,11 @@
 #include "../Header/Particule.h"
 #include "../Header/Definitions.h"
 
+SDL_Color couleurDefaut = {0,0,0,0};
+
 Particule::Particule(Matiere* matiere, size_t nbLiaisons)
  : Element(), m_nbL(nbLiaisons), m_x(-1), m_y(-1),
-   m_matiere(matiere)
+   m_matiere(matiere), m_couleur((matiere==NULL) ? couleurDefaut : matiere->getCouleur())
 {
     if (nbLiaisons == 0)
         m_liaisons = NULL;
@@ -14,7 +16,7 @@ Particule::Particule(Matiere* matiere, size_t nbLiaisons)
 Particule::Particule(int x, int y, Matiere* matiere, size_t nbLiaisons)
  : Element(Vecteur(x+0.5, y+0.5)), m_nbL(nbLiaisons),
    m_x(x), m_y(y),
-   m_resf(), m_matiere(matiere)
+   m_resf(), m_matiere(matiere), m_couleur((matiere==NULL) ? couleurDefaut : matiere->getCouleur())
 {
     m_pos2 = m_pos;
     m_v2 = m_v;
@@ -26,7 +28,7 @@ Particule::Particule(int x, int y, Matiere* matiere, size_t nbLiaisons)
 
 Particule::Particule(Vecteur&& pos, Matiere* matiere, size_t nbLiaisons)
 : Element(std::move(pos)), m_nbL(nbLiaisons), m_x((int)pos.getX()), m_y((int)pos.getY()),
-  m_resf(), m_matiere(matiere)
+  m_resf(), m_matiere(matiere), m_couleur((matiere==NULL) ? couleurDefaut : matiere->getCouleur())
 {
     m_pos2 = m_pos;
     m_v2 = m_v;
@@ -65,8 +67,14 @@ Particule& Particule::operator=(const Particule& p)
     m_v2 = p.m_v2;
     m_resf = p.m_resf;
     m_matiere = p.m_matiere;
+    m_couleur = p.m_couleur;
 
     return *this;
+}
+
+bool Particule::estValide() const
+{
+    return !(m_x == -1 && m_y == -1);
 }
 
 bool Particule::lier(Particule* p)
@@ -124,37 +132,41 @@ void Particule::briser(Particule* p)
 
 void Particule::reorganiserLiaisons(int k)
 {
-    for(int i = k ; i > 0 ; i--)
+    bool modif;
+    do
     {
-        // Normalement m_liaisons[i] != NULL (cf supprimer liaisons)
-        Vecteur v1(m_pos, m_liaisons[i-1].part->m_pos);
-        Vecteur v2(m_pos, m_liaisons[i].part->m_pos);
+        modif = false;
 
-        // Inversion des 2 liaisons
-        if (v1.mixte(v2) < 0)
-        {
-            LiaisonPart tmp = m_liaisons[i-1];
-            m_liaisons[i-1] = m_liaisons[i];
-            m_liaisons[i] = tmp;
+        for (int i = k; i > 0; i--) {
+            // Normalement m_liaisons[i] != NULL (cf supprimer liaisons)
+            Vecteur v1(m_pos, m_liaisons[i - 1].part->m_pos);
+            Vecteur v2(m_pos, m_liaisons[i].part->m_pos);
+
+            // Inversion des 2 liaisons
+            if (v1.mixte(v2) < 0) {
+                LiaisonPart tmp = m_liaisons[i - 1];
+                m_liaisons[i - 1] = m_liaisons[i];
+                m_liaisons[i] = tmp;
+                modif = true;
+            }
         }
-    }
 
-    // Si les liaisons forment un cycle
-    if (k == m_nbL-1)
-    {
+        // Si les liaisons forment un cycle
+        if (k == m_nbL - 1) {
 
 
-        Vecteur v1(m_pos, m_liaisons[k].part->m_pos);
-        Vecteur v2(m_pos, m_liaisons[0].part->m_pos);
+            Vecteur v1(m_pos, m_liaisons[k].part->m_pos);
+            Vecteur v2(m_pos, m_liaisons[0].part->m_pos);
 
-        // Inversion des 2 liaisons
-        if (v1.mixte(v2) < 0)
-        {
-            LiaisonPart tmp = m_liaisons[k];
-            m_liaisons[k] = m_liaisons[0];
-            m_liaisons[0] = tmp;
+            // Inversion des 2 liaisons
+            if (v1.mixte(v2) < 0) {
+                LiaisonPart tmp = m_liaisons[k];
+                m_liaisons[k] = m_liaisons[0];
+                m_liaisons[0] = tmp;
+                modif = true;
+            }
         }
-    }
+    } while(modif);
 }
 
 void Particule::setInt(int x, int y)
@@ -168,6 +180,13 @@ double Particule::getMasse() const
     if (m_matiere == NULL)
         return 0.0;
     return m_matiere->getMasse();
+}
+
+void Particule::setMatiere(Matiere* m)
+{
+    m_matiere = m;
+    if (m_couleur.r == 0 && m_couleur.g == 0 && m_couleur.b == 0 && m_couleur.a == 0 && m != NULL)
+        m_couleur = m->getCouleur();
 }
 
 void Particule::appliquerForce(Vecteur f)
@@ -533,4 +552,48 @@ void Particule::afficher(SDL_Renderer* rendu, int coucheAffichage, double taille
     SDL_SetRenderDrawColor(rendu, c.r, c.g, c.b, c.a);
     SDL_Rect rect = {(int)(tailleParticule*(double)m_x), (int)(tailleParticule*(double)m_y),(int)tailleParticule,(int)tailleParticule};
     SDL_RenderFillRect(rendu, &rect);
+}
+
+void Particule::rearrangerParticules(Particule* part, int nb, Particule*& newPart, int& newNb, bool allouer)
+{
+    // Tableaux des correlations d'indices
+    int* cor = new int[nb];
+    int ind = 0;
+
+    // Correlations, et nombre total de particules valides
+    for(int i = 0 ; i < nb ; i++)
+    {
+        if (part[i].estValide())
+        {
+            cor[i] = ind;
+            ind++;
+        }
+    }
+
+    // Allocation
+    newNb = ind;
+    ind = 0;
+    if (allouer)
+        newPart = new Particule[newNb];
+
+    // Copie des particules, une par une
+    for(int i = 0 ; i < nb ; i++)
+    {
+        if (part[i].estValide())
+        {
+            Particule& p = newPart[ind]; // Nouvelle particule
+            Particule& p2 = part[i]; // Particule à copier
+            ind++;
+
+            p=p2;
+            // Copie des liaisons
+            for(int j = 0 ; j < p.m_nbL ; j++)
+            {
+                if (p2.m_liaisons[j].part!=NULL)
+                    p.m_liaisons[j].part=newPart+cor[p2.m_liaisons[j].part-part];
+            }
+        }
+    }
+
+    delete[] cor;
 }
