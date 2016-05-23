@@ -36,19 +36,19 @@ void Matiere::forceLiaison(Particule* p, LiaisonPart& lp) const
     else if (l >= m_lLiaisonMax)
     {
         // TODO Retravailler l'expression de la force
-        Vecteur f = m_raideur*m_l0*(ab.unitaire()); // Force répulsive, pas d'amortissement
+        Vecteur f = -m_raideur*m_l0*(ab.unitaire()); // Force répulsive, pas d'amortissement
         p->appliquerForce(f);
         if (!lp.bris)
             throw Brisure(p,lp.part);
     }
     else if (l >= m_dLiaisonInv) // Force proportionnelle + amortissement
     {
-        Vecteur f = m_raideur*(l-m_l0)*(ab.unitaire()) + m_amor*vr;
+        Vecteur f = m_raideur*(l-m_l0)*(ab.unitaire()) + m_amor/ab.normeCarre()*(vr*ab)*ab;
         p->appliquerForce(f);
     }
     else // Force en 1/r^exposant
     {
-        Vecteur f = (m_a/(m_b+pow(l,m_exposantLiaison))+m_c)*(ab.unitaire()) + m_amor*vr;
+        Vecteur f = (m_a/(m_b+pow(l,m_exposantLiaison))+m_c)*(ab.unitaire()) + m_amor/ab.normeCarre()*(vr*ab)*ab;
         p->appliquerForce(f);
     }
 }

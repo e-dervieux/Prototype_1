@@ -1,30 +1,34 @@
 #include "../Header/SolideImage.h"
 
-SolideImage::SolideImage(double echelle, double l, Matiere* m, const char* image)
- : m_fichier(image), m_part(NULL)
+SolideImage::SolideImage(double echelle, double l, const char* image)
+ : m_fichier(image), m_part(NULL), m_echelle(echelle), m_l(l)
 {
-    init(Vecteur(), echelle, l, m);
+    init(Vecteur(), 1.0, NULL);
 }
 
-void SolideImage::init(Vecteur&& o, double echelle, double l, Matiere* m)
+void SolideImage::init(Vecteur&& o, double taille, Matiere* m)
 {
+    // Chargement de l'image sous forme de SDL_Surface
     SDL_Surface* img = SDL_LoadBMP(m_fichier);
     if (img == NULL)
     {
         std::stringstream err;
         err << "Le fichier " << m_fichier << " ne peut etre charge : " << std::endl << SDL_GetError();
-        throw Erreur(5, err.str());
+        throw Erreur(2, err.str());
     }
 
-    int w1 = (int)((double)(img->w)*echelle/l);
-    int w2 = (int)(((double)(img->w)*echelle-0.5)/l);
-    int h1 = (int)((double)(img->h)*echelle/l/sqrt(3.0));
-    int h2 = (int)(((double)(img->h)*echelle/sqrt(3.0)-0.5)/l);
+    // Taille des 2 quadrillages pour le maillage
+    int w1 = (int)((double)(img->w)*m_echelle/m_l);
+    int w2 = (int)(((double)(img->w)*m_echelle-0.5)/m_l);
+    int h1 = (int)((double)(img->h)*m_echelle/m_l/sqrt(3.0));
+    int h2 = (int)(((double)(img->h)*m_echelle/sqrt(3.0)-0.5)/m_l);
 
-    Vecteur v1 = l*Vecteur(1.0,0.0);
-    Vecteur v2 = l*Vecteur(0.5,0.5*sqrt(3.0));
-    Vecteur v3 = l*Vecteur(0.0,sqrt(3.0));
+    // Vecteurs utilisés pour le maillage
+    Vecteur v1 = m_l*Vecteur(1.0,0.0);
+    Vecteur v2 = m_l*Vecteur(0.5,0.5*sqrt(3.0));
+    Vecteur v3 = m_l*Vecteur(0.0,sqrt(3.0));
 
+    // Premier tableau de particules (non optimisé)
     Particule* partTmp = new Particule[w1*h1 + w2*h2];
     for(int i = 0 ; i < w1*h1 + w2*h2 ; i++)
         partTmp[i] = Particule(m,6);
@@ -40,8 +44,8 @@ void SolideImage::init(Vecteur&& o, double echelle, double l, Matiere* m)
             Vecteur pos = i*v1 + j*v3; // Position de la particule en cours sur l'image
 
             // Coordonnées du pixel associées
-            int x = (int)(pos.getX()/echelle);
-            int y = (int)(pos.getY()/echelle);
+            int x = (int)(pos.getX()/m_echelle);
+            int y = (int)(pos.getY()/m_echelle);
 
             // Conversion vers SDL_Pixel
             PixelSDL c = pixels[y*img->w + x];
@@ -49,7 +53,7 @@ void SolideImage::init(Vecteur&& o, double echelle, double l, Matiere* m)
             // Couleur non transparente
             if (c.r != 255 || c.g != 0 || c.b != 255)
             {
-                partTmp[i*h1+j].setPosInt(pos+o);
+                partTmp[i*h1+j].setPosInt(taille*pos+o);
                 partTmp[i*h1+j].setCouleur({c.r,c.g,c.b,255});
             }
         }
@@ -63,8 +67,8 @@ void SolideImage::init(Vecteur&& o, double echelle, double l, Matiere* m)
             Vecteur pos = v2 + i*v1 + j*v3; // Position de la particule en cours sur l'image
 
             // Coordonnées du pixel associées
-            int x = (int)(pos.getX()/echelle);
-            int y = (int)(pos.getY()/echelle);
+            int x = (int)(pos.getX()/m_echelle);
+            int y = (int)(pos.getY()/m_echelle);
 
             // Conversion vers SDL_Pixel
             PixelSDL c = pixels[y*img->w + x];
@@ -72,7 +76,7 @@ void SolideImage::init(Vecteur&& o, double echelle, double l, Matiere* m)
             // Couleur non transparente
             if (c.r != 255 || c.g != 0 || c.b != 255)
             {
-                partTmp[w1*h1 + i*h2+j].setPosInt(pos+o);
+                partTmp[w1*h1 + i*h2+j].setPosInt(taille*pos+o);
                 partTmp[w1*h1 + i*h2+j].setCouleur({c.r,c.g,c.b,255});
             }
         }
@@ -161,9 +165,11 @@ void SolideImage::init(Vecteur&& o, double echelle, double l, Matiere* m)
                 p1.lier(&p2);
         }
     }
-Particule* part = partTmp;
+
+    // Meilleur tableau de particules (optimisé)
     Particule::rearrangerParticules(partTmp, w1*h1 + w2*h2, m_part, m_nbPart,(m_part==NULL));
     delete[] partTmp;
+
     SDL_FreeSurface(img);
 }
 

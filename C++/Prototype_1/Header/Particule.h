@@ -48,6 +48,7 @@ public:
     void collision(Element& e, int x, int y, int taille, bool haut, bool gauche, bool bas, bool droite);
     void calculerDeplacement(double dt);
     void croisementLiaisons(); // Evite que les liaisons entre particules ne se croisent
+    void stabiliserVitesse(double dvMax);
     // Change la position, en fonction des forces prealablement appliquees, et de la duree de deplacement
     virtual void actualiser(double dt);
     virtual void afficher(SDL_Renderer* rendu, int coucheAffichage, double tailleParticule);

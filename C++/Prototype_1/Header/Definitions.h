@@ -32,6 +32,7 @@ namespace def
     // Paramètres temporels
     extern bool pasFixe; // Affichage à pas temporel fixe, ou à pas dynamique
     extern double dtMax; // Délai maximum entre frames (en s), ou bien pas temporel si on tourne à pas fixe
+    extern double dvMax; // Variation de vitesse maximale tolérée
     extern Uint32 delaiEntreFrames; // En ms
 
     // Calculs physiques

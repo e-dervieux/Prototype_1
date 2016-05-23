@@ -17,7 +17,7 @@ std::string Erreur::traduireNiveau(int niveau)
     if (niveau < 0)
         return "Erreur sur le niveau de l'erreur........ GG";
     if (niveau >= 5)
-        return "Au-del� de " + niveaux[4];
+        return "Au-dela de " + niveaux[4];
     else
         return niveaux[niveau];
 }

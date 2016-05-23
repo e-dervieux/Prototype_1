@@ -10,7 +10,7 @@ class Mur
 public:
     Mur(int w, int h, double x = 0.0, double y = 0.0, double l = 1.0, Particule* part = NULL)
      : m_x(x), m_y(y), m_l(l), m_w(w), m_h(h), m_part(part),
-       m_m({50,50,50,255}, 5000000000000000.0)
+       m_m({50,50,50,255}, 500000000000000000000.0)
     {}
 
     void init()

@@ -220,6 +220,8 @@ public:
             else // Diagonale
             {
                 mcprive::Conteneur* sm1 = this->getSM(x1,y1, m_coucheCol); // Normalement sm1 != NULL
+                if (sm1 == NULL)
+                    return false; // TODO Ce cas n'est jamais censé arriver, mais arrive. DEBUG
                 mcprive::Conteneur* sm2 = this->getSM(x2,y2, m_coucheCol); // Là on ne sait pas
                 bool sm2Vide = (sm2==NULL) ? true : sm2->estVide();
                 const mcprive::LiaisonsMC& liaisons = sm1->getL();
@@ -299,6 +301,12 @@ public:
             m_part[i].croisementLiaisons();
     }
 
+    void stabiliserVitesse(double dvMax)
+    {
+        for(int i = 0 ; i < m_nbPart ; i++)
+            m_part[i].stabiliserVitesse(dvMax);
+    }
+
     // Calcule la frame suivante, à partir des méthodes ci-dessus
     void actualiser(double dt)
     {
@@ -309,6 +317,9 @@ public:
 
             // Calculer les positions à partir de ces nouvelles positions
             calculerDeplacement(dt/def::nbIterationsEuler);
+
+            // Limitation des vitesses
+            stabiliserVitesse(def::dvMax);
 
             // Eviter que les liaisons entre particules ne se croisent
             croisementLiaisons();

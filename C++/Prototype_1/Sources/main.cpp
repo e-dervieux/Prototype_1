@@ -22,7 +22,8 @@ int main(int argv, char** argc)
         << " 4 : Premier test de collision entre particules" << std::endl
         << " 5 : Test de liaisons entre sous-matrices" << std::endl
         << " 6 : Collision basique avec des sous-matrices" << std::endl
-        << " 7 : Collision entre 2 formes coherentes" << std::endl;
+        << " 7 : Collision entre 2 formes coherentes" << std::endl
+        << " 8 : Simulations d'objets complexes" << std::endl;
         std::cin >> situation;
         switch (situation) {
             case 1:
@@ -45,6 +46,9 @@ int main(int argv, char** argc)
                 break;
             case 7:
                 demoCollision2();
+                break;
+            case 8:
+                demoImage();
                 break;
             default:
                 continuer = false;

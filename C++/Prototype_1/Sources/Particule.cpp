@@ -237,6 +237,14 @@ void Particule::croisementLiaisons()
     }
 }
 
+void Particule::stabiliserVitesse(double dvMax)
+{
+    double n = (m_v2.normeCarre()-m_v.normeCarre());
+    double n2 = (n<0) ? -n : n;
+    if(n2 > dvMax*dvMax)
+        m_v2 = dvMax*m_v2.unitaire();
+}
+
 void Particule::actualiser(double dt)
 {
     m_pos = m_pos2;
