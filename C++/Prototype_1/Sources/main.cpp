@@ -6,9 +6,13 @@
 #include "../Header/demoCollisionMatrices.h"
 #include "../Header/demoCollision2.h"
 #include "../Header/demoImage.h"
+#include "../Header/demoFinale.h"
 
 int main(int argv, char** argc)
 {
+    demoImageFinale();
+    return 0;
+
     bool continuer = true;
     while (continuer)
     {

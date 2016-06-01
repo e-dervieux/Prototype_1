@@ -17,7 +17,7 @@
     m_part[p].setV(Vecteur(vx,vy)); \
     m_element.reinit();
 
-using MatriceDemoCM = MatriceParticules<16,8>;
+using MatriceDemoCM = MatriceParticules<16,8,2>;
 
 class SceneDemoCM : public SceneSDL
 {
@@ -38,16 +38,16 @@ public:
         else
             def::delaiEntreFrames = 100;
 
+        if (m_clavier[def::K_Q] && !m_appui)
+        {
+            m_appui = true;
+            m_mat.afficherLiaisonsSM(8,1);
+        }
+        else if (!m_clavier[def::K_BAS])
+            m_appui = false;
+
         if (m_config == 2)
         {
-            if (m_clavier[def::K_Q] && !m_appui)
-            {
-                m_appui = true;
-                m_mat.afficherLiaisonsSM(8,1);
-            }
-            else if (!m_clavier[def::K_BAS])
-                m_appui = false;
-
             //    4  5  6
             //    7     8
             //    9 10 11
@@ -110,6 +110,14 @@ public:
                 }
             }
         }
+        else
+        {
+            if (m_clavier[def::K_DROITE])
+            {
+                m_part[0].setV(Vecteur(5.0,0.0));
+                m_part[2].setV(Vecteur(5.0,0.0));
+            }
+        }
     }
 
     virtual void charger(int config)
@@ -141,13 +149,13 @@ public:
                 break;
 
             default:
-                m_part[0] = Particule(Vecteur(9.5,12.5), &m_m1, 2);
-                m_part[0].setV(Vecteur(5.0,0.0));
-                m_part[1] = Particule(Vecteur(20.5,12.5), &m_m2, 2);
+                m_part[0] = Particule(Vecteur(17.5,12.5), &m_m1, 2);
+                //m_part[0].setV(Vecteur(5.0,0.0));
+                m_part[1] = Particule(Vecteur(28.5,12.5), &m_m2, 2);
 
-                m_part[2] = Particule(Vecteur(9.5,20.5), &m_m1, 2);
-                m_part[2].setV(Vecteur(5.0,0.0));
-                m_part[3] = Particule(Vecteur(20.5,20.5), &m_m2, 2);
+                m_part[2] = Particule(Vecteur(17.5,20.5), &m_m1, 2);
+                //m_part[2].setV(Vecteur(5.0,0.0));
+                m_part[3] = Particule(Vecteur(28.5,20.5), &m_m1, 2);
                 m_part[2].lier(&m_part[3]);
 
                 m_titre = "Collision simple entre 2 matrices / 2 particules";
@@ -170,7 +178,7 @@ private:
 void demoCollisionMatrices()
 {
     // Définitions
-    def::redefGrille(40,40, 10.0, 0, 1, 2, true, true, 8, 16);
+    def::redefGrille(40,40, 15.0, 0, 1, 4, true, true, 2, 8);
     def::redefTemp(true, 0.1, 100);
     def::liaisonsAffichees = true;
 
@@ -178,7 +186,7 @@ void demoCollisionMatrices()
     Particule* part = new Particule[NB_PART];
 
     // Matrice de particules
-    MatriceDemoCM mat(40,40, 1, part, NB_PART);
+    MatriceDemoCM mat(40,40, 2, part, NB_PART);
 
     // Création de la scène
     SceneDemoCM scene(mat, part);

@@ -100,7 +100,7 @@ public:
         double v = 10.0;
 
         // Réinitialisation des particules
-        for(int i = 0 ; i < 2*JambonHexa::nbPart() + Mur(80,40).nbPart() ; i++)
+        for(int i = 0 ; i < 2*JambonHexa::nbPart() + Mur(30,30).nbPart() ; i++)
             m_part[i].setPosInt(Vecteur(-1.0,-1.0));
 
         // Initialisation
@@ -141,11 +141,11 @@ public:
                 m_m1 = Matiere({255,0,0,255}, 1.0, 2.0, k, cc);
                 m_m2 = Matiere({0,0,255,255}, 1.0, 2.0, k, cc);
 
-                m_part[0] = Particule(50,50, &m_m1);
-                m_part[0].appliquerDV(Vecteur(35.0,15.0));
+                m_part[0] = Particule(15,25, &m_m1);
+                m_part[0].appliquerDV(Vecteur(20.0,12.0));
 
-                m_part[1] = Particule(105,65, &m_m2);
-                m_part[1].appliquerDV(Vecteur(-20.0,0.0));
+                m_part[1] = Particule(50,37, &m_m2);
+                m_part[1].appliquerDV(Vecteur(-15.0,0.0));
 
                 m_titre = "Rebond entre particules";
                 break;
@@ -174,18 +174,18 @@ private:
 };
 
 void demoCollision2() {
-    def::redefGrille(180,100,5.0,0,2,3,true,true,8,16);
+    def::redefGrille(70,70,8.0,0,2,3,true,true,4,16);
     def::redefTemp(true, 0.03, 0);
     def::nbIterationsEuler = 1;
 
     // Création des particules
-    int nbPart = 2*JambonHexa::nbPart() + Mur(80,40).nbPart();
+    int nbPart = 2*JambonHexa::nbPart() + Mur(30,30).nbPart();
     Particule* particules = new Particule[nbPart];
 
-    Mur mur(80, 40, 12.5, 12.5, 2.0, particules+2*JambonHexa::nbPart());
+    Mur mur(30, 30, 5.5, 5.5, 2.0, particules+2*JambonHexa::nbPart());
 
     // Création de la grille
-    MatriceDemoCollision mat(180, 100, 1, particules, nbPart);
+    MatriceDemoCollision mat(70,70, 1, particules, nbPart);
 
     // Lancement de la scène SDL
     try

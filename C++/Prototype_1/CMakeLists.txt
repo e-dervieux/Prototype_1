@@ -24,6 +24,6 @@ set(SOURCE_FILES    Sources/main.cpp
         Header/demoCollisionMatrices.h
         Header/demoCollision2.h
         Header/LiaisonsMC.h         Sources/LiaisonsMC.cpp
-        Header/Brisure.h Header/SolideImage.h Sources/SolideImage.cpp Header/demoImage.h)
+        Header/Brisure.h Header/SolideImage.h Sources/SolideImage.cpp Header/demoImage.h Header/demoFinale.h)
 
 add_executable(Prototype_1 ${SOURCE_FILES})
