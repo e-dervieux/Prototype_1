@@ -9,11 +9,9 @@
 
 int main(int argv, char** argc)
 {
-    demoImage();
-    return 0;
-
     bool continuer = true;
-    while (continuer) {
+    while (continuer)
+    {
         int situation;
         std::cout << "Quelle demo realiser ? (0 = stop)" << std::endl
         << " 1 : Matrice de particules" << std::endl

@@ -95,9 +95,9 @@ public:
 
     virtual void charger(int config)
     {
-        double k = 200.0;
-        double cc = 5.0;
-        double v = 15.0;
+        double k = 175.0;
+        double cc = 8.0;
+        double v = 10.0;
 
         // Réinitialisation des particules
         for(int i = 0 ; i < 2*JambonHexa::nbPart() + Mur(80,40).nbPart() ; i++)
@@ -144,8 +144,8 @@ public:
                 m_part[0] = Particule(50,50, &m_m1);
                 m_part[0].appliquerDV(Vecteur(35.0,15.0));
 
-                m_part[1] = Particule(150,60, &m_m2);
-                m_part[1].appliquerDV(Vecteur(-20.0,20.0));
+                m_part[1] = Particule(105,65, &m_m2);
+                m_part[1].appliquerDV(Vecteur(-20.0,0.0));
 
                 m_titre = "Rebond entre particules";
                 break;

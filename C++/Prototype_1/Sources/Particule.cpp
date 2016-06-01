@@ -1,6 +1,8 @@
 #include "../Header/Particule.h"
 #include "../Header/Definitions.h"
 
+#define BORDS_PLATS 1
+
 SDL_Color couleurDefaut = {0,0,0,0};
 
 Particule::Particule(Matiere* matiere, size_t nbLiaisons)
@@ -534,11 +536,13 @@ void Particule::collision(Element& e, int x, int y, int taille,
             e.getPos(), // Barycentre de la sous-matrice
             Point(xCol,yCol) ); // Point de collision
 
+#if BORDS_PLATS
     // Gestion des liaisons, rebond sur une surface plane
     if (haut && m_y-y < taille/2 || bas && m_y-y >= taille/2)
         n = Vecteur(cd ? 1.0 : -1.0, 0.0);
     else if (gauche && m_x-x < taille/2 || droite && m_x-x >= taille/2)
         n = Vecteur(0.0, cb ? 1.0 : -1.0);
+#endif
     //TODO pas de V2 pour les éléments
     Vecteur vr = m_v2 - e.getV(); // Vitesse relative
 
